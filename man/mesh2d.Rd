@@ -4,15 +4,7 @@
 \alias{mesh2d}
 \title{Illustrative code for building a mesh in 2d domain.}
 \usage{
-mesh2d(
-  loc,
-  domain,
-  max.edge,
-  offset,
-  SP = TRUE,
-  transpose = NULL,
-  refine = TRUE
-)
+mesh2d(loc, domain, max.edge, offset, SP = TRUE)
 }
 \arguments{
 \item{loc}{a two column matrix with location coordinates.}
@@ -24,10 +16,6 @@ mesh2d(
 \item{offset}{the length of the outer extension.}
 
 \item{SP}{logical indicating if the output will include the SpatialPolygons.}
-
-\item{transpose}{if the horizontal vertical orientation is swap.}
-
-\item{refine}{if the corners far from the points should be cutted off.}
 }
 \value{
 a mesh object.

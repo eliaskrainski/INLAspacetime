@@ -7,16 +7,13 @@
 #' @param max.edge the maximun edge length.
 #' @param offset the length of the outer extension.
 #' @param SP logical indicating if the output will include the SpatialPolygons.
-#' @param transpose if the horizontal vertical orientation is swap.
-#' @param refine if the corners far from the points should be cutted off.
 #' @section Warning:
 #'  This is just for illustration purpose and one should consider the
 #'  efficient function available a the INLA package.
 #' @return a mesh object.
 #' @export
 mesh2d <-
-  function(loc, domain, max.edge, offset,
-           SP=TRUE, transpose=NULL, refine=TRUE)
+  function(loc, domain, max.edge, offset, SP=TRUE)
   {
     ### arguments check
     if(missing(loc))
@@ -28,9 +25,6 @@ mesh2d <-
       stop("'loc' or 'domain' must be provided!")
     if(!is.logical(SP))
       stop("'SP' must be logical")
-    if(!is.null(transpose))
-      if(!is.logical(transpose))
-        stop("'transpose' must be logical")
     ### define retangle around
     xyl <- apply(rbind(loc, domain), 2, range)
     if(!missing(offset)) {
@@ -42,8 +36,7 @@ mesh2d <-
     }
     ### define triangle coordinates
     xyr <- apply(xyl, 2, diff)
-    if (is.null(transpose))
-      transpose <- (xyr[1]<xyr[2])
+    transpose <- (xyr[1]<xyr[2])
     if(transpose) {
       xyl <- xyl[,2:1]
       xyr <- rev(xyr)
@@ -60,6 +53,7 @@ mesh2d <-
                  xu[nxu]+edgelen/2), xu)
 
     k.a <- 0
+    refine <- TRUE
     if (refine)
       xx <- xx[2:1]
     else  {
@@ -111,7 +105,7 @@ mesh2d <-
           cbind(1:(a-1), 2:a, (2:a)+a),
           cbind(1:a, 1:a+a+1, 1:a+a)[a:1,])+a0
         i.b[[j+1]] <- rbind(c(1, a+1), c(a, 2*a+1))+a0
-      }else {
+      } else {
         tv[[j]] <- cbind(1:(a-1), 2:a, 1:(a-1)+a)+a0
         if(nrow(tv[[j]])>1) {
           add <- cbind(2:(a-1), 2:(a-1)+a, 1:(a-2)+a)+a0
@@ -128,8 +122,7 @@ mesh2d <-
         i.b[[length(i.b)+1]] <- cbind(1:(a-1), 2:a)+a0
     }
     triang$graph <- list(tv=Reduce('rbind', tv))
-    triang$n <- nrow(triang$graph$tv)
-
+    triang$n <- nrow(triang$loc)
     triang$segm <- list(bnd=list(loc=NULL,
                                  idx=Reduce('rbind', i.b)))
     triang$segm$bnd$grp <- matrix(0, nrow(triang$segm$bnd$idx), 1)
@@ -137,8 +130,9 @@ mesh2d <-
     attr(triang$segm$bnd, 'class') <- 'inla.mesh.segment'
     if(SP) {
       triang$SP <- sp:::SpatialPolygons(
-        lapply(1:triang$n, function(j) {
-          p <- sp:::Polygon(triang$loc[triang$graph$tv[j, ], ])
+        lapply(1:nrow(triang$graph$tv), function(j) {
+          jj <- triang$graph$tv[j, ]
+          p <- sp:::Polygon(triang$loc[c(jj, jj[1]), ])
           sp:::Polygons(list(p), paste(j))
         }))
       triang$centroids <- sp:::coordinates(triang$SP)

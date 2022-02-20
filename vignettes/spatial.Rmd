@@ -1,0 +1,92 @@
+---
+title: 'INLAspacetime: spatial model example'
+author: "Elias Teixeira Krainski"
+date: "2/20/2022"
+output: pdf_document
+bibliography: INLAspacetime.bib
+---
+
+```{r setup, include=FALSE}
+set.seed(1)
+library(INLAspacetime)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Abstract 
+
+Build a SPDE model precision matrix, simulate data from and visualize. 
+
+## Introduction 
+
+It considers the method proposed in @lindgren2011explicit 
+to build a continuous domain model. 
+
+## Define the precison matrix 
+
+Domain:
+```{r domain}
+domain <- cbind(x=c(0,10,10,0,0), y=c(0,0,5,5,0))
+```
+
+Build a mesh:
+```{r mesh}
+mesh <- mesh2d(domain=domain, max.edge=0.7, offset=2)
+```
+
+Build the Finite Element Method (FEM) matrices:
+```{r fem}
+fem <- mesh2fem(mesh, order=2)
+```
+
+Build the precision matrix for a giver range:
+```{r prec}
+range <- 2.0
+Q1mesh <- spde2precision(kappa=sqrt(2*1)/range, fem, alpha=2)
+```
+
+Consider the marginal variance, see @lindgren2015bayesian:
+```{r qprec}
+sigma2u <- 1.0
+tau <- range^2/(8*pi*sigma2u)
+Qmesh <- tau * Q1mesh
+```
+
+## Sample from the model 
+
+At the mesh nodes:
+```{r samplemesh}
+u0 <- drop(solve(Qmesh, rnorm(mesh$n)))
+summary(u0)
+```
+
+Locations:
+```{r locs}
+nlocs <- 70
+locs <- cbind(x=runif(nlocs, min(domain[,1]), max(domain[,1])),  
+              y=runif(nlocs, min(domain[,2]), max(domain[,2])))
+```
+
+Projector matrix:
+```{r projl}
+Alocs <- mesh2projector(mesh, locs)
+```
+
+Project the samples to the locations:
+```{r projx}
+x <- drop(Alocs$proj$A %*% u0)
+summary(x)
+```
+
+## Visualize 
+
+Visualize the mesh and the location whose points proportional to the 
+projected field at the locations.
+
+```{r plotlocs}
+par(mfrow=c(1,1), mar=c(0,0,1,0), mgp=c(1,0.5,0), las=1)
+plot(mesh$SP)
+points(locs, col=2, pch=19, cex=0.5+(x-min(x))/diff(range(x))) 
+```
+
+## References
+

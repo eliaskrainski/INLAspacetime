@@ -13,6 +13,14 @@
 #' @export
 mesh2projector <- function(mesh, loc=NULL, lattice=NULL,
                            xlim=NULL, ylim=NULL, dims=c(100, 100)) {
+  heron <- function(x, y) {
+    ### function to compute the area of a triangle
+    aa <- sqrt((x[2]-x[1])^2 + (y[2]-y[1])^2)
+    bb <- sqrt((x[3]-x[2])^2 + (y[3]-y[2])^2)
+    cc <- sqrt((x[1]-x[3])^2 + (y[1]-y[3])^2)
+    s <- 0.5*(aa+bb+cc)
+    sqrt(s*(s-aa)*(s-bb)*(s-cc))
+  }
   proj1f <- function(i, xy) {
     a <- numeric(3)
     for (j in 1:3)
@@ -26,7 +34,8 @@ mesh2projector <- function(mesh, loc=NULL, lattice=NULL,
   if (is.null(mesh$SP))
     mesh$SP <- sp:::SpatialPolygons(
       lapply(1:nrow(mesh$graph$tv), function(j) {
-        p <- sp:::Polygon(mesh$loc[mesh$graph$tv[j, ], 1:2])
+        jj <- triang$graph$tv[j, ]
+        p <- sp:::Polygon(triang$loc[c(jj, jj[1]), ])
         sp:::Polygons(list(p), paste(j))
       }))
   res <- list()

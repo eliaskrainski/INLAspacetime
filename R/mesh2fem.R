@@ -9,7 +9,7 @@
 #'  efficient function available a the INLA package.
 #' @return a list object containing the FE matrices.
 #' @export
-fem2d <- function(mesh, order=2) {
+mesh2fem <- function(mesh, order=2) {
   heron <- function(x, y) {
     ### function to compute the area of a triangle
     aa <- sqrt((x[2]-x[1])^2 + (y[2]-y[1])^2)
@@ -50,10 +50,12 @@ fem2d <- function(mesh, order=2) {
                     'dgTMatrix'))
   order <- floor(order)
   if (order>1) {
-    for (o in 2:order)
-      res[[2+o]] <- as(crossprod(
-        res$g1/diag(res$c0),
+    for (o in 2:order) {
+      g1s <- res$g1 %*% Diagonal(n, 1/c0)
+      res[[2+o]] <- as(Matrix::crossprod(
+        g1s,
         res[[o+1]]), 'dgTMatrix')
+    }
     names(res)[4:(order+2)] <- paste0('g', 2:order)
   }
   res$va <- matrix(c0, ncol=1)
