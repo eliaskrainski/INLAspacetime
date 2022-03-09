@@ -1,7 +1,7 @@
 ---
 title: 'INLAspacetime: spatial model example'
 author: "Elias Teixeira Krainski"
-date: "2/20/2022"
+date: "February 2022, last update: `r format(Sys.Date(), '%B %d, %Y')`"
 output: pdf_document
 bibliography: INLAspacetime.bib
 ---
@@ -18,8 +18,9 @@ Build a SPDE model precision matrix, simulate data from and visualize.
 
 ## Introduction 
 
-It considers the method proposed in @lindgren2011explicit 
-to build a continuous domain model. 
+Define a continuous domain Whittle-Matérn model 
+considering the discretization method 
+as proposed in @lindgren2011explicit. 
 
 ## Define the precison matrix 
 
@@ -38,17 +39,14 @@ Build the Finite Element Method (FEM) matrices:
 fem <- mesh2fem(mesh, order=2)
 ```
 
-Build the precision matrix for a giver range:
-```{r prec}
-range <- 2.0
-Q1mesh <- spde2precision(kappa=sqrt(2*1)/range, fem, alpha=2)
-```
-
-Consider the marginal variance, see @lindgren2015bayesian:
-```{r qprec}
-sigma2u <- 1.0
-tau <- range^2/(8*pi*sigma2u)
-Qmesh <- tau * Q1mesh
+Build the precision matrix for a given range and 
+marginal variance, see @lindgren2015bayesian, 
+for fixed $\nu=1$ or $\alpha=2$:
+```{r precmat}
+range <- 2.0 ## the empirically derived one
+sigma2u <- 1.0 ### marginal variance
+tau2 <- range^2/(4*pi*8*sigma2u) ### local variance
+Qmesh <- tau2 * spde2precision(kappa=sqrt(8*pi)/range, fem, alpha=2)
 ```
 
 ## Sample from the model 
@@ -79,8 +77,8 @@ summary(x)
 
 ## Visualize 
 
-Visualize the mesh and the location whose points proportional to the 
-projected field at the locations.
+Visualize the mesh and the location points with size 
+proportional to the projected field at the locations.
 
 ```{r plotlocs}
 par(mfrow=c(1,1), mar=c(0,0,1,0), mgp=c(1,0.5,0), las=1)
