@@ -25,8 +25,10 @@ upperPadding <- function(M) {
     return(upperPadding(Matrix(M)))
   }
   if(is(M, 'Matrix')) {
-    M <- as(as(M, 'dgCMatrix'),
-            'dgTMatrix')
+    if((!is(M, 'dgTMatrix')) &
+       (!is(M, 'dtTMatrix')))
+      M <- as(as(M, 'dgCMatrix'),
+              'dgTMatrix')
     upp <- which(M@j>=M@i)
     ord <- order(M@i[upp])
     return(sparseMatrix(
@@ -37,17 +39,17 @@ upperPadding <- function(M) {
       repr='T'))
   }
   if(is(M, 'list')) {
-    M <- lapply(M, upperPadding)
     graphMx <- list(
-        graph=Reduce(
+        graph=upperPadding(
+          Reduce(
             '+',
             lapply(M, function(m) {
                 m@x <- m@x*0.0 + 1.0
                 return(m)
-            })))
+            }))))
     graphMx$Mx <- mapply(
         function(x) (x + graphMx$graph*0)@x,
-        M)
+        lapply(M, upperPadding))
     return(graphMx)
   }
   warning('nothing done!')
