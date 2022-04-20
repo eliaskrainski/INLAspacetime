@@ -48,13 +48,13 @@ upperPadding <- function(M) {
       which(m@j>=m@i)))
   if(is(M, 'list')) {
     M <- lapply(M, .check)
-    graph <- Reduce(
+    graph <- .check(as(Reduce(
       '+',
       lapply(M, function(m) {
         m@x <- m@x*0.0 + 1.0
         return(m)
-      }))
-    uo <- .uof(.check(as(graph, 'CsparseMatrix')))
+      })), 'CsparseMatrix'))
+    uo <- .uof(graph)
     xx <- sapply(M, function(m) {
       m <- graph*0 + m
       return(m@x[uo])
