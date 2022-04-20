@@ -28,6 +28,7 @@
 #' list(a=A, a=B)
 #' upperPadding(list(a=A, b=B))
 upperPadding <- function(M) {
+## TO DO: relative indexing
   .check <- function(m) {
     if(is(m, 'matrix'))
       m <- Matrix(m)
@@ -47,12 +48,12 @@ upperPadding <- function(M) {
       which(m@j>=m@i)))
   if(is(M, 'list')) {
     M <- lapply(M, .check)
-    graph <- .check(Reduce(
+    graph <- Reduce(
       '+',
       lapply(M, function(m) {
         m@x <- m@x*0.0 + 1.0
         return(m)
-      })))
+      }))
     uo <- .uof(.check(as(graph, 'CsparseMatrix')))
     xx <- sapply(M, function(m) {
       m <- graph*0 + m
