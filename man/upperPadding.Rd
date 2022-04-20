@@ -3,31 +3,38 @@
 \name{upperPadding}
 \alias{upperPadding}
 \title{Prepare a matrix (or a list of matrices)
-for use in a cgeneric code.}
+for use in some cgeneric code.}
 \usage{
 upperPadding(M)
 }
 \arguments{
-\item{matrices}{a matrix a list of matrices}
+\item{M}{a matrix or a list of matrices}
 }
 \value{
 If a unique matrix is given, return the
 upper triangle considering the 'T' representation
-in the Matrix package.
- If a list of matrices is given, return the graph of the
-corresponding sum of all the matrices and the corresponding
-values of the matrices.
+in the Matrix package. If a list of matrices is given,
+return the union of the graph from each matrix and
+a matrix with the values each one of the matrices.
+This matrix has number of columns equal the number
+of matrices given and number of rows equal the number
+of elements in the upper triangle and diagonal
+of the union graph. Return M otherwise.
 }
 \description{
-The supplied matrix (or matrices) are prepared to
-follow the required graph and precision pattern.
+Define a graph of the union of the supplied matrices
+and return the row ordered diagonal plus upper triangle
+after padding with zeroes each one so that
+all the returned matrices have the same pattern.
 }
 \examples{
 A <- sparseMatrix(
-   i=c(1,1,2,2,3,3,3,4,5,5),
-   j=c(2,5,1,3,2,4,5,3,1,3), x=1)
+   i=c(1,1,2,3,3,5),
+   j=c(2,5,3,4,5,5),
+   x=-(0:5), symmetric=TRUE)
 A
 upperPadding(A)
-B <- Diagonal(5, colSums(A))
+B <- Diagonal(nrow(A), -colSums(A))
+list(a=A, a=B)
 upperPadding(list(a=A, b=B))
 }
