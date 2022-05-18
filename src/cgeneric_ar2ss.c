@@ -11,6 +11,14 @@
 
 #define Calloc(n_, type_)  (type_ *)calloc((n_), sizeof(type_))
 #define SQR(x) ((x)*(x))
+#define abs(x) sqrt((x)*(-x))
+//#define iszero(x) (abs(x)<0.000001)
+
+# ifdef __SUPPORT_SNAN__
+#  define iszero(x) (fpclassify (x) == FP_ZERO)
+# else
+#  define iszero(x) (((__typeof (x)) (x)) == 0)
+# endif
 
 double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgeneric_data_tp * data)
 {
@@ -34,7 +42,7 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
   assert(pcor->len == 2);
 
   int npar=0;
-  if (!isnan(psigma->doubles[1])) {
+  if (!iszero(psigma->doubles[1])) {
     if(theta) {
       lprec = - 2 * theta[npar];
       prec = exp(lprec);
@@ -43,10 +51,11 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
     }
     npar++;
   } else {
-    prec = lprec = NAN;
+    prec = 1/sqrt(psigma->doubles[0]);
+    lprec = log(prec);
   }
 
-  if (!isnan(pleng->doubles[1])) {
+  if (!iszero(pleng->doubles[1])) {
     if(theta) {
       lleng = theta[npar];
       sleng = exp(lleng);
@@ -55,10 +64,11 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
     }
     npar++;
   } else {
-    lleng = sleng = NAN;
+    sleng = pleng->doubles[0];
+    lleng = log(sleng);
   }
 
-  if (!isnan(pcor->doubles[1])) {
+  if (!iszero(pcor->doubles[1])) {
     if(theta) {
       a2 = 2.0 / ( 1.0 + exp( - theta[npar] )) - 1.0;
     } else {
@@ -66,7 +76,7 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
     }
     npar++;
   } else {
-    a2 = NAN;
+    a2 = pcor->doubles[0];
   }
 
   if(theta) {
@@ -231,15 +241,15 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
     {
       ret = Calloc(npar + 1, double);
       npar=0;
-      if (!isnan(psigma->doubles[1])) {
+      if (!iszero(psigma->doubles[1])) {
 	npar++;
 	ret[npar] = 0.0; // log(psigma->doubles[0] - 1);
       }
-      if (!isnan(pleng->doubles[1])) {
+      if (!iszero(pleng->doubles[1])) {
 	npar++;
 	ret[npar] = 10.0; // log(pleng->doubles[0] + 1);
       }
-      if (!isnan(pcor->doubles[1])) {
+      if (!iszero(pcor->doubles[1])) {
 	npar++;
 	ret[npar] = 2.94445; // log((0.5+0.5*pcor->doubles[0])/(1-(0.5+0.5*pcor->doubles[0]))); 
       }
@@ -258,17 +268,17 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
       ret[0] = 0.0;
       double lam;
       npar=0;
-      if (!isnan(psigma->doubles[1])) {
+      if (!iszero(psigma->doubles[1])) {
 	lam = -log(psigma->doubles[1])/psigma->doubles[0];
 	ret[0] += log(lam) + theta[npar] - lam * exp(theta[npar]);
 	npar++;
       }
-      if (!isnan(pleng->doubles[1])) {
+      if (!iszero(pleng->doubles[1])) {
 	lam = -log(pleng->doubles[1])/pleng->doubles[0];
 	ret[0] += log(lam * 0.5) - 0.5 * theta[npar] - lam * exp(-0.5 * theta[npar]);
 	npar++;
       }
-      if (!isnan(pcor->doubles[1])) {
+      if (!iszero(pcor->doubles[1])) {
 	//	ret[0] += priorfunc_pc_cor1(&theta[npar], &pcor->doubles[0]);
 	ret[0] += -0.5*SQR(theta[npar]);
 	npar++;
