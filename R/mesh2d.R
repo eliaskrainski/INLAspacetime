@@ -13,20 +13,25 @@
 #' @return a mesh object.
 #' @export
 mesh2d <-
-  function(loc, domain, max.edge, offset, SP=TRUE)
-  {
-    ### arguments check
-    if(missing(loc))
-      loc <- matrix(0, 0, 2)
-    if(missing(domain))
-      domain <- matrix(0, 0, 2)
-    xy <- rbind(loc, domain)
-    if(nrow(xy)==0)
-      stop("'loc' or 'domain' must be provided!")
+    function(loc, domain, max.edge, offset, SP=TRUE)
+{
+### arguments check
+    if(missing(loc)) {
+        if(missing(domain)) {
+            stop("please provide 'loc' or domain'!")
+        }
+        xy <- domain
+    } else {
+        if(missing(domain)) {
+            xy <- loc
+        } else {
+            xy <- rbind(loc, domain)
+        }
+    }
     if(!is.logical(SP))
-      stop("'SP' must be logical")
-    ### define retangle around
-    xyl <- apply(rbind(loc, domain), 2, range)
+        stop("'SP' must be logical")
+### define retangle around
+    xyl <- unique(apply(xy, 2, range, na.rm=TRUE))
     if(!missing(offset)) {
       ro <- which(offset<0)
       if (length(ro)>0)
