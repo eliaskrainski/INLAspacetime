@@ -98,7 +98,7 @@ ggplot(times) +
     scale_y_log10()
 
 ggplot(times) +
-    geom_boxplot(aes(x=factor(n), y=cpu/nfn, fill=case)) +
+    geom_boxplot(aes(x=factor(n), y=nfn/cpu, fill=case)) +
     scale_y_log10()
 
 head(times,2)

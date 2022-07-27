@@ -1,29 +1,9 @@
-#include <assert.h>
-#if !defined(__FreeBSD__)
-#include <malloc.h>
-#endif
-#include <math.h>
-#include <stdlib.h>
-#include <strings.h>
-
-#include "cgeneric_ar2ss.h"
-
-
-#define Calloc(n_, type_)  (type_ *)calloc((n_), sizeof(type_))
-#define SQR(x) ((x)*(x))
-#define abs(x) sqrt((x)*(-x))
-//#define iszero(x) (abs(x)<0.000001)
-
-# ifdef __SUPPORT_SNAN__
-#  define iszero(x) (fpclassify (x) == FP_ZERO)
-# else
-#  define iszero(x) (((__typeof (x)) (x)) == 0)
-# endif
+#include "cgeneric_defs.h"
 
 double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgeneric_data_tp * data)
 {
   
-  double *ret = NULL, a1, a2, a1s, lleng, sleng, lprec, prec, pcorrect;
+  double *ret = NULL, a1, a2, a1s, sleng, lprec, prec, pcorrect;
   
   assert(!strcasecmp(data->ints[0]->name, "n"));
   int N = data->ints[0]->ints[0];
@@ -42,48 +22,34 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
   assert(pcor->len == 2);
 
   int npar=0;
-  if (!iszero(psigma->doubles[1])) {
-    if(theta) {
-      lprec = - 2 * theta[npar];
-      prec = exp(lprec);
-    } else {
-      prec = lprec = NAN;
-    }
-    npar++;
-  } else {
-    prec = 1/sqrt(psigma->doubles[0]);
-    lprec = log(prec);
-  }
-
-  if (!iszero(pleng->doubles[1])) {
-    if(theta) {
-      lleng = theta[npar];
-      sleng = exp(lleng);
-    } else {
-      lleng = sleng = NAN;
-    }
-    npar++;
-  } else {
-    sleng = pleng->doubles[0];
-    lleng = log(sleng);
-  }
-
-  if (!iszero(pcor->doubles[1])) {
-    if(theta) {
-      a2 = 2.0 / ( 1.0 + exp( - theta[npar] )) - 1.0;
-    } else {
-      a2 = NAN;
-    }
-    npar++;
-  } else {
-    a2 = pcor->doubles[0];
-  }
-
   if(theta) {
+    if (iszero(psigma->doubles[1])) {
+      prec = 1/SQR(psigma->doubles[0]);
+      lprec = log(prec);
+    } else {
+      lprec = -2 * theta[npar];
+      prec = exp(lprec);
+      npar++;
+    }
+    if (iszero(pleng->doubles[1])) {
+      sleng = pleng->doubles[0];
+    } else {
+      sleng = exp(theta[npar]);
+      npar++;
+    }
+    if (iszero(pcor->doubles[1])) {
+      a2 = pcor->doubles[0];
+    } else {
+      a2 = (2.0 / ( 1.0 + exp(-theta[npar]) )) -1.0;
+      npar++;
+    }
     a1 = -2 * sqrt(a2) * cos(2 * M_PI / sleng);
     a1s = SQR(a1);
     pcorrect = (1 + a2) / ( (1.0-a2) * (1.0-a1+a2) * (1.0+a1+a2) ) ;
   } else {
+    sleng = NAN;
+    prec = lprec = NAN;
+    a2 = NAN;
     pcorrect = a1s = a1 = NAN;
   }
   
@@ -137,28 +103,27 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 	ret[k++] = i+1;
 	//printf("G k = %d\n", k);
       }
-      /*
-      if(N<7) {
+      assert(N == (i+2));
+      assert((2*M+2) == k);
+      
+      if(N<20) {
 	FILE *fp = fopen("gg2", "w");
 	k=0;
 	fprintf(fp, "%g ",ret[k++]);
 	fprintf(fp, "%g\n",ret[k++]);
 	for(int l=0; l<2; l++) {
-	  for(i=0; i<N; i++) {
-	    if(i==0) fprintf(fp, "%g\n",ret[k++]);
-	    if(i==1) {
-	      fprintf(fp, "%g ",ret[k++]);
-	      fprintf(fp, "%g\n",ret[k++]);
-	    }
-	    if(i>1) {
-	      fprintf(fp, "%g ",ret[k++]);
-	      fprintf(fp, "%g ",ret[k++]);
-	      fprintf(fp, "%g\n",ret[k++]);
-	    }
+	  for(i=1; i<(N-1); i++) {
+	    fprintf(fp, "%d %g ", i, ret[k++]);
+	    fprintf(fp, "%g ",ret[k++]);
+	    fprintf(fp, "%g\n",ret[k++]);
 	  }
+	  fprintf(fp, "%d %g ", i, ret[k++]);
+	  fprintf(fp, "%g\n", ret[k++]);
+	  fprintf(fp, "%d %g\n",i+1,ret[k++]);
 	}
 	fclose(fp);
-	} */
+      } 
+
       break;
     }
   
@@ -209,24 +174,23 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
       if(N>1) {
 	ret[k++] = param;
       }
-      /*
-      if(N<7){
+
+      if(N<20) {
+	FILE *fp = fopen("qq2", "w");
 	k=0;
-	printf("%g ",ret[k++]);
-	printf("%g\n",ret[k++]);
-	for(i=0; i<N; i++) {
-	  if(i==0) printf("%g\n",ret[k++]);
-	  if(i==1) {
-	    printf("%g ",ret[k++]);
-	    printf("%g\n",ret[k++]);
-	  }
-	  if(i>1) {
-	    printf("%g ",ret[k++]);
-	    printf("%g ",ret[k++]);
-	    printf("%g\n",ret[k++]);
-	  }
+	fprintf(fp, "%g ",ret[k++]);
+	fprintf(fp, "%g\n",ret[k++]);
+	for(i=1; i<(N-1); i++) {
+	  fprintf(fp, "%d %g ", i, ret[k++]);
+	  fprintf(fp, "%g ",ret[k++]);
+	  fprintf(fp, "%g\n",ret[k++]);
 	}
-	} */
+	fprintf(fp, "%d %g ", i, ret[k++]);
+	fprintf(fp, "%g\n", ret[k++]);
+	fprintf(fp, "%d %g\n",i+1,ret[k++]);
+	fclose(fp);
+      }
+      
       break;
       }
     
