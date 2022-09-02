@@ -2,9 +2,9 @@ toInclude = ${R_LIBRARY_DIR}/INLA/include/
 
 sources = $(wildcard *.c)
 
-all : $(sources:.c=.o) so 
+all : $(sources:.c=.o) so
 
-%.o : %.c 
+%.o : %.c
 	@echo gnerating $@
 	gcc -c -O3 -Wall -Wextra -fpic -lblas -I$(toInclude) $^ -o $@
 
@@ -13,8 +13,7 @@ so : $(sources:.c=.o)
 	gcc -shared *.o -o cgenericModels.so
 
 
-clean : 
+clean :
 	@##-rm -f *.o
 
-.PHONY: all clean 
-	
+.PHONY: all clean

@@ -1,4 +1,4 @@
-#' Prepare a matrix (or a list of matrices)
+#' Prepare a matrix or a list of matrices
 #' for use in some cgeneric code.
 #'
 #' Define a graph of the union of the supplied matrices
@@ -7,15 +7,25 @@
 #' all the returned matrices have the same pattern.
 #'
 #' @param M a matrix or a list of matrices
+#' @param relative logical. If a list of matrices is supplied,
+#' it indicates if it is to be returned a relative index
+#' and the value for each matrix. See details. 
 #' @return If a unique matrix is given, return the
 #' upper triangle considering the 'T' representation
 #' in the Matrix package. If a list of matrices is given,
-#' return the union of the graph from each matrix and
-#' a matrix with the values each one of the matrices.
-#' This matrix has number of columns equal the number
-#' of matrices given and number of rows equal the number
-#' of elements in the upper triangle and diagonal
-#' of the union graph. Return M otherwise.
+#' return a list of two elements: 'graph' and 'xx'.
+#' The 'graph' is the union of the graph from each matrix.
+#' If relative=FALSE, 'xx' is a matrix with number of column equals
+#' the the number of matrices imputed.
+#' If relative=TRUE, it is a list of length equal the number
+#' of matrices imputed. See details. 
+#' @details If relative=FALSE, each colums of 'xx' is the
+#' elements of the corresponding matrix after being padded
+#' to fill the pattern of the union graph.
+#' If relative=TRUE, each element of 'xx' would be a list
+#' with a relative index, 'r', for each non-zero elements of
+#' each matrix is returned relative to the union graph,
+#' and the non-lower elements, 'x', of the corresponding matrix.  
 #' @export
 #' @examples
 #' A <- sparseMatrix(
@@ -27,8 +37,8 @@
 #' B <- Diagonal(nrow(A), -colSums(A))
 #' list(a=A, a=B)
 #' upperPadding(list(a=A, b=B))
-upperPadding <- function(M) {
-## TO DO: relative indexing
+#' upperPadding(list(a=A, b=B), relative=TRUE)
+upperPadding <- function(M, relative=FALSE) {
   .check <- function(m) {
     if(is(m, 'matrix'))
       m <- Matrix(m)
@@ -55,10 +65,23 @@ upperPadding <- function(M) {
         return(m)
       })), 'CsparseMatrix'))
     uo <- .uof(graph)
-    xx <- sapply(M, function(m) {
-      m <- graph*0 + m
-      return(m@x[uo])
-    })
+    if(relative) {
+        xx <- lapply(M, function(m) {
+##            i <- .uof(m)
+  ##          r <- pmatch(paste(m@i[i], m@j[i]),
+    ##                    paste(graph@i[uo], graph@j[uo]))
+            ##      return(list(r=r, x=m@x[i]))
+            m <- graph*0 + m
+            x <- m@x[uo]
+            i <- which(abs(x)>sqrt(.Machine$double.eps))
+            return(list(r=i, x=x[i]))
+        })
+    } else {
+        xx <- sapply(M, function(m) {
+            m <- graph*0 + m
+            return(m@x[uo])
+        })
+    }
     return(list(
       graph=sparseMatrix(
         i=graph@i[uo]+1L,

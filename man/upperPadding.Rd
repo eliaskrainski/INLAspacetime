@@ -2,30 +2,43 @@
 % Please edit documentation in R/upperPadding.R
 \name{upperPadding}
 \alias{upperPadding}
-\title{Prepare a matrix (or a list of matrices)
+\title{Prepare a matrix or a list of matrices
 for use in some cgeneric code.}
 \usage{
-upperPadding(M)
+upperPadding(M, relative = FALSE)
 }
 \arguments{
 \item{M}{a matrix or a list of matrices}
+
+\item{relative}{logical. If a list of matrices is supplied,
+it indicates if it is to be returned a relative index
+and the value for each matrix. See details.}
 }
 \value{
 If a unique matrix is given, return the
 upper triangle considering the 'T' representation
 in the Matrix package. If a list of matrices is given,
-return the union of the graph from each matrix and
-a matrix with the values each one of the matrices.
-This matrix has number of columns equal the number
-of matrices given and number of rows equal the number
-of elements in the upper triangle and diagonal
-of the union graph. Return M otherwise.
+return a list of two elements: 'graph' and 'xx'.
+The 'graph' is the union of the graph from each matrix.
+If relative=FALSE, 'xx' is a matrix with number of column equals
+the the number of matrices imputed.
+If relative=TRUE, it is a list of length equal the number
+of matrices imputed. See details.
 }
 \description{
 Define a graph of the union of the supplied matrices
 and return the row ordered diagonal plus upper triangle
 after padding with zeroes each one so that
 all the returned matrices have the same pattern.
+}
+\details{
+If relative=FALSE, each colums of 'xx' is the
+elements of the corresponding matrix after being padded
+to fill the pattern of the union graph.
+If relative=TRUE, each element of 'xx' would be a list
+with a relative index, 'r', for each non-zero elements of
+each matrix is returned relative to the union graph,
+and the non-lower elements, 'x', of the corresponding matrix.
 }
 \examples{
 A <- sparseMatrix(
@@ -37,4 +50,5 @@ upperPadding(A)
 B <- Diagonal(nrow(A), -colSums(A))
 list(a=A, a=B)
 upperPadding(list(a=A, b=B))
+upperPadding(list(a=A, b=B), relative=TRUE)
 }
