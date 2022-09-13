@@ -9,7 +9,7 @@ double *inla_cgeneric_st121_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
   // c1 = gamma(a_t - 1/2) / [ gamma(a_t)(4 pi)^(1/2) ]
   // c2 = gamma(a - 1) / [ gamma(a)(4pi) ]
   double lc12 = -3.224171; //log(0.03978874); //4 * 4.141592654;
-  double lg[3], params[9];
+  double a1, a2, a3, params[9];
   int N, M, nc, i;
 
   // the size of the model
@@ -80,34 +80,34 @@ double *inla_cgeneric_st121_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
     // g_e = sqrt(c12 / (sigma * g_t * g_s^{2a-d})) ;
     ith = 0;
     if(ifix[0]){
-      lg[0] = 1.039721 - log(prs->doubles[0]);
+      a1 = 1.039721 - log(prs->doubles[0]);
     } else {
-      lg[0] = 1.039721 - theta[ith];
+      a1 = 1.039721 - theta[ith];
       ith++;
     }
     if(iszero(prt->doubles[1])) {
-      lg[1] = log(prt->doubles[0]) + lg[0]*2 - 0.6931472;
+      a2 = log(prt->doubles[0]) + a1*2 - 0.6931472;
     } else {
-      lg[1] = theta[ith] + lg[0]*2 - 0.6931472;
+      a2 = theta[ith] + a1*2 - 0.6931472;
       ith++;
     }
     if(iszero(psigma->doubles[1])) {
-      lg[2] = 0.5*( lc12 - log(psigma->doubles[0]) - lg[0] - lg[1]*2 ) ;
+      a3 = 0.5*( lc12 - log(psigma->doubles[0]) - a1 - a2*2 ) ;
     } else {
-      lg[2] = 0.5*( lc12 - theta[ith]*2 - lg[0] - lg[1]*2 ) ;
+      a3 = 0.5*( lc12 - theta[ith]*2 - a1 - a2*2 ) ;
       ith++;
     }
     assert(nth == ith);
 
-    params[0] = exp(lg[2]*2 + lg[0]*6);             //  g_s^6         * g_e^2
-    params[1] = exp(lg[2]*2 + lg[0]*4 + 3);         // 3g_s^4         * g_e^2
-    params[2] = exp(lg[2]*2 + lg[0]*2 + 3);         // 3g_s^2         * g_e^2
-    params[3] = exp(lg[2]*2);                       //      1         * g_e^2
-    params[4] = exp(lg[2]*2 + lg[1] + lg[0]*4);     //  g_s^4 * g_t   * g_e^2
-    params[5] = exp(lg[2]*2 + lg[1] + lg[0]*2 + 2); // 2g_s^2 * g_t   * g_e^2
-    params[6] = exp(lg[2]*2 + lg[1]);               //          g_t   * g_e^2
-    params[7] = exp(lg[2]*2 + lg[1]*2 + lg[0]*2);   //  g_s^2 * g_t^2 * g_e^2
-    params[8] = exp(lg[2]*2 + lg[1]*2);             //          g_t^2 * g_e^2
+    params[0] = exp(a3*2 + a1*6);           //  g_s^6         * g_e^2
+    params[1] = exp(a3*2 + a1*4)*3;         // 3g_s^4         * g_e^2
+    params[2] = exp(a3*2 + a1*2)*3;         // 3g_s^2         * g_e^2
+    params[3] = exp(a3*2);                  //      1         * g_e^2
+    params[4] = exp(a3*2 + a2 + a1*4);      //  g_s^4 * g_t   * g_e^2
+    params[5] = exp(a3*2 + a2 + a1*2)*2;    // 2g_s^2 * g_t   * g_e^2
+    params[6] = exp(a3*2 + a2);             //          g_t   * g_e^2
+    params[7] = exp(a3*2 + a2*2 + a1*2);    //  g_s^2 * g_t^2 * g_e^2
+    params[8] = exp(a3*2 + a2*2);           //          g_t^2 * g_e^2
   } else {
     params[3] = params[2] = params[1] = params[0] = NAN;
     params[6] = params[5] = params[4]  = NAN;
