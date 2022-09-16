@@ -4,14 +4,14 @@
 double *inla_cgeneric_st121_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgeneric_data_tp * data) {
 
   double *ret = NULL;
-  // define model121 constants
+  // define model121 constants 
   //  double at = 1, as=2, ae=1, aa = 2, nus = 1;
   // c1 = gamma(a_t - 1/2) / [ gamma(a_t)(4 pi)^(1/2) ]
-  // c2 = gamma(a - 1) / [ gamma(a)(4pi) ]
-  double lc12 = -3.224171; //log(0.03978874); //4 * 4.141592654;
+  // c2 = gamma(a - 1) / [ gamma(a)(4pi) ] 
+  double lc12 = -3.22417142752924; 
   double a1, a2, a3, params[9];
-  int N, M, nc, i;
-
+  int N, M, nc, i, k, ith, nth, ifix[3];
+  
   // the size of the model
   assert(data->n_ints > 1);
   assert(!strcasecmp(data->ints[0]->name, "n"));       // this will always be the case
@@ -24,7 +24,7 @@ double *inla_cgeneric_st121_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
   if(debug==1) {
     debug = 1; // just to 'find an use for "debug" ...'
   }
-
+    
   assert(!strcasecmp(data->ints[2]->name, "ii"));
   inla_cgeneric_vec_tp *ii = data->ints[2];
   M = ii->len;
@@ -51,141 +51,138 @@ double *inla_cgeneric_st121_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
   inla_cgeneric_vec_tp *psigma = data->doubles[2];
   assert(psigma->len == 2);
 
-  int ith, ifix[3];
+  nth=0;
   if(iszero(prs->doubles[1])){
     ifix[0] = 1;
   } else {
     ifix[0] = 0;
+    nth++;
   }
   if(iszero(prt->doubles[1])) {
     ifix[1] = 1;
   } else {
     ifix[1] = 0;
+    nth++;
   }
   if(iszero(psigma->doubles[1])) {
     ifix[2] = 1;
   } else {
     ifix[2] = 0;
+    nth++;
   }
-  int nth = 3;
-  for(i=0; i<3; i++)
-    nth -= ifix[i];
-
+  assert(nth<4);
+  
   if (theta) {
-    // interpretable parameters
+    // interpretable parameters 
     //  theta = log(range_s, range_t, sigma)
-    //   lg = log(g_s, g_t, g_e)
+    //   a1,a2,a3 = log(g_s, g_t, g_e) 
     // g_s = sqrt(8 * v_s) / r_s ;
     // g_t = r_t * g_s^a_s / sqrt(8(a_t-1/2)) ;
     // g_e = sqrt(c12 / (sigma * g_t * g_s^{2a-d})) ;
     ith = 0;
-    if(ifix[0]){
-      a1 = 1.039721 - log(prs->doubles[0]);
+    if(ifix[0]==1){
+      a2 = 1.03972077083992 - log(prs->doubles[0]);
     } else {
-      a1 = 1.039721 - theta[ith];
-      ith++;
+      a2 = 1.03972077083992 - theta[ith++];
     }
-    if(iszero(prt->doubles[1])) {
-      a2 = log(prt->doubles[0]) + a1*2 - 0.6931472;
+    if(ifix[1]==1){
+      a1 = log(prt->doubles[0]) + a2*2 - 0.693147180559945;
     } else {
-      a2 = theta[ith] + a1*2 - 0.6931472;
-      ith++;
+      a1 = theta[ith++] + a2*2 - 0.693147180559945;
     }
-    if(iszero(psigma->doubles[1])) {
-      a3 = 0.5*( lc12 - log(psigma->doubles[0]) - a1 - a2*2 ) ;
+    if(ifix[2]==1){
+      a3 = lc12 - a1 - 2*( log(psigma->doubles[0]) + a2) ; // gs^2
     } else {
-      a3 = 0.5*( lc12 - theta[ith]*2 - a1 - a2*2 ) ;
-      ith++;
+      a3 = lc12 - a1 - 2*( theta[ith++] + a2) ;    // gs^2
     }
     assert(nth == ith);
 
-    params[0] = exp(a3*2 + a1*6);           //  g_s^6         * g_e^2
-    params[1] = exp(a3*2 + a1*4)*3;         // 3g_s^4         * g_e^2
-    params[2] = exp(a3*2 + a1*2)*3;         // 3g_s^2         * g_e^2
-    params[3] = exp(a3*2);                  //      1         * g_e^2
-    params[4] = exp(a3*2 + a2 + a1*4);      //  g_s^4 * g_t   * g_e^2
-    params[5] = exp(a3*2 + a2 + a1*2)*2;    // 2g_s^2 * g_t   * g_e^2
-    params[6] = exp(a3*2 + a2);             //          g_t   * g_e^2
-    params[7] = exp(a3*2 + a2*2 + a1*2);    //  g_s^2 * g_t^2 * g_e^2
-    params[8] = exp(a3*2 + a2*2);           //          g_t^2 * g_e^2
+    params[0] = exp(a3 + a2*6);        //  g_s^6         * g_e^2
+    params[1] = exp(a3 + a2*4)*3;      // 3g_s^4         * g_e^2
+    params[2] = exp(a3 + a2*2)*3;      // 3g_s^2         * g_e^2
+    params[3] = exp(a3);               // 1              * g_e^2
+    params[4] = exp(a3 + a2*4 + a1);   //  g_s^4 * g_t   * g_e^2
+    params[5] = exp(a3 + a2*2 + a1)*2; // 2g_s^2 * g_t   * g_e^2
+    params[6] = exp(a3 +        a1);   //          g_t   * g_e^2
+    params[7] = exp(a3 + a2*2 + a1*2); //  g_s^2 * g_t^2 * g_e^2
+    params[8] = exp(a3 +        a1*2); //          g_t^2 * g_e^2
   } else {
     params[3] = params[2] = params[1] = params[0] = NAN;
     params[6] = params[5] = params[4]  = NAN;
     params[8] = params[7] = NAN;
   }
 
-
+  
   switch (cmd) {
   case INLA_CGENERIC_VOID:
     {
       assert(!(cmd == INLA_CGENERIC_VOID));
       break;
     }
-
+    
   case INLA_CGENERIC_GRAPH:
     {
-      int offset = 2;
-      ret = Calloc(2 + 2 * M, double);
+      k = 2;
+      ret = Calloc(k + 2 * M, double);
       ret[0] = N;        	       /* dimension */
       ret[1] = M;		   /* number of (i <= j) */
       for (i = 0; i < M; i++) {
-	ret[offset + i] = ii->ints[i];
-	ret[offset + M + i] = jj->ints[i];
+	ret[k++] = ii->ints[i];
+      }
+      for (i = 0; i < M; i++) {
+	ret[k++] = jj->ints[i];
       }
       break;
     }
-
+    
   case INLA_CGENERIC_Q:
     {
-      int offset = 2;
-      ret = Calloc(2 + M, double);
+      k = 2;
+      ret = Calloc(k + M, double);
       //memset(ret + offset, 0, M * sizeof(double));
       int one=1;
       double zerof = 0.0, onef = 1.0;
       char trans  = 'N'; // (trans=="N") | (trans=='n')) {
-      dgemv_(&trans, &M, &nc, &onef, &xx->x[0], &M, params, &one, &zerof, &ret[offset], &one, F_ONE);
+      dgemv_(&trans, &M, &nc, &onef, &xx->x[0], &M, params, &one, &zerof, &ret[k], &one, F_ONE);
       ret[0] = -1;		/* REQUIRED */
       ret[1] = M;		/* REQUIRED */
       break;
     }
-
+    
   case INLA_CGENERIC_MU:
     {
       // return (N, mu)
-      // if N==0 then mu is not needed as its taken to be mu[]==0
+      // if N==0 then mu is not needed as its taken to be mu[]==0      
       ret = Calloc(1, double);
       ret[0] = 0;
       break;
     }
-
+    
   case INLA_CGENERIC_INITIAL:
     {
-      // return c(M, initials)
-      // where M is the number of hyperparameters
+      // return c(P, initials)
+      // where P is the number of hyperparameters      
       ret = Calloc(nth+1, double);
-      ret[0] = (double)nth;
       ith = 0;
+      ret[ith++] = (double)nth;
       if(ifix[0]==0){
-	ith++;
-	ret[ith] = log(prs->doubles[0]) + 1;
-      }
+	ret[ith++] = 1.0;
+      } 
       if(ifix[1]==0) {
-	ith++;
-	ret[ith] = log(prt->doubles[0]) + 1;
-      }
+	ret[ith++] = 1.0;
+      } 
       if(ifix[2]==0) {
-	ith++;
-	ret[ith] = log(psigma->doubles[0]) -1.0;
+	ret[ith++] = 0.0;
       }
-      assert(ith==nth);
+      assert(ith==(nth+1));
       break;
     }
-
+    
   case INLA_CGENERIC_LOG_NORM_CONST:
     {
       break;
     }
-
+    
   case INLA_CGENERIC_LOG_PRIOR:
     {
       ret = Calloc(1, double);
@@ -193,29 +190,29 @@ double *inla_cgeneric_st121_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
       ret[0] = 0.0;
       ith = 0;
       if(ifix[0]==0) {
-	double lam2 = -log(prs->doubles[1])/prs->doubles[0];
-	ret[0] += log(lam2) - theta[ith] - lam2*exp(-1*theta[ith]) ;
+	double lam1 = -log(prs->doubles[1])/prs->doubles[0];
+	ret[0] += log(lam1) - theta[ith] - lam1*exp(-theta[ith]) ;
 	ith++;
       }
       if(ifix[1]==0) {
-	double lam3 = -log(prt->doubles[1])/prt->doubles[0];
-	ret[0] += log(lam3) - 0.5*theta[ith] - lam3*exp(-0.5*theta[ith]) - log(0.5) ;
+	double lam2 = -log(prt->doubles[1])/prt->doubles[0];      
+	ret[0] += log(lam2) - 0.5*theta[ith] - lam2*exp(-0.5*theta[ith]) +log(0.5) ;
 	ith++;
       }
       if(ifix[2]==0) {
-	double lam1 = -log(psigma->doubles[1])/psigma->doubles[0];
-	ret[0] += log(lam1) + theta[ith] - lam1*exp(theta[ith]) ;
+	double lam3 = -log(psigma->doubles[1])/psigma->doubles[0];
+	ret[0] += log(lam3) + theta[ith] - lam3*exp(theta[ith]) ;
 	ith++;
       }
       assert(ith==nth);
       break;
     }
-
+    
   case INLA_CGENERIC_QUIT:
   default:
     break;
   }
-
+  
   return (ret);
 }
 
