@@ -106,7 +106,7 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
       assert(N == (i+2));
       assert((2*M+2) == k);
       
-      if(N<20) {
+      /*      if(N<20) {
 	FILE *fp = fopen("gg2", "w");
 	k=0;
 	fprintf(fp, "%g ",ret[k++]);
@@ -122,7 +122,7 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 	  fprintf(fp, "%d %g\n",i+1,ret[k++]);
 	}
 	fclose(fp);
-      } 
+	} */
 
       break;
     }
@@ -174,7 +174,7 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
       if(N>1) {
 	ret[k++] = param;
       }
-
+      /*
       if(N<20) {
 	FILE *fp = fopen("qq2", "w");
 	k=0;
@@ -190,7 +190,7 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 	fprintf(fp, "%d %g\n",i+1,ret[k++]);
 	fclose(fp);
       }
-      
+      */
       break;
       }
     
