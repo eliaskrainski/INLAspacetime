@@ -32,13 +32,15 @@ after padding with zeroes each one so that
 all the returned matrices have the same pattern.
 }
 \details{
-If relative=FALSE, each colums of 'xx' is the
+If relative=FALSE, each columns of 'xx' is the
 elements of the corresponding matrix after being padded
 to fill the pattern of the union graph.
 If relative=TRUE, each element of 'xx' would be a list
 with a relative index, 'r', for each non-zero elements of
 each matrix is returned relative to the union graph,
-and the non-lower elements, 'x', of the corresponding matrix.
+the non-lower elements, 'x', of the corresponding matrix,
+and a vector, 'o', with the number of non-zero elements
+for each line of each resulting matrix.
 }
 \examples{
 A <- sparseMatrix(

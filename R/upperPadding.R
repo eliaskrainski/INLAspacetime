@@ -9,7 +9,7 @@
 #' @param M a matrix or a list of matrices
 #' @param relative logical. If a list of matrices is supplied,
 #' it indicates if it is to be returned a relative index
-#' and the value for each matrix. See details. 
+#' and the value for each matrix. See details.
 #' @return If a unique matrix is given, return the
 #' upper triangle considering the 'T' representation
 #' in the Matrix package. If a list of matrices is given,
@@ -18,14 +18,16 @@
 #' If relative=FALSE, 'xx' is a matrix with number of column equals
 #' the the number of matrices imputed.
 #' If relative=TRUE, it is a list of length equal the number
-#' of matrices imputed. See details. 
-#' @details If relative=FALSE, each colums of 'xx' is the
+#' of matrices imputed. See details.
+#' @details If relative=FALSE, each columns of 'xx' is the
 #' elements of the corresponding matrix after being padded
 #' to fill the pattern of the union graph.
 #' If relative=TRUE, each element of 'xx' would be a list
 #' with a relative index, 'r', for each non-zero elements of
 #' each matrix is returned relative to the union graph,
-#' and the non-lower elements, 'x', of the corresponding matrix.  
+#' the non-lower elements, 'x', of the corresponding matrix,
+#' and a vector, 'o', with the number of non-zero elements
+#' for each line of each resulting matrix.
 #' @export
 #' @examples
 #' A <- sparseMatrix(
@@ -43,11 +45,10 @@ upperPadding <- function(M, relative=FALSE) {
     if(is(m, 'matrix'))
       m <- Matrix(m)
     if(is(m, 'Matrix')) {
-      if((!is(m, 'dgTMatrix')) &
-         (!is(m, 'dtTMatrix')))
-        m <- as(as(as(m, 'CsparseMatrix'),
-                   'dgCMatrix'),
-                'dgTMatrix')
+      m <- as(as(as(as(m, "dMatrix"),
+                    "generalMatrix"),
+                 "CsparseMatrix"),
+              "TsparseMatrix")
       return(m)
     }
     stop('The argument is not valid!')
@@ -58,12 +59,13 @@ upperPadding <- function(M, relative=FALSE) {
       which(m@j>=m@i)))
   if(is(M, 'list')) {
     M <- lapply(M, .check)
-    graph <- .check(as(Reduce(
+    graph <- .check(Reduce(
       '+',
       lapply(M, function(m) {
         m@x <- m@x*0.0 + 1.0
         return(m)
-      })), 'CsparseMatrix'))
+      })))
+    graph@x <- rep(1, length(graph@x))
     uo <- .uof(graph)
     if(relative) {
         xx <- lapply(M, function(m) {
@@ -74,7 +76,8 @@ upperPadding <- function(M, relative=FALSE) {
             m <- graph*0 + m
             x <- m@x[uo]
             i <- which(abs(x)>sqrt(.Machine$double.eps))
-            return(list(r=i, x=x[i]))
+            o <- table(factor(1L + graph@i[uo][i], 1:nrow(graph)))
+            return(list(r=i, x=x[i], o=as.integer(o)))
         })
     } else {
         xx <- sapply(M, function(m) {
