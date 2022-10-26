@@ -1,16 +1,11 @@
 #include "cgeneric_defs.h"
 
-// This version uses 'padded' matrices with zeroes
-double *inla_cgeneric_st121_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgeneric_data_tp * data) {
+// This function uses the padded matrices with zeroes
+double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgeneric_data_tp * data) {
 
   double *ret = NULL;
-  // define model121 constants 
-  //  double at = 1, as=2, ae=1, aa = 2, nus = 1;
-  // c1 = gamma(a_t - 1/2) / [ gamma(a_t)(4 pi)^(1/2) ]
-  // c2 = gamma(a - 1) / [ gamma(a)(4pi) ] 
-  double lc12 = -3.22417142752924; 
-  double a1, a2, a3, params[9];
-  int N, M, nc, i, k, ith, nth, ifix[3];
+  int N, M, i, k, ith, nth, ifix[3];
+  double lg[3], a1, a2;
   
   // the size of the model
   assert(data->n_ints > 1);
@@ -20,10 +15,7 @@ double *inla_cgeneric_st121_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 
   assert(!strcasecmp(data->ints[1]->name, "debug"));    // this will always be the case
   int debug = data->ints[1]->ints[0];	        // this will always be the case
-
-  if(debug==1) {
-    debug = 1; // just to 'find an use for "debug" ...'
-  }
+  assert(debug>=0); // just to 'find an use for "debug" ...'
     
   assert(!strcasecmp(data->ints[2]->name, "ii"));
   inla_cgeneric_vec_tp *ii = data->ints[2];
@@ -33,23 +25,43 @@ double *inla_cgeneric_st121_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
   inla_cgeneric_vec_tp *jj = data->ints[3];
   assert(M == jj->len);
 
-  assert(!strcasecmp(data->mats[0]->name, "xx"));
-  inla_cgeneric_mat_tp *xx = data->mats[0];
-  assert(M == xx->ncol);
-  nc = xx->nrow;
+  assert(!strcasecmp(data->ints[4]->name, "aaa"));
+  inla_cgeneric_vec_tp *aaa = data->ints[4];
+  assert(aaa->len == 3);
+  double alphas = (float)aaa->ints[1];
+  double alpha = (float)aaa->ints[2] + alphas*((float)aaa->ints[1]-0.5);
+  double aaux = 1-alpha; // d=2;
+
+  assert(!strcasecmp(data->ints[5]->name, "nm"));
+  int nm = data->ints[5]->ints[0];
+  assert(nm>0);
+  double params[nm];
+
+  assert(!strcasecmp(data->doubles[0]->name, "cc"));
+  inla_cgeneric_vec_tp *cc = data->doubles[0];
+  assert(cc->len == 3);
+
+  assert(!strcasecmp(data->doubles[1]->name, "bb"));
+  inla_cgeneric_vec_tp *bb = data->doubles[1];
+  assert(bb->len == nm);
 
   // prior parameters
-  assert(!strcasecmp(data->doubles[0]->name, "prs"));
-  inla_cgeneric_vec_tp *prs = data->doubles[0];
+  assert(!strcasecmp(data->doubles[2]->name, "prs"));
+  inla_cgeneric_vec_tp *prs = data->doubles[2];
   assert(prs->len == 2);
 
-  assert(!strcasecmp(data->doubles[1]->name, "prt"));
-  inla_cgeneric_vec_tp *prt = data->doubles[1];
+  assert(!strcasecmp(data->doubles[3]->name, "prt"));
+  inla_cgeneric_vec_tp *prt = data->doubles[3];
   assert(prt->len == 2);
 
-  assert(!strcasecmp(data->doubles[2]->name, "psigma"));
-  inla_cgeneric_vec_tp *psigma = data->doubles[2];
+  assert(!strcasecmp(data->doubles[4]->name, "psigma"));
+  inla_cgeneric_vec_tp *psigma = data->doubles[4];
   assert(psigma->len == 2);
+
+  assert(!strcasecmp(data->mats[0]->name, "tt"));
+  inla_cgeneric_mat_tp *tt = data->mats[0];
+  assert(tt->nrow == nm);
+  assert(tt->ncol == 2);
 
   nth=0;
   if(iszero(prs->doubles[1])){
@@ -75,41 +87,40 @@ double *inla_cgeneric_st121_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
   if (theta) {
     // interpretable parameters 
     //  theta = log(range_s, range_t, sigma)
-    //   a1,a2,a3 = log(g_s, g_t, g_e) 
     // g_s = sqrt(8 * v_s) / r_s ;
+    //   log(g_s) = c1 + log(r_s) ;
     // g_t = r_t * g_s^a_s / sqrt(8(a_t-1/2)) ;
+    //   log(g_t) = c2 + log(r_t) + a_s log(g_s) ;
     // g_e = sqrt(c12 / (sigma * g_t * g_s^{2a-d})) ;
+    //   log(g_e) = c3 + log(sigma) + log(g_t) + (d-2a)log(g_s) ;
     ith = 0;
     if(ifix[0]==1){
-      a2 = 1.03972077083992 - log(prs->doubles[0]);
+      lg[0] = cc->doubles[0] - log(prs->doubles[0]);
     } else {
-      a2 = 1.03972077083992 - theta[ith++];
+      lg[0] = cc->doubles[0] - theta[ith++];
     }
     if(ifix[1]==1){
-      a1 = log(prt->doubles[0]) + a2*2 - 0.693147180559945;
+      lg[1] = cc->doubles[1] + alphas*lg[0] + log(prt->doubles[0]);
     } else {
-      a1 = theta[ith++] + a2*2 - 0.693147180559945;
+      lg[1] = cc->doubles[1] + alphas*lg[0] + theta[ith++];
     }
     if(ifix[2]==1){
-      a3 = lc12 - a1 - 2*( log(psigma->doubles[0]) + a2) ; // gs^2
+      lg[2] = cc->doubles[2] +aaux*lg[0] -0.5*lg[1] - log(psigma->doubles[0]); 
     } else {
-      a3 = lc12 - a1 - 2*( theta[ith++] + a2) ;    // gs^2
+      lg[2] = cc->doubles[2] +aaux*lg[0] -0.5*lg[1] - theta[ith++];
     }
     assert(nth == ith);
 
-    params[0] = exp(a3 + a2*6);        //  g_s^6         * g_e^2
-    params[1] = exp(a3 + a2*4)*3;      // 3g_s^4         * g_e^2
-    params[2] = exp(a3 + a2*2)*3;      // 3g_s^2         * g_e^2
-    params[3] = exp(a3);               // 1              * g_e^2
-    params[4] = exp(a3 + a2*4 + a1);   //  g_s^4 * g_t   * g_e^2
-    params[5] = exp(a3 + a2*2 + a1)*2; // 2g_s^2 * g_t   * g_e^2
-    params[6] = exp(a3 +        a1);   //          g_t   * g_e^2
-    params[7] = exp(a3 + a2*2 + a1*2); //  g_s^2 * g_t^2 * g_e^2
-    params[8] = exp(a3 +        a1*2); //          g_t^2 * g_e^2
+    k=0;
+    for(i=0; i<nm; i++) {
+      a1 = lg[0] * tt->x[k++];
+      a2 = lg[1] * tt->x[k++];
+      params[i] = exp( 2*(lg[2] + a1 + a2) ) * bb->doubles[i];
+    }
   } else {
-    params[3] = params[2] = params[1] = params[0] = NAN;
-    params[6] = params[5] = params[4]  = NAN;
-    params[8] = params[7] = NAN;
+    for(i=0; i<nm; i++) {
+      params[i] = NAN;
+    }
   }
 
   
@@ -137,15 +148,24 @@ double *inla_cgeneric_st121_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
     
   case INLA_CGENERIC_Q:
     {
-      k = 2;
-      ret = Calloc(k + M, double);
-      //memset(ret + offset, 0, M * sizeof(double));
+
+      int offset = 2;
+      ret = Calloc(offset + M, double);
+
+      assert(!strcasecmp(data->mats[1]->name, "xx"));
+      inla_cgeneric_mat_tp *xx = data->mats[1];
+      assert(xx->nrow == nm);
+      assert(xx->ncol == M);
+
       int one=1;
       double zerof = 0.0, onef = 1.0;
-      char trans  = 'N'; // (trans=="N") | (trans=='n')) {
-      dgemv_(&trans, &M, &nc, &onef, &xx->x[0], &M, params, &one, &zerof, &ret[k], &one, F_ONE);
+      char trans = 'N';
+      
+      dgemv_(&trans, &M, &nm, &onef, &xx->x[0], &M, params, &one, &zerof, &ret[offset], &one, F_ONE);
+      
       ret[0] = -1;		/* REQUIRED */
       ret[1] = M;		/* REQUIRED */
+
       break;
     }
     
@@ -205,6 +225,15 @@ double *inla_cgeneric_st121_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 	ith++;
       }
       assert(ith==nth);
+      /*ret[0] = 0.0;
+      double z = 0.0;
+      double m[3] = {8, 5, 3};
+      double s[3] = {3, 3, 3};
+      for(j=0; j<nth; j++) {
+	z = (theta[j] - m[j])/s[j];
+	ret[0] -= 0.5*SQR(z) + 0.9189385332 + log(s[j]);
+      }*/
+	
       break;
     }
     
@@ -215,4 +244,3 @@ double *inla_cgeneric_st121_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
   
   return (ret);
 }
-

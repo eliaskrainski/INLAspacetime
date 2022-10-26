@@ -62,7 +62,7 @@ stlines <- function(stdata, spatial, group=NULL, nmax.group=NULL,
         yy <- z[, gspl[[i]][j]]*s0*yscale + loc[i,2]
         lines(xx, yy, col=colour[gspl[[i]][j]], ...)
         if(any(is.na(yy)))
-          points(xx, yy, col=colour[gspl[[i]][j]], cex=0.1, ...)
+          points(xx, yy, col=colour[gspl[[i]][j]], ...)
       }
     }
   }

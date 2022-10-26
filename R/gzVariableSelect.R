@@ -1,0 +1,54 @@
+#' @title Select the specified variable
+#' @description Select a specivied variable from a .gz file and
+#' save it into a .RData.
+#' @param gzfile the .gz file
+#' @param variable a character indicating which variable to select.
+#' @param astype function to be used to type the data.
+#' Default is the current working directory.
+#' @param verbose logical to indicate if verbose mode is active
+#' @section Warning:
+#'  it can take time to execute if the data.table package is not available.
+#' @seealso \code{\link{ghcnDownload}}
+#' @return it writes a new file
+#' @export
+gzVariableSelect <- function(gzfile, variable, astype=as.integer,
+                             qflag='', verbose=TRUE) {
+  if(verbose) t0 <- Sys.time()
+  if(requireNamespace("data.table", quietly = TRUE)) {
+    d <- data.table::fread(gzfile)
+  } else {
+    if(verbose) warning('"data.table" is not available... it may take a while.')
+    d <- read.csv(gzfile)
+  }
+  if(verbose) {
+    cat('readed ', nrow(d), '')
+    t1 <- Sys.time()
+    cat('t1 =', t1-t0, '\n')
+  }
+  ii <- which(d$V3 %in% variable)
+  ii <- ii[which(d$V6[ii] %in% qflag)]
+  d <- d[ii, ]
+  gc(reset = TRUE)
+  if(verbose) {
+    cat('selected', nrow(d), '')
+    t2 <- Sys.time()
+    cat('t2 =', t2-t1, '\n')
+  }
+  cnames <- c('day', 'station')
+  if(length(variable)==1) {
+    names(d)[2:1] <- cnames
+    w <- tapply(
+      d$V4, d[, cnames], astype)
+  } else {
+    cnames <- c(cnames, 'variable')
+    w <- tapply(
+      d$V4, d[, cnames], astype)
+    w <- w[,,pmatch(variable, dimnames(w)[[3]]),drop=FALSE]
+  }
+  if(verbose) {
+    cat('dim =', dim(w), '')
+    t3 <- Sys.time()
+    cat('t3 =', t3-t2, '\n')
+  }
+  return(w)
+}

@@ -4,6 +4,7 @@
 //#include <malloc.h>
 //#endif
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
@@ -37,4 +38,4 @@ inla_cgeneric_func_tp inla_cgeneric_ar2ss_model;
 
 inla_cgeneric_func_tp inla_cgeneric_st121_model;
 
-
+inla_cgeneric_func_tp inla_cgeneric_sstspde;
