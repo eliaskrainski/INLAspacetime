@@ -34,16 +34,15 @@ gzVariableSelect <- function(gzfile, variable, astype=as.integer,
     t2 <- Sys.time()
     cat('t2 =', t2-t1, '\n')
   }
-  cnames <- c('day', 'station')
+  cnames <- c("day", "station")
+  names(d)[2:1] <- cnames
   if(length(variable)==1) {
-    names(d)[2:1] <- cnames
-    w <- tapply(
-      d$V4, d[, cnames], astype)
-  } else {
-    cnames <- c(cnames, 'variable')
-    w <- tapply(
-      d$V4, d[, cnames], astype)
-    w <- w[,,pmatch(variable, dimnames(w)[[3]]),drop=FALSE]
+      w <- tapply(d$V4, d[, cnames], astype)
+  } else { 
+      cnames <- c(cnames, 'variable')
+      names(d)[3] <- 'variable'
+      w <- tapply(d$V4, d[, cnames], astype)
+      w <- w[, , pmatch(variable, dimnames(w)[[3]]), drop = FALSE]
   }
   if(verbose) {
     cat('dim =', dim(w), '')

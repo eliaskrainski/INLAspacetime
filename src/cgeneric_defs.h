@@ -13,7 +13,9 @@
 
 #define Calloc(n_, type_)  (type_ *)calloc((n_), sizeof(type_))
 #define SQR(x) ((x)*(x))
-
+#define pow2(x) ((x)*(x))
+#define pow3(x) ((x)*(x)*(x))
+#define pow4(x) ((x)*(x)*(x)*(x))
 
 # ifdef __SUPPORT_SNAN__
 #  define iszero(x) (fpclassify (x) == FP_ZERO)

@@ -29,17 +29,23 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
   inla_cgeneric_vec_tp *aaa = data->ints[4];
   assert(aaa->len == 3);
   double alphas = (float)aaa->ints[1];
-  double alpha = (float)aaa->ints[2] + alphas*((float)aaa->ints[1]-0.5);
+  double alpha = (float)aaa->ints[2] + alphas*((float)aaa->ints[0]-0.5);
+  int ialpha = ((float)((int)alpha)) == alpha;
   double aaux = 1-alpha; // d=2;
 
-  assert(!strcasecmp(data->ints[5]->name, "nm"));
-  int nm = data->ints[5]->ints[0];
+  assert(!strcasecmp(data->ints[5]->name, "manifold"));
+  int manifold = data->ints[5]->ints[0];
+  assert(manifold>=0);
+
+  assert(!strcasecmp(data->ints[6]->name, "nm"));
+  int nm = data->ints[6]->ints[0];
   assert(nm>0);
   double params[nm];
 
   assert(!strcasecmp(data->doubles[0]->name, "cc"));
   inla_cgeneric_vec_tp *cc = data->doubles[0];
   assert(cc->len == 3);
+  double c3 = cc->doubles[2];
 
   assert(!strcasecmp(data->doubles[1]->name, "bb"));
   inla_cgeneric_vec_tp *bb = data->doubles[1];
@@ -99,15 +105,42 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
     } else {
       lg[0] = cc->doubles[0] - theta[ith++];
     }
+    if(manifold==0) {
+      if (ialpha & (((int)alpha)==1L)) {
+	for(int k=0; k<50; k++) {
+	  c3 += (2 * (float)k) / (exp(2*lg[0]) + (float)((k*(k+1))));
+	}
+      }
+      if (ialpha & (((int)alpha)==2L)) {
+	for(int k=0; k<50; k++) {
+	  c3 += (2 * (float)k) / pow2(exp(2*lg[0]) + (float)((k*(k+1))));
+	}
+      }
+      if (ialpha & (((int)alpha)==3L)) {
+	for(int k=0; k<50; k++) {
+	  c3 += (2 * (float)k) / pow3(exp(2*lg[0]) + (float)((k*(k+1))));
+	}
+      }
+      if (ialpha & (((int)alpha)==4L)) {
+	for(int k=0; k<50; k++) {
+	  c3 += (2 * (float)k) / pow4(exp(2*lg[0]) + (float)((k*(k+1))));
+	}
+      }
+      if(!ialpha) {
+	for(int k=0; k<50; k++) {
+	  c3 += (2 * (float)k) / pow(exp(2*lg[0]) + (float)((k*(k+1))), alpha);
+	}
+      }
+    }
     if(ifix[1]==1){
       lg[1] = cc->doubles[1] + alphas*lg[0] + log(prt->doubles[0]);
     } else {
       lg[1] = cc->doubles[1] + alphas*lg[0] + theta[ith++];
     }
     if(ifix[2]==1){
-      lg[2] = cc->doubles[2] +aaux*lg[0] -0.5*lg[1] - log(psigma->doubles[0]); 
+      lg[2] = c3 +aaux*lg[0] -0.5*lg[1] - log(psigma->doubles[0]); 
     } else {
-      lg[2] = cc->doubles[2] +aaux*lg[0] -0.5*lg[1] - theta[ith++];
+      lg[2] = c3 +aaux*lg[0] -0.5*lg[1] - theta[ith++];
     }
     assert(nth == ith);
 

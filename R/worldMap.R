@@ -4,15 +4,16 @@
 #' Mollweide projection in km distance (default, can be changed).
 #'
 #' @param crs the CRS string to transform the coordinates.
+#' Defalt is the Mollweide projection with units in kilometers.
 #' @seealso \code{\link{oceans50m}}
 #' @return the world map
 #' @references
 #'  the world map data is from the maps R package:
 #'  \link{https://cran.r-project.org/web/packages/maps/index.html}
-#' @export
 #' @examples
 #' wmap <- worldMap()
 #' sp::plot(wmap)
+#' @export
 worldMap <- function(crs=CRS("+proj=moll +units=km")) {
   ### extract the countries world map
   wrld <- maps::map("world", fill=TRUE, plot=FALSE)
