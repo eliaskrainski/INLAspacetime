@@ -16,8 +16,8 @@ So far we have the following models:
 '102', '121', '202' and '220' models.}
 }
 \value{
-a list containing
-1. a string with the model identification
+a list containing needed objects for model definition.
+1. 'manifold' to spedify the a string with the model identification
 2. a length three vector with the constants `c1`, `c2` and `c3`
 3. the vector `d`
 4. the matrix `T`
@@ -29,5 +29,5 @@ the precision matrix for a non-stationary and non-separable
 spatio-temporal model, as in ...
 }
 \details{
-See the paper and the vignettes.
+See the paper and the vignette('stspdemodels') for details.
 }

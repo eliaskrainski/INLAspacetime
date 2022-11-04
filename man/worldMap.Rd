@@ -7,7 +7,8 @@
 worldMap(crs = CRS("+proj=moll +units=km"))
 }
 \arguments{
-\item{crs}{the CRS string to transform the coordinates.}
+\item{crs}{the CRS string to transform the coordinates.
+Defalt is the Mollweide projection with units in kilometers.}
 }
 \value{
 the world map

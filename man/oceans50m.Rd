@@ -31,5 +31,5 @@ load it into the R environment.
 \link{https://maps.princeton.edu/catalog/stanford-jb593mf9286}
 }
 \seealso{
-\code{\link{worldMollweide}}
+\code{\link{worldMap}}
 }

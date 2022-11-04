@@ -20,10 +20,10 @@ E.g. prior.rs, prior.rt and prior.sigma
 as vectors with length two (U, a) to define the
 corresponding PC-prior such that
 P(r_s<U)=a, P(r_t<U)=a or P(sigma>U)=a.
-If a=0, then U is taken as fixed.}
+If a=0 then U is taken to be the fixed value of the parameter.}
 }
 \value{
-objects to be used in the cgeneric or rgeneric
+objects to be used in the f() formula term in INLA.
 }
 \description{
 Define a spacetime model object for the `f()` call.
