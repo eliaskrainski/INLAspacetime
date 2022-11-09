@@ -36,6 +36,8 @@ stModel.matrices <-
         return(m)
     }
 
+    val <- list()
+    
     if(tmesh$cyclic) {
         if(model=='102') {
             val$bb <- rep(c(1,2,1), 2)
@@ -182,7 +184,7 @@ stModel.matrices <-
 
     }
 
-    stopifnot(length(bb) == ncol(val$TT))
+    stopifnot(length(val$bb) == ncol(val$TT))
     stopifnot(ncol(val$TT) == (length(val)-2L))
     names(val)[3:length(val)] <- paste0('M', 1:ncol(val$TT))
 
