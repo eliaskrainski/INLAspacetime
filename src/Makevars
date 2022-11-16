@@ -1,1 +1,2 @@
-PKG_LIBS = $(BLAS_LIBS) $(FLIBS)
+PKG_LIBS = $(BLAS_LIBS) $(FLIBS) 
+PKG_CPPFLAGS = -I${R_LIBRARY_DIR}/INLA/include/ -O3 -Wall -Wextra -fpic
