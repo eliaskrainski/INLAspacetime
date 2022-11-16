@@ -48,7 +48,7 @@ stModel.define <-
         return(do.call(
             "inla.cgeneric.define",
             list(model = "inla_cgeneric_sstspde",
-                 shlib = paste0(llib, "/cgenericModels.so"),
+                 shlib = paste0(llib, "/cgenericModels"),
                  n = n, debug = 0L,
                  ii = lmats$graph@i,
                  jj = lmats$graph@j,
