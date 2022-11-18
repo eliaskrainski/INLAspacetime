@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+
+src/cgeneric_ar2ss.o
+
+src/cgeneric_sstspde.o
