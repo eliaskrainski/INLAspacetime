@@ -50,28 +50,28 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 	int verbose = data->ints[2]->ints[0];
 	assert(verbose >= 0);
 
-	assert(!strcasecmp(data->ints[2]->name, "ii"));
-	inla_cgeneric_vec_tp *ii = data->ints[2];
+	assert(!strcasecmp(data->ints[3]->name, "ii"));
+	inla_cgeneric_vec_tp *ii = data->ints[3];
 	M = ii->len;
 
-	assert(!strcasecmp(data->ints[3]->name, "jj"));
-	inla_cgeneric_vec_tp *jj = data->ints[3];
+	assert(!strcasecmp(data->ints[4]->name, "jj"));
+	inla_cgeneric_vec_tp *jj = data->ints[4];
 	assert(M == jj->len);
 
-	assert(!strcasecmp(data->ints[4]->name, "aaa"));
-	inla_cgeneric_vec_tp *aaa = data->ints[4];
+	assert(!strcasecmp(data->ints[5]->name, "aaa"));
+	inla_cgeneric_vec_tp *aaa = data->ints[5];
 	assert(aaa->len == 3);
 	double alphas = (double) aaa->ints[1];
 	double alpha = (double) aaa->ints[2] + alphas * ((double) aaa->ints[0] - 0.5);
 	int ialpha = ((double) ((int) alpha)) == alpha;
 	double aaux = 1 - alpha;			       // d=2;
 
-	assert(!strcasecmp(data->ints[5]->name, "manifold"));
-	int manifold = data->ints[5]->ints[0];
+	assert(!strcasecmp(data->ints[6]->name, "manifold"));
+	int manifold = data->ints[6]->ints[0];
 	assert(manifold >= 0);
 
-	assert(!strcasecmp(data->ints[6]->name, "nm"));
-	int nm = data->ints[6]->ints[0];
+	assert(!strcasecmp(data->ints[7]->name, "nm"));
+	int nm = data->ints[7]->ints[0];
 	assert(nm > 0);
 	double params[nm];
 
