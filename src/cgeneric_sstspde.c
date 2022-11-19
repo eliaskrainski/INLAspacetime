@@ -46,6 +46,10 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 	int debug = data->ints[1]->ints[0];		       // this will always be the case
 	assert(debug >= 0);				       // just to 'find an use for "debug" ...'
 
+	assert(!strcasecmp(data->ints[2]->name, "verbose"));
+	int verbose = data->ints[2]->ints[0];
+	assert(verbose >= 0);
+
 	assert(!strcasecmp(data->ints[2]->name, "ii"));
 	inla_cgeneric_vec_tp *ii = data->ints[2];
 	M = ii->len;
@@ -181,6 +185,12 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 			a1 = lg[0] * tt->x[k++];
 			a2 = lg[1] * tt->x[k++];
 			params[i] = exp(2 * (lg[2] + a1 + a2)) * bb->doubles[i];
+		}
+		if (verbose) {
+			fprintf(stderr, "theta = ");
+			for(int i=0; i<nth; i++)
+				fprintf(stderr, "%f ", theta[i]);
+			fprintf(stderr, "gamma = %f %f %f\n", lg[0], lg[1], lg[2]);
 		}
 	} else {
 		for (int i = 0; i < nm; i++) {

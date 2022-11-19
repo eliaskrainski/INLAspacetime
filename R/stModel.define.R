@@ -11,12 +11,15 @@
 #' corresponding PC-prior such that
 #' P(r_s<U)=a, P(r_t<U)=a or P(sigma>U)=a.
 #' If a=0 then U is taken to be the fixed value of the parameter.
+#' @param debug logical indicating if to run in debug mode.
+#' @param verbose logical indicating if to print parameter values.
 #' @details
 #' See the paper.
 #' @return objects to be used in the f() formula term in INLA.
 #' @export
 stModel.define <-
-    function(smesh, tmesh, model, control.priors)
+    function(smesh, tmesh, model, control.priors, 
+             debug=FALSE, verbose=FALSE)
 {
     stopifnot(model %in% c('102','121','202','220'))
 
@@ -42,14 +45,19 @@ stModel.define <-
         stopifnot(length(jmm[complete.cases(jmm)]) == nm)
 
         llib <- system.file("libs", package = "INLAspacetime")
+	if(Sys.info()['sysname']=='Windows') {
+		llib <- paste0(llib, '/INLAspacetime.dll')
+	} else {
+		llib <- paste0(llib, '/INLAspacetime.so')
+	}
         lmats <- upperPadding(mm[jmm], relative = FALSE)
         stopifnot(n == nrow(lmats$graph))
 
         return(do.call(
             "inla.cgeneric.define",
             list(model = "inla_cgeneric_sstspde",
-                 shlib = paste0(llib, "/cgenericModels"),
-                 n = n, debug = 0L,
+                 shlib = llib,
+                 n = n, debug = 0L, verbose=verbose,
                  ii = lmats$graph@i,
                  jj = lmats$graph@j,
                  aaa = alphas,
