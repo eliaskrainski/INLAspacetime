@@ -148,7 +148,7 @@ for(model in 1:4) {
     cmodel <- stModel.define(
         smesh, tmesh, models[model], 
         control.priors=list(
-            prs=prs, prt=prt, psigma=psigma))    
+            prs=prs, prt=prt, psigma=psigma))
 
 ### fit the separable model
     results[[model]] <- inla(

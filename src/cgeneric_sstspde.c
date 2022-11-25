@@ -50,13 +50,13 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 	int verbose = data->ints[2]->ints[0];
 	assert(verbose >= 0);
 
-	assert(!strcasecmp(data->ints[3]->name, "ii"));
-	inla_cgeneric_vec_tp *ii = data->ints[3];
-	M = ii->len;
+	assert(!strcasecmp(data->ints[3]->name, "Rmanifold"));
+	int Rmanifold = data->ints[3]->ints[0];
+	assert(Rmanifold >= 0);
 
-	assert(!strcasecmp(data->ints[4]->name, "jj"));
-	inla_cgeneric_vec_tp *jj = data->ints[4];
-	assert(M == jj->len);
+	assert(!strcasecmp(data->ints[4]->name, "dimension"));
+	int dimension = data->ints[4]->ints[0];
+	assert(dimension>0);
 
 	assert(!strcasecmp(data->ints[5]->name, "aaa"));
 	inla_cgeneric_vec_tp *aaa = data->ints[5];
@@ -64,16 +64,20 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 	double alphas = (double) aaa->ints[1];
 	double alpha = (double) aaa->ints[2] + alphas * ((double) aaa->ints[0] - 0.5);
 	int ialpha = ((double) ((int) alpha)) == alpha;
-	double aaux = 1 - alpha;			       // d=2;
+	double aaux = 0.5*(float)dimension - alpha; 
 
-	assert(!strcasecmp(data->ints[6]->name, "manifold"));
-	int manifold = data->ints[6]->ints[0];
-	assert(manifold >= 0);
-
-	assert(!strcasecmp(data->ints[7]->name, "nm"));
-	int nm = data->ints[7]->ints[0];
+	assert(!strcasecmp(data->ints[6]->name, "nm"));
+	int nm = data->ints[6]->ints[0];
 	assert(nm > 0);
 	double params[nm];
+
+	assert(!strcasecmp(data->ints[7]->name, "ii"));
+	inla_cgeneric_vec_tp *ii = data->ints[7];
+	M = ii->len;
+
+	assert(!strcasecmp(data->ints[8]->name, "jj"));
+	inla_cgeneric_vec_tp *jj = data->ints[8];
+	assert(M == jj->len);
 
 	assert(!strcasecmp(data->doubles[0]->name, "cc"));
 	inla_cgeneric_vec_tp *cc = data->doubles[0];
@@ -140,7 +144,7 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 		} else {
 			lg[0] = cc->doubles[0] - theta[ith++];
 		}
-		if (manifold == 0) {
+		if (Rmanifold == 0) {
 			if (ialpha & (((int) alpha) == 1L)) {
 				for (int k = 0; k < 50; k++) {
 					c3 += (2 * (double) k) / (exp(2 * lg[0]) + (double) ((k * (k + 1))));

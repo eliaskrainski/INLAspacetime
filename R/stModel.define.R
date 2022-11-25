@@ -22,19 +22,23 @@ stModel.define <-
              debug=FALSE, verbose=FALSE)
 {
     stopifnot(model %in% c('102','121','202','220'))
+    
+    stopifnot(any(substr(smesh$manifold,1,1)%in%c('S', 'R')))
+    Rmanifold <- (substr(smesh$manifold, 1, 1)=='R') + 0L 
 
-    manifold <- (smesh$manifold=='R2') + 0L
+    dimension <- as.integer(substr(smesh$manifold, 2, 2))
+    stopifnot(dimension>0)
 
     alphas <- as.integer(strsplit(model, '')[[1]])
     nu.t <- alphas[1]-1/2
     alpha <- alphas[3] + alphas[2]*nu.t
-    nu.s <- alpha-1
+    nu.s <- alpha-dimension/2
     
     cc <- c(0.5*log(8*nu.s), -0.5*log(8*nu.t),
             0.5*(lgamma(nu.t) - lgamma(alphas[1]) -1.5*log(4*pi)))
-    if(manifold) {
+    if(Rmanifold) {
         cc[3] <- 0.5*(lgamma(nu.t) + lgamma(nu.s) -
-                       lgamma(alphas[1]) -lgamma(alpha) -1.5*log(4*pi))
+                       lgamma(alphas[1]) -lgamma(alpha) -(dimension/2+0.5)*log(4*pi))
     }
     
     mm <- stModel.matrices(smesh, tmesh, model)
@@ -57,18 +61,20 @@ stModel.define <-
             "inla.cgeneric.define",
             list(model = "inla_cgeneric_sstspde",
                  shlib = llib,
-                 n = n, debug = as.integer(debug), 
+                 n = n,
+                 debug = as.integer(debug), 
 		 verbose = as.integer(verbose),
-                 ii = lmats$graph@i,
-                 jj = lmats$graph@j,
-                 aaa = alphas,
-                 manifold = as.integer(manifold),
+                 Rmanifold = as.integer(Rmanifold),
+                 dimension = as.integer(dimension),
+                 aaa = as.integer(alphas),
                  nm = as.integer(nm),
                  cc = as.double(cc),
                  bb = mm$bb,
                  prs = control.priors$prs,
                  prt = control.priors$prt,
                  psigma = control.priors$psigma,
+                 ii = lmats$graph@i,
+                 jj = lmats$graph@j,
                  tt = t(mm$TT),
                  xx = t(lmats$xx))))
 }

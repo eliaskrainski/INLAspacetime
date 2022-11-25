@@ -83,7 +83,7 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 	switch (cmd) {
 	case INLA_CGENERIC_GRAPH:
 	{
-		int M = N + N - 1, i = 0, k = 0;
+		int M = N + N - 1, i = 1, k = 0;
 		if (N > 2) {
 			M += N - 2;
 		}
@@ -102,15 +102,12 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 			ret[k++] = 1;
 		}
 		// printf("G k = %d\n", k);
-
 		if (N > 2) {
 			ret[k++] = 0;
-			if (N > 3) {
-				for (int i = 1; i < (N - 2); i++) {
-					ret[k++] = i;	       /* i */
-					ret[k++] = i;	       /* i */
-					ret[k++] = i;	       /* i */
-				}
+			for (int i = 1; i < (N - 2); i++) {
+				ret[k++] = i;	       /* i */
+				ret[k++] = i;	       /* i */
+				ret[k++] = i;	       /* i */
 			}
 			// printf("G k = %d\n", k);
 			ret[k++] = i;
@@ -155,10 +152,10 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 			ret[k++] = (1.0 + a1s) * param;
 			ret[k++] = a1 * (1 + a2) * param;
 			ret[k++] = a2 * param;
-		}
 		// printf("q123 = %g, %g, %g\n", q1, q2, q3);
+		}
 		if (N > 4) {
-			q1 = (1.0 + a1s + SQR(a2)) * param;
+		        q1 = (1.0 + a1s + SQR(a2)) * param;
 			q2 = (a1 * (1.0 + a2)) * param;
 			q3 = a2 * param;
 			// printf("a = %g, %g\n", a1, a2);
