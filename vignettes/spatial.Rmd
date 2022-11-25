@@ -4,6 +4,10 @@ author: "Elias Teixeira Krainski"
 date: "February 2022, last update: `r format(Sys.Date(), '%B %d, %Y')`"
 output: pdf_document
 bibliography: INLAspacetime.bib
+vignette: >
+  %\VignetteIndexEntry{INLAspacetime: spatial model example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
