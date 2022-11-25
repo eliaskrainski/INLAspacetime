@@ -134,17 +134,23 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 		// theta = log(range_s, range_t, sigma)
 		// g_s = sqrt(8 * v_s) / r_s ;
 		// log(g_s) = c1 + log(r_s) ;
-		// g_t = r_t * g_s^a_s / sqrt(8(a_t-1/2)) ;
-		// log(g_t) = c2 + log(r_t) + a_s log(g_s) ;
-		// g_e = sqrt(c12 / (sigma * g_t * g_s^{2a-d})) ;
-		// log(g_e) = c3 + log(sigma) + log(g_t) + (d-2a)log(g_s) ;
 		ith = 0;
 		if (ifix[0] == 1) {
 			lg[0] = cc->doubles[0] - log(prs->doubles[0]);
 		} else {
 			lg[0] = cc->doubles[0] - theta[ith++];
 		}
-		if (Rmanifold == 0) {
+
+		// g_t = r_t * g_s^a_s / sqrt(8(a_t-1/2)) ;
+		// log(g_t) = c2 + log(r_t) + a_s log(g_s) ;
+		if (ifix[1] == 1) {
+			lg[1] = cc->doubles[1] + alphas * lg[0] + log(prt->doubles[0]);
+		} else {
+			lg[1] = cc->doubles[1] + alphas * lg[0] + theta[ith++];
+		}
+
+		// c3 (depends on the manifold) 
+		if (Rmanifold == 0) { // if sphere (Rmanifold==0)
 			if (ialpha & (((int) alpha) == 1L)) {
 				for (int k = 0; k < 50; k++) {
 					c3 += (2 * (double) k) / (exp(2 * lg[0]) + (double) ((k * (k + 1))));
@@ -171,13 +177,8 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 				}
 			}
 		}
-
-		if (ifix[1] == 1) {
-			lg[1] = cc->doubles[1] + alphas * lg[0] + log(prt->doubles[0]);
-		} else {
-			lg[1] = cc->doubles[1] + alphas * lg[0] + theta[ith++];
-		}
-
+		// g_e = sqrt(c12 / (sigma * g_t * g_s^{2a-d})) ;
+		// log(g_e) = c3 + log(sigma) + log(g_t) + (d-2a)log(g_s) ;
 		if (ifix[2] == 1) {
 			lg[2] = c3 + aaux * lg[0] - 0.5 * lg[1] - log(psigma->doubles[0]);
 		} else {
@@ -274,9 +275,10 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 		// PC-priors
 		ret[0] = 0.0;
 		ith = 0;
+		double daux = 0.5 * (float)dimension
 		if (ifix[0] == 0) {
 			double lam1 = -log(prs->doubles[1]) / prs->doubles[0];
-			ret[0] += log(lam1) - theta[ith] - lam1 * exp(-theta[ith]);
+			ret[0] += log(lam1) - daux * theta[ith] - lam1 * exp(-daux * theta[ith]) + log(daux);
 			ith++;
 		}
 		if (ifix[1] == 0) {
