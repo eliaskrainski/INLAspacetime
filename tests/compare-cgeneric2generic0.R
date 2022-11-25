@@ -88,7 +88,7 @@ times$case <- factor(
     paste(times$model, times$nth), 
     paste(rep(cmod, each=length(nths)), nths))
 
-library(ggplot2)
+if (require(ggplot2)) {
 
 ggplot(times) +
     geom_boxplot(aes(x=factor(n), y=nfn, fill=case))
@@ -128,4 +128,4 @@ ggplot(times) +
     ylab('CPU: cgeneric / generic0') +
     facet_wrap(~nth)
 
-
+}

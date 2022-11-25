@@ -6,3 +6,8 @@
 src/cgeneric_ar2ss.o
 
 src/cgeneric_sstspde.o
+inst/doc
+
+src/*.so
+src/*.o
+
