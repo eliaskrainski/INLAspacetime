@@ -64,7 +64,7 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 	double alphas = (double) aaa->ints[1];
 	double alpha = (double) aaa->ints[2] + alphas * ((double) aaa->ints[0] - 0.5);
 	int ialpha = ((double) ((int) alpha)) == alpha;
-	double aaux = 0.5*(float)dimension - alpha; 
+	double aaux = 0.5*(double)dimension - alpha; 
 
 	assert(!strcasecmp(data->ints[6]->name, "nm"));
 	int nm = data->ints[6]->ints[0];
@@ -275,7 +275,7 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 		// PC-priors
 		ret[0] = 0.0;
 		ith = 0;
-		double daux = 0.5 * (float)dimension
+		double daux = 0.5 * (double)dimension;
 		if (ifix[0] == 0) {
 			double lam1 = -log(prs->doubles[1]) / prs->doubles[0];
 			ret[0] += log(lam1) - daux * theta[ith] - lam1 * exp(-daux * theta[ith]) + log(daux);
