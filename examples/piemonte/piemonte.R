@@ -1,12 +1,14 @@
-### fit the four models for the piemonte dataset
+### fit one of the spacetime models (Lindgren et. al. 2022) 
+### for the piemonte dataset (Cameleti et. al. 2012)
 
+### packages
 library(INLAspacetime)
+library(inlabru)
 
+### overall INLA setup
 inla.setOption(
-    inla.mode='experimental',
-    num.threads='8:-1',
+    inla.mode='compact',
     smtp='pardiso', 
-    inla.call='remote',
     pardiso.license='~/.pardiso.lic')
 
 ctri <- list(
@@ -19,69 +21,52 @@ ctrc <- list(
     dic=TRUE,
     cpo=TRUE)
 
-if(!any(ls()=='iverbose'))
-    iverbose <- !FALSE
+### the data filenames
+u0 <- paste0(
+    'http://inla.r-inla-download.org/',
+    'r-inla.org/case-studies/Cameletti2012/')
+coofl <- 'coordinates.csv'
+datafl <- 'Piemonte_data_byday.csv'
+bordersfl <- 'Piemonte_borders.csv'
+
+### get the domain borders
+if(!file.exists(bordersfl)) 
+    download.file(paste0(u0, bordersfl), bordersfl)
+dim(pborders <- read.csv(bordersfl))
+
+### get the coordinates
+if(!file.exists(coofl)) 
+    download.file(paste0(u0, coofl), coofl)
+dim(locs <- read.csv(coofl))
 
 ### get the dataset
-source('piemonte_data.R')
+if(!file.exists(datafl)) 
+    download.file(paste0(u0, datafl), datafl)
+dim(pdata <- read.csv(datafl))
 
-if(FALSE) {
+head(pdata)
 
-    system.time(wdat <- reshape(pdata[c('Station.ID', 'Date', 'PM10')],
-                                direction='wide', timevar='Station.ID', idvar='Date'))
-    dim(wdat)
-    wdat[1:3, 1:5]
-
-    png('~/github/slides/figures/piemonte_stlines.png', 1200, 700, res=100)
-    par(mfrow=c(1,2), mar=c(0,0,0,0))
-    plot(pborders, type='l', lwd=2, col=3, asp=1, las=2, axes=FALSE)
-    points(locs[,2:3], pch=8, cex=2)
-    plot(pborders, type='l', lwd=2, col=3, asp=1, las=2, axes=FALSE)
-    stlines(wdat[,-1], SpatialPoints(locs[,2:3]))
-    dev.off()
-
-}
-
-table(pdata$time)
-if(!any(ls()=='nt'))
-    nt <- 182 ### max number of time points to be used
-pdata <- pdata[pdata$time<=nt,]
+### prepare and select time 
+range(pdata$Date <- as.Date(pdata$Date, '%d/%m/%y'))
+pdata$time <- as.integer(difftime(
+    pdata$Date, min(pdata$Date), units='days'))+1
 
 ### define a temporal mesh
+nt <- max(pdata$time)
 tmesh <- inla.mesh.1d(1:nt, degree=1)
 tmesh$n
 
-if(FALSE) {
-    
-    bnd <- inla.nonconvex.hull(
-        rbind(cbind(locs[,2], locs[,3]),
-              cbind(pborders[,1], pborders[,2])), 
-        convex=10, concave=50, resolution=100)
-    
-    locs0 <- inla.mesh.2d(    
-        boundary=bnd, 
-        max.edge=10,
-        cutoff=5)$loc[,1:2]
-    
-    smesh <- inla.mesh.2d(
-        rbind(cbind(locs[,2], locs[,3]), locs0),
-        max.edge=150, offset=150, cutoff=15)
-
-} else {
-
 ### mesh as in Cameleti et. al. 2012
-    smesh <- inla.mesh.2d(
-        cbind(locs[,2], locs[,3]),
-        loc.domain=pborders, 
-        max.edge=c(50, 300), 
-        offset=c(10, 140), 
-        cutoff=5, 
-        min.angle=c(26, 21))
-
-}
-
+smesh <- inla.mesh.2d(
+    cbind(locs[,2], locs[,3]),
+    loc.domain=pborders, 
+    max.edge=c(50, 300), 
+    offset=c(10, 140), 
+    cutoff=5, 
+    min.angle=c(26, 21))
 smesh$n
 
+### visualize
 par(mfrow=c(1,1), mar=c(0,0,1,0))
 plot(smesh, asp=1)
 points(locs[,2:3], pch=8, col='red')
@@ -93,83 +78,105 @@ xnames <- c('A', ###'UTMX', 'UTMY',
 xmean <- colMeans(pdata[, xnames])
 xsd <- sapply(pdata[xnames], sd)
 
-### define the projector matrix
-A <- inla.spde.make.A(
-    smesh, as.matrix(pdata[c('UTMX', 'UTMY')]),
-    group=pdata$time, group.mesh=tmesh)
-dim(A)
-smesh$n * tmesh$n
-stopifnot(sum(A)==nrow(pdata))
+### prepare the data (st loc, scale covariates and log PM10)
+dataf <- data.frame(pdata[c('UTMX', 'UTMY', 'time')],
+                    scale(pdata[xnames], xmean, xsd),
+                    y=log(pdata$PM10))
+str(dataf)
 
-dsstack <- inla.stack(
-    tag='e',
-    data=list(y=log(pdata$PM10)),
-    effects=list(
-        data.frame(b0=1,
-                   scale(pdata[xnames], xmean, xsd)),
-        spacetime=1:(tmesh$n*smesh$n)),
-    A=list(1, A))
+#### mappter from the model domain to the data
+stmapper <- bru_mapper_multi(
+    list(space = bru_mapper(smesh),
+         time = bru_mapper(tmesh, indexed=TRUE)))
 
-diff(range(pdata$UTMX))
-diff(range(pdata$UTMY))
-
-sd(pdata$PM10, na.rm=TRUE)
-
-### define the prior parameters
-prs <- c(70, 0.5)
-prt <- c(50, 0.5)
-psigma <- c(20, 0.5)
-
-### likelihood precision prior
-lkprec <- list(
-    prec=list(prior='pcprec', param=c(1, 0.1)))
-
+### add a overall integrate-to-zero constraint (no need but helps)
 stConstr <- list(
     A=matrix(diag(kronecker(
         Diagonal(tmesh$n, colSums(inla.mesh.fem(tmesh)$c1)),
         Diagonal(smesh$n, colSums(inla.mesh.fem(smesh)$c1)))), nrow=1), e=0)
 
-### define the model formula     
-ff <- update(
-    y~0+b0+f(spacetime, model=cmodel, extraconstr=stConstr), 
-    paste('.~.+', paste(xnames, collapse='+')))
+### define the data Model
+M <- ~ -1 + Intercept(1) + A + WS + TEMP + HMIX + PREC + EMI + 
+    field(list(space = cbind(UTMX, UTMY), time=time),
+          mapper=stmapper, model=stmodel, extraconstr=stConstr)
 
-theta.ini <- c(3.5, log(70), log(50), log(1))
+### likelihood precision prior
+lkprec <- list(
+    prec=list(prior='pcprec', param=c(1, 0.1)))
+
+### initial theta (higher prec and ranges and lower sigma)
+theta.ini <- list('102'=c(4, 5.5, 5, 0),
+                  '121'=c(4, 7.5, 12, 2))
 theta.ini
 
-models <- c('102', '121', '202', '220')
+### fit two first order in time models (separable and non-separable) 
+models <- c('102', '121')
+results <- vector('list', 2)
+names(results) <- models
 
-results <- vector('list', 4L); names(results) <- models
-
-for(model in 1:4) {
-
-    cat('Running model', models[model], '\n')
+for(m in 1:2) {
     
-    cmodel <- stModel.define(
-        smesh, tmesh, models[model], 
+### define the spacetime model
+    stmodel <- stModel.define(
+        smesh, tmesh, models[m], 
         control.priors=list(
-            prs=prs, prt=prt, psigma=psigma))
+            prs=c(70, 0.5),
+            prt=c(50, 0.5),
+            psigma=c(20, 0.5)))
 
-### fit the separable model
-    results[[model]] <- inla(
-        ff,
-        data=inla.stack.data(dsstack),
-        control.predictor=list(
-            A=inla.stack.A(dsstack)), 
-        control.family=list(hyper=lkprec),
-        control.fixed=list(prec=c(b0=1)),
-        control.mode=list(theta=theta.ini, restart=TRUE),
-        verbose=iverbose,
-        control.inla=ctri,
-        control.compute=ctrc)
+### fit 
+    results[[m]] <- 
+        bru(M, 
+            like(formula = y ~ ., 
+                 family="gaussian",
+                 control.family = list(
+                     hyper = lkprec), 
+                 data=dataf),
+            options = list(
+                verbose=TRUE, 
+                control.mode=list(
+                    theta=theta.ini[[m]], 
+                    restart=TRUE),
+                control.inla=ctri,
+                control.compute=ctrc))
 
 }
 
+### time, nfn and theta
 sapply(results, function(r) r$cpu)
 sapply(results, function(r) r$misc$nfunc)
 sapply(results, function(r) unname(r$mode$theta))
-sapply(results, function(r)
-    stats.inla(r, y=log(pdata$PM10), fsummarize=function(x) mean(x, na.rm=TRUE)))
 
-detach("package:INLAspacetime", unload=TRUE)
-library(INLAspacetime)
+### compare with Table 2 (UTMX and UTMY were not included here)
+round(results$'102'$summary.fixed[, c(1,2,3,4,5)], 4)
+
+### user parametrization marginals
+marginals <- lapply(results, function(r)
+    list(sigma.e=inla.tmarginal(
+             function(x) exp(-x/2),
+             r$internal.marginals.hyperpar[[1]]),
+         srange=inla.tmarginal(
+             function(x) exp(x),
+             r$internal.marginals.hyperpar[[2]]),
+         trange=inla.tmarginal(
+             function(x) exp(x),
+             r$internal.marginals.hyperpar[[3]]),
+         sigma.u=inla.tmarginal(
+             function(x) exp(x),
+             r$internal.marginals.hyperpar[[4]])))
+
+### user interpretable parameters summary
+margz <- lapply(marginals, lapply, function(m)
+        unlist(inla.zmarginal(m, silent=TRUE)))
+lapply(margz, data.frame)
+
+### compare with Table 3 in Cameletti et. al. 2022
+c(s2e=margz$'102'$sigma.e[1]^2,
+  s2w=margz$'102'$sigma.u[1]^2,
+  rho=margz$'102'$srange[1],
+  a=exp(-sqrt(8*0.5)/margz$'102'$trange[1]))
+
+### fit statistics
+sapply(results, stats.inla, y=log(pdata$PM10),
+       fsummarize=function(x) mean(x, na.rm=TRUE))
+
