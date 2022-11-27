@@ -10,7 +10,8 @@ stModel.define(
   model,
   control.priors,
   debug = FALSE,
-  verbose = FALSE
+  verbose = FALSE,
+  useINLAprecomp = TRUE
 )
 }
 \arguments{
@@ -32,6 +33,9 @@ If a=0 then U is taken to be the fixed value of the parameter.}
 \item{debug}{logical indicating if to run in debug mode.}
 
 \item{verbose}{logical indicating if to print parameter values.}
+
+\item{useINLAprecomp}{logical indicating if is to be used
+shared object pre-compiled by INLA.}
 }
 \value{
 objects to be used in the f() formula term in INLA.
