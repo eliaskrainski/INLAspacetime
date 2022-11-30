@@ -19,9 +19,9 @@ oceans50m <- function(
   url="https://stacks.stanford.edu/file/druid:jb593mf9286/data.zip") {
   zipfile <- paste0(local, '/', zipfile)
   if (!file.exists(zipfile)) {
-    download.file(url, zipfile)
+    utils::download.file(url, zipfile)
   }
-  unzip(zipfile)
+  utils::unzip(zipfile)
   oc <- rgdal::readOGR('.', 'ne_50m_ocean') ##sf::st_read('.', 'ne_50m_ocean')
   system('rm ne_50m_ocean.dbf ne_50m_ocean-fgdc.xml  ne_50m_ocean-iso19110.xml  ne_50m_ocean-iso19139.xml  ne_50m_ocean.prj  ne_50m_ocean.README.html  ne_50m_ocean.shp  ne_50m_ocean.shp.xml  ne_50m_ocean.shx')
   return(oc)

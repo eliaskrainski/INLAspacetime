@@ -5,12 +5,15 @@
 #' @param m an inla output object.
 #' @param i an index to subset the estimated values.
 #' @param y observed to compare against.
+#' @param fsummarize the summary function, default \code{mean}
 #' @section Warning:
 #'  The po, crps and scrps are computed using the posterior mean and the
 #'  sum of the sd of the posterior fitted value plus the inverse of the
 #'  likelihood precision posterior mean.
 #' @return a vector with the extracted statistics
 #' @export
+#'
+#' @importFrom stats dnorm pnorm complete.cases
 stats.inla <- function(m, i=NULL, y, fsummarize=mean) {
     crps.g <- function(y, m, s) {
         md <- y-m

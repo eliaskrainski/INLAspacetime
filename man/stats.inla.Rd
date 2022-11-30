@@ -12,6 +12,8 @@ stats.inla(m, i = NULL, y, fsummarize = mean)
 \item{i}{an index to subset the estimated values.}
 
 \item{y}{observed to compare against.}
+
+\item{fsummarize}{the summary function, default \code{mean}}
 }
 \value{
 a vector with the extracted statistics

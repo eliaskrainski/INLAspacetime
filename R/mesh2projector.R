@@ -35,8 +35,8 @@ mesh2projector <- function(mesh, loc=NULL, lattice=NULL,
   if (is.null(mesh$SP))
     mesh$SP <- sp:::SpatialPolygons(
       lapply(1:nrow(mesh$graph$tv), function(j) {
-        jj <- triang$graph$tv[j, ]
-        p <- sp:::Polygon(triang$loc[c(jj, jj[1]), ])
+        jj <- mesh$graph$tv[j, ]
+        p <- sp:::Polygon(mesh$loc[c(jj, jj[1]), ])
         sp:::Polygons(list(p), paste(j))
       }))
   res <- list()
@@ -64,7 +64,7 @@ mesh2projector <- function(mesh, loc=NULL, lattice=NULL,
     m <- prod(dims)
     res$proj <- list(t=matrix(as.integer(NA), m, 1),
                      bary=matrix(0, m, 1))
-    o <- over(SpatialPoints(res$lattice$loc), mesh$SP)
+    o <- sp::over(sp::SpatialPoints(res$lattice$loc), mesh$SP)
     res$proj$bary <- t(sapply(1:nrow(
       res$lattice$loc), function(x)
         proj1f(o[x], res$lattice$loc[x,])))
@@ -79,12 +79,12 @@ mesh2projector <- function(mesh, loc=NULL, lattice=NULL,
     res$proj$ok <- ok
   } else {
     res <- list(x=NULL, y=NULL, lattice=NULL, loc=loc)
-    o <- over(SpatialPoints(loc), mesh$SP)
+    o <- sp::over(sp::SpatialPoints(loc), mesh$SP)
     res$proj <- list(t=matrix(o, ncol=1))
     res$proj$bary <- t(sapply(1:nrow(loc), function(x)
       proj1f(o[x], res$loc[x,1:2])))
     ok <- rowSums(is.na(res$proj$bary))==0
-    res$proj$A <- as(sparseMatrix(
+    res$proj$A <- as(Matrix::sparseMatrix(
       i=rep((1:nrow(res$loc))[ok], 3),
       j=mesh$graph$tv[o[ok],],
       x=as.vector(res$proj$bary[ok,]/

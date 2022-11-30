@@ -45,14 +45,14 @@ stlines <- function(stdata, spatial, group=NULL, nmax.group=NULL,
     gspl <- split(1:nd, factor(group, 1:ns))
   }
   if(is.null(nmax.group)) nmax.group <- nd
-  b <- bbox(spatial)
+  b <- sp::bbox(spatial)
   s0 <- 0.5*sqrt(diff(b[1,])^2 + diff(b[2,])^2)/(ns^0.8)
   z <- scale(stdata, scale=FALSE)
   z <- z/sqrt(mean(z^2, na.rm=TRUE))
   if(is.null(colour)) {
     r <- rank(attr(z, 'scaled:center'))
     u <- (r-0.5)/nd
-    colour <- rgb(u, 1-2*abs(u-0.5), 1-u, 0.5)
+    colour <- grDevices::rgb(u, 1-2*abs(u-0.5), 1-u, 0.5)
   }
   for(i in 1:ns) {
     xx <- seq(-s0, s0, length=nt)*xscale + loc[i,1]
@@ -60,9 +60,9 @@ stlines <- function(stdata, spatial, group=NULL, nmax.group=NULL,
     if(nj>0) {
       for(j in 1:min(nj, nmax.group)) {
         yy <- z[, gspl[[i]][j]]*s0*yscale + loc[i,2]
-        lines(xx, yy, col=colour[gspl[[i]][j]], ...)
+        graphics::lines(xx, yy, col=colour[gspl[[i]][j]], ...)
         if(any(is.na(yy)))
-          points(xx, yy, col=colour[gspl[[i]][j]], ...)
+          graphics::points(xx, yy, col=colour[gspl[[i]][j]], ...)
       }
     }
   }

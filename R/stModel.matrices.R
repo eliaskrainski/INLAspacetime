@@ -78,8 +78,8 @@ stModel.matrices <-
         }
     }
 
-    tfe <- inla.mesh.fem(tmesh, order = 2)
-    sfe <- inla.mesh.fem(smesh, order = 4)
+    tfe <- INLA::inla.mesh.fem(tmesh, order = 2)
+    sfe <- INLA::inla.mesh.fem(smesh, order = 4)
 
     ns <- nrow(sfe$c0)
     nt <- nrow(tfe$c0)
@@ -89,7 +89,7 @@ stModel.matrices <-
 
         J0 <- tfe$c0
         if(!tmesh$cyclic) {
-            J1 <- sparseMatrix(
+            J1 <- Matrix::sparseMatrix(
                 i=c(1, nt), j=c(1, nt), x=c(0.5,0.5))
         }
         J2 <- tfe$g1
@@ -197,10 +197,11 @@ stModel.matrices <-
 }
 
 #' The 2nd order temporal matrices with boundary correction
+#' @param tmesh Temporal mesh
 #' @export
 Jmatrices <- function(tmesh) {
 
-    tfe <- inla.mesh.fem(tmesh, 2L)
+    tfe <- INLA::inla.mesh.fem(tmesh, 2L)
     nt <- nrow(tfe$g1)
     h <- mean(diff(tmesh$loc))
 
@@ -211,7 +212,7 @@ Jmatrices <- function(tmesh) {
     if(tmesh$cyclic) {
         J1 <- NULL
     } else {
-        J1 <- sparseMatrix(
+        J1 <- Matrix::sparseMatrix(
             i=c(1,1,2, nt-1,nt-1,nt),
             j=c(1,2,2, nt-1,nt,nt),
             x=c(5,-1,5, 5,-1,5)/4)
@@ -226,7 +227,7 @@ Jmatrices <- function(tmesh) {
     if(tmesh$cyclic) {
         J3 <- NULL
     } else {
-        J3 <- sparseMatrix(
+        J3 <- Matrix::sparseMatrix(
             i=c(1,1,2, nt-1,nt-1,nt),
             j=c(1,2,2, nt-1,nt,nt),
             x=c(2,-2,2, 2,-2,2)/(h^2))

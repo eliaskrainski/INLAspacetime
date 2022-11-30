@@ -15,15 +15,15 @@ ghcnStations <- function(local=".", file='ghcdn-stations.txt') {
   stfl <- 'ghcnd-stations.txt'
   lfile <- paste0(local, '/', file)
   if(!file.exists(lfile)) {
-    download.file(paste0('https://www.ncei.noaa.gov/',
-                         'pub/data/ghcn/daily/', stfl),
-                  lfile)
+    utils::download.file(paste0('https://www.ncei.noaa.gov/',
+                                'pub/data/ghcn/daily/', stfl),
+                         lfile)
   }
   ws <- diff(c(0,11,20,30,37,40,71,75,79,85))
-  stations <- read.fwf(lfile, ws, comment.char='')
+  stations <- utils::read.fwf(lfile, ws, comment.char='')
   colnames(stations) <- c('station', 'latitude', 'longitude', 'elevation',
                           'state', 'name', 'gsn', 'hcn/crn', 'wmo')
-  coordinates(stations) <- ~ longitude + latitude
-  stations@proj4string <- CRS("+proj=longlat +datum=WGS84")
+  sp::coordinates(stations) <- ~ longitude + latitude
+  sp::proj4string(stations) <- sp::CRS("+proj=longlat +datum=WGS84")
   return(stations)
 }

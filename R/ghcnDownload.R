@@ -22,7 +22,7 @@ ghcnDownload <- function(year, local=".") {
   if (file.exists(lfl)) {
     warning(paste('The file', lfl, 'already exists. Please check!'))
   } else {
-      download.file(
+      utils::download.file(
         paste0('ftp://ftp.ncdc.noaa.gov/pub/data/ghcn/',
                'daily/by_year/', ufl), lfl)
   }

@@ -23,6 +23,6 @@ spde2precision <- function(kappa, fem, alpha) {
                    3), 1/(c(4:2) + lambda - alpha))
     result <- kappa^4*fem$c0*b[1] + kappa^2*fem$g1*b[2] + fem$g2*b[3]
   }
-  result <- forceSymmetric(result)
+  result <- Matrix::forceSymmetric(result)
   return(result)
 }

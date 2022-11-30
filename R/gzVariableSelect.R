@@ -18,7 +18,7 @@ gzVariableSelect <- function(gzfile, variable, astype=as.integer,
     d <- data.table::fread(gzfile)
   } else {
     if(verbose) warning('"data.table" is not available... it may take a while.')
-    d <- read.csv(gzfile)
+    d <- utils::read.csv(gzfile)
   }
   if(verbose) {
     cat('readed ', nrow(d), '')
@@ -38,7 +38,7 @@ gzVariableSelect <- function(gzfile, variable, astype=as.integer,
   names(d)[2:1] <- cnames
   if(length(variable)==1) {
       w <- tapply(d$V4, d[, cnames], astype)
-  } else { 
+  } else {
       cnames <- c(cnames, 'variable')
       names(d)[3] <- 'variable'
       w <- tapply(d$V4, d[, cnames], astype)

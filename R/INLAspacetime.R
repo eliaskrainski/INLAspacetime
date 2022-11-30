@@ -6,8 +6,10 @@
 #'
 #' @return opens the Vignettes directory on a browser
 #' @export
+#'
+#' @importFrom methods as is
 
 INLAspacetime <- function() {
   print("Welcome to the INLAspacetime package!")
-  browseVignettes("INLAspacetime")
+  utils::browseVignettes("INLAspacetime")
 }

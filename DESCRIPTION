@@ -7,12 +7,17 @@ Maintainer: The package maintainer <elias@r-inla.org>
 Description: Functions to fit spatio-temporal models using INLA.
 Depends: Matrix, sp, INLA
 Imports:
-  methods
+    graphics,
+    grDevices,
+    methods,
+    stats,
+    utils
 Suggests:
-  inlabru,
+    inlabru,
     knitr,
     ggplot2,
-    rmarkdown
+    rmarkdown,
+    parallel
 VignetteBuilder: knitr
 BuildVignettes: true
 License: GPL (>=2) 

@@ -4,10 +4,10 @@
 \alias{worldMap}
 \title{Get the world map}
 \usage{
-worldMap(crs = CRS("+proj=moll +units=km"))
+worldMap(crs = sp::CRS("+proj=moll +units=km"))
 }
 \arguments{
-\item{crs}{the CRS string to transform the coordinates.
+\item{crs}{a CRS object for the target coordinates.
 Defalt is the Mollweide projection with units in kilometers.}
 }
 \value{

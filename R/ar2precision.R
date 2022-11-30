@@ -41,7 +41,7 @@ ar2precision <- function(n, a) {
       a[1]*a[2], sum(a[1:2]^2), a[1]*a[2],
       a[1]*a[3], a[1]*a[2], a[1]^2), 3))
   if (n>3)
-    return(sparseMatrix(
+    return(Matrix::sparseMatrix(
       i=c(1:n, 1:(n-1), 1:(n-2)),
       j=c(1:n, 2:n, 3:n),
       x=c(a[1]^2, a[1]^2+a[2]^2,
@@ -52,5 +52,5 @@ ar2precision <- function(n, a) {
           a[1]*a[2],
           rep(a[1]*a[3], n-2)),
       symmetric = TRUE,
-      repr='T'))
+      repr = 'T'))
 }

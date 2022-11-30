@@ -6,6 +6,9 @@
 \usage{
 Jmatrices(tmesh)
 }
+\arguments{
+\item{tmesh}{Temporal mesh}
+}
 \description{
 The 2nd order temporal matrices with boundary correction
 }

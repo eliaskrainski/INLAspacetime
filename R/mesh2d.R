@@ -134,13 +134,13 @@ mesh2d <-
     triang$segm$bnd$is.bnd <- TRUE
     attr(triang$segm$bnd, 'class') <- 'inla.mesh.segment'
     if(SP) {
-      triang$SP <- sp:::SpatialPolygons(
+      triang$SP <- sp::SpatialPolygons(
         lapply(1:nrow(triang$graph$tv), function(j) {
           jj <- triang$graph$tv[j, ]
-          p <- sp:::Polygon(triang$loc[c(jj, jj[1]), ])
-          sp:::Polygons(list(p), paste(j))
+          p <- sp::Polygon(triang$loc[c(jj, jj[1]), ])
+          sp::Polygons(list(p), paste(j))
         }))
-      triang$centroids <- sp:::coordinates(triang$SP)
+      triang$centroids <- sp::coordinates(triang$SP)
     }
     triang$loc <- cbind(triang$loc, 0)
     attr(triang, 'class') <- 'inla.mesh'
