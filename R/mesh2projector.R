@@ -8,8 +8,9 @@
 #' @param dims the number of subdivisions over each boundary limits.
 #' @section Warning:
 #'  This is just for illustration purpose and one should consider the
-#'  efficient function available a the INLA package.
-#' @return the projector matrix as a sparse matrix object.
+#'  efficient functions available in the INLA and inlabru packages,
+#'  e.g. `inlabru::fm_evaluator`.
+#' @return the projector matrix as a list with sparse matrix object at `x$proj$A`..
 #' @export
 mesh2projector <- function(mesh, loc=NULL, lattice=NULL,
                            xlim=NULL, ylim=NULL, dims=c(100, 100)) {
@@ -68,13 +69,13 @@ mesh2projector <- function(mesh, loc=NULL, lattice=NULL,
       res$lattice$loc), function(x)
         proj1f(o[x], res$lattice$loc[x,])))
     ok <- rowSums(is.na(res$proj$bary))==0
-    res$proj$A <- as(sparseMatrix(
+    res$proj$A <- Matrix::sparseMatrix(
       i=rep((1:nrow(res$lattice$loc))[ok], 3),
       j=mesh$graph$tv[o[ok],],
       x=as.vector(res$proj$bary[ok,]/
                     rowSums(res$proj$bary[ok,])),
-      dims=c(nrow(res$lattice$loc), nrow(mesh$loc))),
-      'dgCMatrix')
+      dims=c(nrow(res$lattice$loc), nrow(mesh$loc)),
+      repr = "C")
     res$proj$ok <- ok
   } else {
     res <- list(x=NULL, y=NULL, lattice=NULL, loc=loc)

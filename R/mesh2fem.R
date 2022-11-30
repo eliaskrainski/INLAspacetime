@@ -42,19 +42,18 @@ mesh2fem <- function(mesh, order=2) {
       stiffness(mesh$loc[it, 1],
                 mesh$loc[it, 2])/h
   }
-  res <- list(c0=as(sparseMatrix(i=1:n, j=1:n, x=c0),
-                    'dgTMatrix'),
-              c1=as(Matrix(c1, sparse=TRUE),
-                    'dgTMatrix'),
-              g1=as(Matrix(g1, sparse=TRUE),
-                    'dgTMatrix'))
+  res <- list(c0=Matrix::sparseMatrix(i=1:n, j=1:n, x=c0, repr = "T"),
+              c1=INLA::inla.as.dgTMatrix(Matrix::Matrix(c1, sparse=TRUE)),
+              g1=INLA::inla.as.dgTMatrix(Matrix::Matrix(g1, sparse=TRUE)))
   order <- floor(order)
   if (order>1) {
     for (o in 2:order) {
-      g1s <- res$g1 %*% Diagonal(n, 1/c0)
-      res[[2+o]] <- as(Matrix::crossprod(
-        g1s,
-        res[[o+1]]), 'dgTMatrix')
+      g1s <- res$g1 %*% Matrix::Diagonal(n, 1/c0)
+      res[[2+o]] <- INLA::inla.as.dgTMatrix(
+        Matrix::crossprod(
+          g1s,
+          res[[o+1]])
+      )
     }
     names(res)[4:(order+2)] <- paste0('g', 2:order)
   }

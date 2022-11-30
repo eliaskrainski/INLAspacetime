@@ -10,7 +10,7 @@
 #' So far we have the following models:
 #' '102', '121', '202' and '220' models.
 #' @details
-#' See the paper and the vignette('stspdemodels') for details. 
+#' See the paper and the vignette('stspdemodels') for details.
 #' @return a list containing needed objects for model definition.
 #' 1. 'manifold' to spedify the a string with the model identification
 #' 2. a length three vector with the constants `c1`, `c2` and `c3`
@@ -28,7 +28,7 @@ stModel.matrices <-
     stopifnot(model %in% c('102', '121', '202', '220'))
 
     uM <- function(m) { ### extract the upper
-        m <- inla.as.dgTMatrix(m)
+        m <- INLA::inla.as.dgTMatrix(m)
         i.u <- which(m@i<=m@j)
         m@i <- m@i[i.u]
         m@j <- m@j[i.u]
@@ -37,7 +37,7 @@ stModel.matrices <-
     }
 
     val <- list()
-    
+
     if(tmesh$cyclic) {
         if(model=='102') {
             val$bb <- rep(c(1,2,1), 2)
@@ -99,7 +99,7 @@ stModel.matrices <-
         val$M3 <- uM(kronecker(J0, sfe$g2))
 
         if(model=='102') {
-            
+
             if(!tmesh$cyclic) {
                 val$M4 <- uM(kronecker(J1, sfe$c0))
                 val$M5 <- uM(kronecker(J1, sfe$g1))
@@ -119,7 +119,7 @@ stModel.matrices <-
                 val$M6 <- uM(kronecker(J1, sfe$g1))
                 val$M7 <- uM(kronecker(J1, sfe$g2))
             }
-            
+
             val$M8 <- uM(kronecker(J2, sfe$c0))
             val$M9 <- uM(kronecker(J2, sfe$g1))
 
@@ -216,7 +216,7 @@ Jmatrices <- function(tmesh) {
             j=c(1,2,2, nt-1,nt,nt),
             x=c(5,-1,5, 5,-1,5)/4)
     }
-    
+
     J2 <- tfe$g1 * 2
     J2[2,2] <- tfe$g1[2,2]
     J2[1,2] <- J2[2,1] <- tfe$g1[1,2]
@@ -231,7 +231,7 @@ Jmatrices <- function(tmesh) {
             j=c(1,2,2, nt-1,nt,nt),
             x=c(2,-2,2, 2,-2,2)/(h^2))
     }
-    
+
     J4 <- tfe$g2
     J4[1,1] <- tfe$g2[1,1]/3
     J4[nt,nt] <- tfe$g2[nt,nt]/3

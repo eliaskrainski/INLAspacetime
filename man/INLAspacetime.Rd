@@ -10,7 +10,7 @@ INLAspacetime()
 opens the Vignettes directory on a browser
 }
 \description{
-This package main pourpose is to provide user friendly functions
+This package main purpose is to provide user friendly functions
 to fit temporal, spatial and spatio-temporal models using the
 INLA software available at www.r-inla.org
 }
