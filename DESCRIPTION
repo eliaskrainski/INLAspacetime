@@ -6,7 +6,8 @@ Author: Elias Teixeira Krainski
 Maintainer: The package maintainer <elias@r-inla.org>
 Description: Functions to fit spatio-temporal models using INLA.
 Depends: Matrix, sp, INLA
-Suggests: 
+Suggests:
+  inlabru,
     knitr,
     ggplot2,
     rmarkdown
@@ -16,4 +17,3 @@ License: GPL (>=2)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.2
-LinkingTo: INLA
