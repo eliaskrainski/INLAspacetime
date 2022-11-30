@@ -47,7 +47,7 @@ upperPadding <-
         if(is(m, 'matrix'))
             m <- Matrix::Matrix(m)
         if(is(m, 'Matrix')) {
-### as INLA:::inla.as.dgTMatrix(., unique=TRUE, na.rm=TRUE, zeros.rm=TRUE)
+### as INLA::inla.as.dgTMatrix(., unique=TRUE, na.rm=TRUE, zeros.rm=TRUE)
             m <- as(as(as(as(m, "dMatrix"),
                           "generalMatrix"),
                        "CsparseMatrix"),

@@ -5,8 +5,10 @@ Version: 0.1.0
 Author: Elias Teixeira Krainski
 Maintainer: The package maintainer <elias@r-inla.org>
 Description: Functions to fit spatio-temporal models using INLA.
-Depends: Matrix, sp, INLA
+Depends:
+    Matrix, sp
 Imports:
+    INLA,
     graphics,
     grDevices,
     methods,
@@ -17,7 +19,11 @@ Suggests:
     knitr,
     ggplot2,
     rmarkdown,
-    parallel
+    parallel,
+    data.table,
+    maps,
+    maptools,
+    rgdal
 VignetteBuilder: knitr
 BuildVignettes: true
 License: GPL (>=2) 

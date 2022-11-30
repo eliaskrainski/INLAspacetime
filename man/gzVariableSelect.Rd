@@ -20,6 +20,8 @@ gzVariableSelect(
 \item{astype}{function to be used to type the data.
 Default is the current working directory.}
 
+\item{qflag}{Extract data matching this quality flag. Default ''.}
+
 \item{verbose}{logical to indicate if verbose mode is active}
 }
 \value{

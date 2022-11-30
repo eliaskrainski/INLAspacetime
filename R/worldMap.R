@@ -15,6 +15,8 @@
 #' sp::plot(wmap)
 #' @export
 worldMap <- function(crs=sp::CRS("+proj=moll +units=km")) {
+  requireNamespace("maps")
+  requireNamespace("maptools")
   ### extract the countries world map
   wrld <- maps::map("world", fill=TRUE, plot=FALSE)
   ID <- sapply(strsplit(wrld$names, ":"), "[", 1L)

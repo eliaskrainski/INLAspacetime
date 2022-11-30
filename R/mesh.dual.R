@@ -12,7 +12,6 @@ mesh.dual <- function(mesh, SP=TRUE) {
     stop("This only works for R2!")
   ce <- t(sapply(1:nrow(mesh$graph$tv), function(i)
     colMeans(mesh$loc[mesh$graph$tv[i, ], 1:2])))
-  library(parallel)
   pls <- parallel::mclapply(1:mesh$n, function(i) {
     p <- unique(Reduce('rbind', lapply(1:3, function(k) {
       j <- which(mesh$graph$tv[,k]==i)

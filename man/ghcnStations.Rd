@@ -4,13 +4,13 @@
 \alias{ghcnStations}
 \title{The informations on the GHCN stations.}
 \usage{
-ghcnStations(local = ".", file = "ghcdn-stations.txt")
+ghcnStations(local = ".", file = "ghcnd-stations.txt")
 }
 \arguments{
 \item{local}{the directory to save the downloaded file.
 Default is the current working directory.}
 
-\item{year}{an integer to specify the year}
+\item{file}{the filename to download. Default is 'ghcnd-stations.txt'.}
 }
 \value{
 it writes the downloaded file locally and return the information

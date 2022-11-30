@@ -13,6 +13,10 @@ oceans50m(
 \arguments{
 \item{local}{the directory to save the downloaded file.
 Default is the current working directory.}
+
+\item{zipfile}{The name of the local zip file}
+
+\item{url}{The zip file URL to download from}
 }
 \value{
 the oceans map

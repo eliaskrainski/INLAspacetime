@@ -5,6 +5,8 @@
 #'
 #' @param local the directory to save the downloaded file.
 #' Default is the current working directory.
+#' @param zipfile The name of the local zip file
+#' @param url The zip file URL to download from
 #' @section Warning:
 #'  it would not work if the file is not available
 #'  locally and there is no internet connection.
@@ -17,6 +19,7 @@ oceans50m <- function(
   local=".",
   zipfile='oceans50m.zip',
   url="https://stacks.stanford.edu/file/druid:jb593mf9286/data.zip") {
+  requireNamespace("rgdal")
   zipfile <- paste0(local, '/', zipfile)
   if (!file.exists(zipfile)) {
     utils::download.file(url, zipfile)

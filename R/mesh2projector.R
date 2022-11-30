@@ -4,6 +4,7 @@
 #'
 #' @param mesh a 2d mesh object.
 #' @param loc a two columns matrix with the locations to project for.
+#' @param lattice Unused; feature not supported by this illustration.
 #' @param xlim,ylim vector with the boundary limits.
 #' @param dims the number of subdivisions over each boundary limits.
 #' @section Warning:
@@ -33,11 +34,11 @@ mesh2projector <- function(mesh, loc=NULL, lattice=NULL,
     return(a)
   }
   if (is.null(mesh$SP))
-    mesh$SP <- sp:::SpatialPolygons(
+    mesh$SP <- sp::SpatialPolygons(
       lapply(1:nrow(mesh$graph$tv), function(j) {
         jj <- mesh$graph$tv[j, ]
-        p <- sp:::Polygon(mesh$loc[c(jj, jj[1]), ])
-        sp:::Polygons(list(p), paste(j))
+        p <- sp::Polygon(mesh$loc[c(jj, jj[1]), ])
+        sp::Polygons(list(p), paste(j))
       }))
   res <- list()
   if (is.null(loc)) {

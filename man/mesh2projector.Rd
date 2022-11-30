@@ -18,6 +18,8 @@ mesh2projector(
 
 \item{loc}{a two columns matrix with the locations to project for.}
 
+\item{lattice}{Unused; feature not supported by this illustration.}
+
 \item{xlim, ylim}{vector with the boundary limits.}
 
 \item{dims}{the number of subdivisions over each boundary limits.}

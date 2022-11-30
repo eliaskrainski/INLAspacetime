@@ -59,12 +59,12 @@ mesh2fem <- function(mesh, order=2) {
   }
   res$va <- matrix(c0, ncol=1)
   if (is.null(mesh$SP)) {
-    ##mesh$SP <- sp:::SpatialPolygons(
+    ##mesh$SP <- sp::SpatialPolygons(
     ##   lapply(1:nrow(mesh$graph$tv), function(j) {
-    ##     p <- sp:::Polygon(mesh$loc[mesh$graph$tv[j, ], 1:2])
-    ##    sp:::Polygons(list(p), paste(j))
+    ##     p <- sp::Polygon(mesh$loc[mesh$graph$tv[j, ], 1:2])
+    ##    sp::Polygons(list(p), paste(j))
     ##}))
-    ##mesh$centroids <- sp:::coordinates(mesh$SP)
+    ##mesh$centroids <- sp::coordinates(mesh$SP)
     mesh$ta <-  NULL
   } else {
     res$ta <- matrix(sapply(mesh$SP@polygons, function(p)

@@ -5,6 +5,7 @@
 #' @param variable a character indicating which variable to select.
 #' @param astype function to be used to type the data.
 #' Default is the current working directory.
+#' @param qflag Extract data matching this quality flag. Default ''.
 #' @param verbose logical to indicate if verbose mode is active
 #' @section Warning:
 #'  it can take time to execute if the data.table package is not available.

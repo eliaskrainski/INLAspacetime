@@ -7,7 +7,9 @@
 #' @return opens the Vignettes directory on a browser
 #' @export
 #'
-#' @importFrom methods as is
+#' @import methods
+#' @import Matrix
+#' @importFrom sp CRS
 
 INLAspacetime <- function() {
   print("Welcome to the INLAspacetime package!")
