@@ -8,7 +8,7 @@
 #' @param verbose logical to indicate if verbose mode is active
 #' @section Warning:
 #'  it can take time to execute if the data.table package is not available.
-#' @seealso \code{\link{ghcnDownload}}
+#' @seealso [ghcnDownload()]
 #' @return it writes a new file
 #' @export
 gzVariableSelect <- function(gzfile, variable, astype=as.integer,

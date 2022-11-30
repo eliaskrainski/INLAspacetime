@@ -25,7 +25,7 @@ Creates a mesh object.
 }
 \section{Warning}{
 
- This is just for illustration purpose and one should consider the
- efficient function available a the INLA package.
+This is just for illustration purpose and one should consider the
+efficient function available a the INLA package.
 }
 

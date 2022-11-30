@@ -5,7 +5,7 @@
 #'
 #' @param crs a CRS object for the target coordinates.
 #' Defalt is the Mollweide projection with units in kilometers.
-#' @seealso \code{\link{oceans50m}}
+#' @seealso [oceans50m()]
 #' @return the world map
 #' @references
 #'  the world map data is from the maps R package:

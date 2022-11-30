@@ -5,7 +5,7 @@
 #' @param m an inla output object.
 #' @param i an index to subset the estimated values.
 #' @param y observed to compare against.
-#' @param fsummarize the summary function, default \code{mean}
+#' @param fsummarize the summary function, default `mean`
 #' @section Warning:
 #'  The po, crps and scrps are computed using the posterior mean and the
 #'  sum of the sd of the posterior fitted value plus the inverse of the

@@ -14,7 +14,7 @@ ar2cor(a1, a2, k = 30)
 \item{k}{maximun length for evaluating the auto-correlation.}
 }
 \value{
-the autocorrelation as a vector or matrix, whenever `a1` or `a2` are
+the autocorrelation as a vector or matrix, whenever \code{a1} or \code{a2} are
 scalar or vector.
 }
 \description{
@@ -22,9 +22,9 @@ Computes the auto-correlation.
 }
 \section{Details}{
 
- Le the second order auto-regression model defined as
-  x_t + a_1 x_{t-1} + a_2 x_{t-2} = w_t
-where w_t ~ N(0, 1).
+Let the second order auto-regression model defined as
+\verb{x_t + a_1 x_\{t-1\} + a_2 x_\{t-2\} = w_t}
+where \code{w_t ~ N(0, 1)}.
 }
 
 \examples{

@@ -17,11 +17,13 @@ So far we have the following models:
 }
 \value{
 a list containing needed objects for model definition.
-1. 'manifold' to spedify the a string with the model identification
-2. a length three vector with the constants `c1`, `c2` and `c3`
-3. the vector `d`
-4. the matrix `T`
-5. the model matrices `M_1`, ..., `M_m`
+\enumerate{
+\item 'manifold' to spedify the a string with the model identification
+\item a length three vector with the constants \code{c1}, \code{c2} and \code{c3}
+\item the vector \code{d}
+\item the matrix \code{T}
+\item the model matrices \code{M_1}, ..., \code{M_m}
+}
 }
 \description{
 This function computes all the matrices needed to build

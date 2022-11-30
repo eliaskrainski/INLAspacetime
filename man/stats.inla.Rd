@@ -23,8 +23,8 @@ Exctracts dic, waic, po, cpo, mse, mae, crps and scrps.
 }
 \section{Warning}{
 
- The po, crps and scrps are computed using the posterior mean and the
- sum of the sd of the posterior fitted value plus the inverse of the
- likelihood precision posterior mean.
+The po, crps and scrps are computed using the posterior mean and the
+sum of the sd of the posterior fitted value plus the inverse of the
+likelihood precision posterior mean.
 }
 

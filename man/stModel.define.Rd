@@ -2,7 +2,7 @@
 % Please edit documentation in R/stModel.define.R
 \name{stModel.define}
 \alias{stModel.define}
-\title{Define a spacetime model object for the `f()` call.}
+\title{Define a spacetime model object for the \code{f()} call.}
 \usage{
 stModel.define(
   smesh,
@@ -21,7 +21,7 @@ stModel.define(
 
 \item{model}{a three characters string to specify the
 smoothness alpha (each one as integer) parameters.
-Currently it considers the `102`, `121`, `202` and `220` models.}
+Currently it considers the \code{102}, \code{121}, \code{202} and \code{220} models.}
 
 \item{control.priors}{a named list with parameter priors.
 E.g. prior.rs, prior.rt and prior.sigma
@@ -41,7 +41,7 @@ shared object pre-compiled by INLA.}
 objects to be used in the f() formula term in INLA.
 }
 \description{
-Define a spacetime model object for the `f()` call.
+Define a spacetime model object for the \code{f()} call.
 }
 \details{
 See the paper.

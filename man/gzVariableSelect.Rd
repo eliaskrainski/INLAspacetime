@@ -31,9 +31,9 @@ save it into a .RData.
 }
 \section{Warning}{
 
- it can take time to execute if the data.table package is not available.
+it can take time to execute if the data.table package is not available.
 }
 
 \seealso{
-\code{\link{ghcnDownload}}
+\code{\link[=ghcnDownload]{ghcnDownload()}}
 }

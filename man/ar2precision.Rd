@@ -28,17 +28,17 @@ The n times n symmetric precision matrix Q
 for x_1, x_2, ..., x_n
 has the following non-zero elements:
 
- \eqn{Q_{1,1} = Q_{n,n} = a_0^2}
+\eqn{Q_{1,1} = Q_{n,n} = a_0^2}
 
- \eqn{Q_{2,2} = Q_{n-1,n-1} = a_0^2 + a_1^2}
+\eqn{Q_{2,2} = Q_{n-1,n-1} = a_0^2 + a_1^2}
 
- \eqn{Q_{1,2} = Q_{2,1} = Q_{n-1,n} = Q_{n,n-1} = a_0 a_1}
+\eqn{Q_{1,2} = Q_{2,1} = Q_{n-1,n} = Q_{n,n-1} = a_0 a_1}
 
- \eqn{Q_{t,t} = q_0 = a_0^2 + a_1^2 + a_2^2, t = 3, 4, ..., n-2}
+\eqn{Q_{t,t} = q_0 = a_0^2 + a_1^2 + a_2^2, t = 3, 4, ..., n-2}
 
- \eqn{Q_{t,t-1} = Q_{t-1,t} = q_1 = a_1(a_0 + a_2), t = 3, 4, ..., n-1}
+\eqn{Q_{t,t-1} = Q_{t-1,t} = q_1 = a_1(a_0 + a_2), t = 3, 4, ..., n-1}
 
- \eqn{Q_{t,t-2} = Q_{t-2,t} = q_2 = a_2 a_0, t = 3, 4, ..., n}
+\eqn{Q_{t,t-2} = Q_{t-2,t} = q_2 = a_2 a_0, t = 3, 4, ..., n}
 }
 
 \examples{

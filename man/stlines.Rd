@@ -34,10 +34,10 @@ to be plotted over each spatial unit. Default is NULL, so all will be drawn.}
 \item{colour}{color (may be a vector, one for each time series).
 Default is NULL and it will generate colors considering the
 average of each time series.
-These automatic colors are defined using the `rgb()` function with `alpha=0.5`.
-It considers the relative rank of each time series mean, `r`.
-`r` is then used for red,  `1-r` is used for blue and
-a triangular function, `1-2*|1-r/2|`, is considered for green.
+These automatic colors are defined using the \code{rgb()} function with \code{alpha=0.5}.
+It considers the relative rank of each time series mean, \code{r}.
+\code{r} is then used for red,  \code{1-r} is used for blue and
+a triangular function, \verb{1-2*|1-r/2|}, is considered for green.
 That is, time series with mean among the lowest time series averages
 are shown in blue and those among the highest temperatures are shown in red.
 The transition from blue to red goes so that
@@ -53,12 +53,12 @@ Plot each time series over the map centered at the location.
 }
 \details{
 Scaling the times series is needed before drawing it over the map.
- The area of the bounding box for the spatial object
- divided by the number of locations is the standard scaling factor.
- This is further multiplied by the user given \code{xcale} and \code{yscale}.
+The area of the bounding box for the spatial object
+divided by the number of locations is the standard scaling factor.
+This is further multiplied by the user given \code{xcale} and \code{yscale}.
 }
 \section{Warning}{
 
- if there are too many geographical locations, it will not look good
+if there are too many geographical locations, it will not look good
 }
 

@@ -23,13 +23,13 @@ load it into the R environment.
 }
 \section{Warning}{
 
- it would not work if the file is not available
- locally and there is no internet connection.
+it would not work if the file is not available
+locally and there is no internet connection.
 }
 
 \references{
 \link{https://maps.princeton.edu/catalog/stanford-jb593mf9286}
 }
 \seealso{
-\code{\link{worldMap}}
+\code{\link[=worldMap]{worldMap()}}
 }

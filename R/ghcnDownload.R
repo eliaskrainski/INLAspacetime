@@ -6,7 +6,7 @@
 #' Default is the current working directory.
 #' @section Warning:
 #' it takes time to download in case of bad internet connection
-#' @seealso \code{\link{gzVariableSelect}}
+#' @seealso [gzVariableSelect()]
 #' @return it writes the downloaded file locally
 #' @export
 ghcnDownload <- function(year, local=".") {

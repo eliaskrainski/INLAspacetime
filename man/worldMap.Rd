@@ -23,8 +23,8 @@ sp::plot(wmap)
 }
 \references{
 the world map data is from the maps R package:
- \link{https://cran.r-project.org/web/packages/maps/index.html}
+\link{https://cran.r-project.org/web/packages/maps/index.html}
 }
 \seealso{
-\code{\link{oceans50m}}
+\code{\link[=oceans50m]{oceans50m()}}
 }

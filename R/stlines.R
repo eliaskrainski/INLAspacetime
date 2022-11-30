@@ -26,7 +26,7 @@
 #' @details Scaling the times series is needed before drawing it over the map.
 #'  The area of the bounding box for the spatial object
 #'  divided by the number of locations is the standard scaling factor.
-#'  This is further multiplied by the user given \code{xcale} and \code{yscale}.
+#'  This is further multiplied by the user given `xcale` and `yscale`.
 #' @section Warning:
 #'  if there are too many geographical locations, it will not look good
 #' @return add lines to an existing plot

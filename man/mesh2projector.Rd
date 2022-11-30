@@ -23,15 +23,15 @@ mesh2projector(
 \item{dims}{the number of subdivisions over each boundary limits.}
 }
 \value{
-the projector matrix as a list with sparse matrix object at `x$proj$A`..
+the projector matrix as a list with sparse matrix object at \code{x$proj$A}..
 }
 \description{
 Creates a projector matrix object.
 }
 \section{Warning}{
 
- This is just for illustration purpose and one should consider the
- efficient functions available in the INLA and inlabru packages,
- e.g. `inlabru::fm_evaluator`.
+This is just for illustration purpose and one should consider the
+efficient functions available in the INLA and inlabru packages,
+e.g. \code{inlabru::fm_evaluator}.
 }
 

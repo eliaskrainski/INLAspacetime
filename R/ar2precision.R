@@ -27,7 +27,7 @@
 #'  \eqn{Q_{t,t-2} = Q_{t-2,t} = q_2 = a_2 a_0, t = 3, 4, ..., n}
 #'
 #' @return the precision matrix as a sparse matrix object with edge correction.
-#' @seealso \link{ar2cor}
+#' @seealso [ar2cor]
 #' @export
 #' @examples
 #'  ar2precision(7, c(1, -1.5, 0.9))

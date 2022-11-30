@@ -25,5 +25,5 @@ it takes time to download in case of bad internet connection
 }
 
 \seealso{
-\code{\link{gzVariableSelect}}
+\code{\link[=gzVariableSelect]{gzVariableSelect()}}
 }

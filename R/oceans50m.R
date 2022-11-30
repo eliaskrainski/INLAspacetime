@@ -8,7 +8,7 @@
 #' @section Warning:
 #'  it would not work if the file is not available
 #'  locally and there is no internet connection.
-#' @seealso \code{\link{worldMap}}
+#' @seealso [worldMap()]
 #' @return the oceans map
 #' @references
 #'  \link{https://maps.princeton.edu/catalog/stanford-jb593mf9286}
