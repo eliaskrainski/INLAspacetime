@@ -2,7 +2,7 @@ library(INLA)
 library(INLAspacetime)
 library(inlabru)
 
-## We need a plain test-example...
+### We need a plain test-example...
 inla.setOption(smtp='taucs', inla.mode='compact')
 
 smesh <- inla.mesh.2d(cbind(0,0), max.edge=5, offset=2)
@@ -16,18 +16,15 @@ dataf <- data.frame(
     y=rnorm(n, 0, 1))
 str(dataf)
 
-#### mappter from the model domain to the data
-stmapper <- bru_mapper_multi(
-    list(space = bru_mapper(smesh),
-         time = bru_mapper(tmesh, indexed=TRUE)))
-
 ### define the data Model
-M <- ~ -1 + Intercept(1) + 
+M <- ~ -1 + Intercept(1) +
     field(list(space = cbind(s1, s2), time=time),
           mapper=stmapper, model=stmodel)
 
-### likelihood precision prior
-lkprec <- list(prec=list(initial=10, fixed=TRUE))
+### mapper from the model domain to the data
+stmapper <- bru_mapper_multi(
+    list(space = bru_mapper(smesh),
+         time = bru_mapper(tmesh, indexed=TRUE)))
 
 ### define the spacetime model
 stmodel <- stModel.define(
@@ -37,6 +34,10 @@ stmodel <- stModel.define(
         prt=c(5, 0.0),
         psigma=c(1, 0.5)))
 
+### likelihood precision prior
+lkprec <- list(prec=list(initial=10, fixed=TRUE))
+
+### fit
 result <- 
     bru(M, 
         like(formula = y ~ ., 
