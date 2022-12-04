@@ -67,25 +67,37 @@ stModel.define <-
         lmats <- upperPadding(mm[jmm], relative = FALSE)
         stopifnot(n == nrow(lmats$graph))
 
-        return(do.call(
-            "inla.cgeneric.define",
-            list(model = "inla_cgeneric_sstspde",
-                 shlib = llib,
-                 n = n,
-                 debug = as.integer(debug),
-		 verbose = as.integer(verbose),
-                 Rmanifold = as.integer(Rmanifold),
-                 dimension = as.integer(dimension),
-                 aaa = as.integer(alphas),
-                 nm = as.integer(nm),
-                 cc = as.double(cc),
-                 bb = mm$bb,
-                 prs = control.priors$prs,
-                 prt = control.priors$prt,
-                 psigma = control.priors$psigma,
-                 ii = lmats$graph@i,
-                 jj = lmats$graph@j,
-                 tt = t(mm$TT),
-                 xx = t(lmats$xx))))
-}
+        the_model <- do.call(
+          "inla.cgeneric.define",
+          list(
+            model = "inla_cgeneric_sstspde",
+            shlib = llib,
+            n = n,
+            debug = as.integer(debug),
+            verbose = as.integer(verbose),
+            Rmanifold = as.integer(Rmanifold),
+            dimension = as.integer(dimension),
+            aaa = as.integer(alphas),
+            nm = as.integer(nm),
+            cc = as.double(cc),
+            bb = mm$bb,
+            prs = control.priors$prs,
+            prt = control.priors$prt,
+            psigma = control.priors$psigma,
+            ii = lmats$graph@i,
+            jj = lmats$graph@j,
+            tt = t(mm$TT),
+            xx = t(lmats$xx)
+          )
+        )
+        # Prepend specialised model class identifier, for bru_mapper use:
+        class(the_model) <- c("stModel_cgeneric", class(the_model))
+        # Add objects needed by bru_get_mapper.stModel_cgeneric:
+        # (alternatively, construct the mapper already here, but that would
+        # require loading inlabru even when it's not going to be used)
+        the_model[["smesh"]] <- smesh
+        the_model[["tmesh"]] <- tmesh
+
+        the_model
+    }
 

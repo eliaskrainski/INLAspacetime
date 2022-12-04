@@ -1,12 +1,19 @@
 Package: INLAspacetime
 Type: Package
 Title: Functions to fit spatio-temporal models using INLA
-Version: 0.1.1
-Author: Elias Teixeira Krainski
-Maintainer: The package maintainer <elias@r-inla.org>
+Version: 0.1.2
+Authors@R: c(
+  person("Elias Teixeira", "Krainski", email = "elias@r-inla.org",
+         role = c("cre", "aut", "cph")),
+  person("Finn", "Lindgren", email = "finn.lindgren@gmail.com",
+         role = c("aut"),
+         comment = c(ORCID = "0000-0002-5833-2011"))
+  )
 Description: Functions to fit spatio-temporal models using INLA.
 Depends:
-    Matrix, sp
+    Matrix,
+    sp,
+    R (>= 3.6)
 Imports:
     INLA (>= 22.11.28),
     graphics,
@@ -15,7 +22,7 @@ Imports:
     stats,
     utils
 Suggests:
-    inlabru,
+    inlabru (>= 2.6.0),
     knitr,
     ggplot2,
     rmarkdown,
