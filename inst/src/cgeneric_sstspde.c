@@ -133,7 +133,7 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 		// interpretable parameters 
 		// theta = log(range_s, range_t, sigma)
 		// g_s = sqrt(8 * v_s) / r_s ;
-		// log(g_s) = c1 + log(r_s) ;
+		// log(g_s) = c1 - log(r_s) ;
 		ith = 0;
 		if (ifix[0] == 1) {
 			lg[0] = cc->doubles[0] - log(prs->doubles[0]);
