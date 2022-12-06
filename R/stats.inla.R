@@ -1,15 +1,24 @@
 #' To retrieve goodness of fit statistics from an inla output object.
 #'
-#' Exctracts dic, waic, po, cpo, mse, mae, crps and scrps.
+#' Exctracts dic, waic and cpo from an inla output and
+#' computes po, mse, mae, crps and scrps for a given input.
+#' A summary is applied considering the user imputed function,
+#' which by default is the mean.
 #'
 #' @param m an inla output object.
 #' @param i an index to subset the estimated values.
 #' @param y observed to compare against.
-#' @param fsummarize the summary function, default `mean`
-#' @section Warning:
-#'  The po, crps and scrps are computed using the posterior mean and the
-#'  sum of the sd of the posterior fitted value plus the inverse of the
+#' @param fsummarize the summary function,
+#' the default is [base::mean()].
+#' @section Details:
+#'  Tho compute the po, crps and scrps it assumes a
+#'  Gaussian predictive distribution with mean equals the
+#'  posterior mean and variance equals the sum of the
+#'  posterior fitted value variance and the inverse of the
 #'  likelihood precision posterior mean.
+#' @section Warning:
+#'  For cpo, po, crps and scrps what is returned is the
+#'  negative of the applied summary.
 #' @return a vector with the extracted statistics
 #' @export
 #'

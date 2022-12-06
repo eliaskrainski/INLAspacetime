@@ -13,18 +13,30 @@ stats.inla(m, i = NULL, y, fsummarize = mean)
 
 \item{y}{observed to compare against.}
 
-\item{fsummarize}{the summary function, default \code{mean}}
+\item{fsummarize}{the summary function,
+the default is \code{\link[base:mean]{base::mean()}}.}
 }
 \value{
 a vector with the extracted statistics
 }
 \description{
-Exctracts dic, waic, po, cpo, mse, mae, crps and scrps.
+Exctracts dic, waic and cpo from an inla output and
+computes po, mse, mae, crps and scrps for a given input.
+A summary is applied considering the user imputed function,
+which by default is the mean.
 }
+\section{Details}{
+
+Tho compute the po, crps and scrps it assumes a
+Gaussian predictive distribution with mean equals the
+posterior mean and variance equals the sum of the
+posterior fitted value variance and the inverse of the
+likelihood precision posterior mean.
+}
+
 \section{Warning}{
 
-The po, crps and scrps are computed using the posterior mean and the
-sum of the sd of the posterior fitted value plus the inverse of the
-likelihood precision posterior mean.
+For cpo, po, crps and scrps what is returned is the
+negative of the applied summary.
 }
 
