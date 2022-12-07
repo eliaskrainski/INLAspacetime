@@ -20,14 +20,14 @@ the default is \code{\link[base:mean]{base::mean()}}.}
 a vector with the extracted statistics
 }
 \description{
-Exctracts dic, waic and cpo from an inla output and
-computes po, mse, mae, crps and scrps for a given input.
+Exctracts DIC, WAIC and CPO from an inla output and
+computes PO, MSE, MAE, CRPS and SCRPS for a given input.
 A summary is applied considering the user imputed function,
-which by default is the mean.
+which by default is the mean. See Details and Warning!
 }
 \section{Details}{
 
-When computing the po, crps, and scrps scores it assumes a
+When computing the PO, CRPS, and SCRPS scores it assumes a
 Gaussian predictive distribution with mean equal to the
 posterior mean and variance equal to the sum of the
 posterior fitted value variance and the inverse of the
@@ -36,7 +36,7 @@ observation precision posterior mean.
 
 \section{Warning}{
 
-For cpo, po, crps and scrps what is returned is the
+For CPO, PO, CRPS and SCRPS what is returned is the
 negative of the applied summary.
 }
 
