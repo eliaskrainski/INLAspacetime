@@ -1,7 +1,7 @@
 Package: INLAspacetime
 Type: Package
 Title: Functions to fit spatio-temporal models using INLA
-Version: 0.1.2
+Version: 0.1.3
 Authors@R: c(
   person("Elias Teixeira", "Krainski", email = "elias@r-inla.org",
          role = c("cre", "aut", "cph")),
