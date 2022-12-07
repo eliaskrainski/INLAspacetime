@@ -11,11 +11,11 @@
 #' @param fsummarize the summary function,
 #' the default is [base::mean()].
 #' @section Details:
-#'  Tho compute the po, crps and scrps it assumes a
-#'  Gaussian predictive distribution with mean equals the
-#'  posterior mean and variance equals the sum of the
+#'  When computing the po, crps, and scrps scores it assumes a
+#'  Gaussian predictive distribution with mean equal to the
+#'  posterior mean and variance equal to the sum of the
 #'  posterior fitted value variance and the inverse of the
-#'  likelihood precision posterior mean.
+#'  observation precision posterior mean.
 #' @section Warning:
 #'  For cpo, po, crps and scrps what is returned is the
 #'  negative of the applied summary.
