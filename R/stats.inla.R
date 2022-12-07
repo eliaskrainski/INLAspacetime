@@ -1,9 +1,9 @@
-#' To retrieve goodness of fit statistics from an inla output object.
+#' To retrieve goodness of fit statistics.
 #'
-#' Exctracts DIC, WAIC and CPO from an inla output and
-#' computes PO, MSE, MAE, CRPS and SCRPS for a given input.
+#' Extracts dic, waic and log-cpo from an [INLA::inla()] output and
+#' computes log-po, mse, mae, crps and scrps for a given input.
 #' A summary is applied considering the user imputed function,
-#' which by default is the mean. See Details and Warning!
+#' which by default is the mean.
 #'
 #' @param m an inla output object.
 #' @param i an index to subset the estimated values.
@@ -11,15 +11,62 @@
 #' @param fsummarize the summary function,
 #' the default is [base::mean()].
 #' @section Details:
-#'  When computing the PO, CRPS, and SCRPS scores it assumes a
-#'  Gaussian predictive distribution with mean equal to the
-#'  posterior mean and variance equal to the sum of the
-#'  posterior fitted value variance and the inverse of the
-#'  observation precision posterior mean.
+#'  Considering the defaults, for n observations,
+#'  \eqn{y_i, i = 1, 2, ..., n}, we have
+#'
+#'  . dic \deqn{\sum_i d_i/n}{%
+#'  \sum_i d_i /n}
+#'  where \eqn{d_i} is the dic computed for observation i.
+#'
+#'  . waic \deqn{\sum_i w_i/n}{%
+#'  \sum_i w_i / n}
+#'  where \eqn{w_i} is the waic computed for observation i.
+#'
+#'  . lcpo \deqn{-\sum_i \log(p_i)/n}{%
+#'  -\sum_i \log(cpo_i) / n}
+#'  where \eqn{p_i} is the cpo computed for observation i.
+#'
+#'  For the log-po, crps, and scrps scores it assumes a
+#'  Gaussian predictive distribution for each observation
+#'  \eqn{y_i} which the following definitions:
+#'  \eqn{z_i = (y_i-\mu_i)/\sigma_i},
+#'  \eqn{\mu_i} is the posterior mean for the linear predictor,
+#'  \eqn{\sigma_i = \sqrt{v_i + 1/\tau_y}},
+#'  \eqn{\tau_y} is the observation posterior mean,
+#'  \eqn{v_i} is the posterior variance of the
+#'  linear predictor for \eqn{y_i}.
+#'
+#'  Then we consider \eqn{\phi()} the density of a standard
+#'  Gaussian variable and \eqn{\psi()} the corresponding
+#'  Cumulative Probability Distribution.
+#'
+#'  . lpo \deqn{-\sum_i \log(\phi(z_i))/n}{%
+#'  \sum_i \log(\phi(z_i))/n}
+#'
+#'  . crps \deqn{\sum_i \log(r_i)/n}{%
+#'  \sum_i \log(r_i)/n}
+#'  where \deqn{r_i=\sigma_i/\sqrt{\pi} - 2\sigma_i\phi(z_i) + (y_i-\mu_i)(1-2\psi(z_i))}{
+#'  r_i=\sigma_i/\sqrt{\pi} - 2\sigma_i\phi(z_i) + (y_i-\mu_i)(1-2\psi(z_i))}
+#'
+#'  . scrps \deqn{\sum_i \log(s_i)/n}{%
+#'  \frac{\sum_i \log(s_i)}{n}}
+#'  where \deqn{s_i=-\log(2\sigma_i/\sqrt{\pi})/2 -\sqrt{\pi}(\phi(z_i)-\sigma_iz_i/2+z_i\psi(z_i))}{
+#'  s_i=-\log(2\sigma_i/\sqrt{\pi})/2 -\sqrt{\pi}(\phi(z_i)-\sigma_iz_i/2+z_i\psi(z_i))}
+#'
 #' @section Warning:
-#'  For CPO, PO, CRPS and SCRPS what is returned is the
-#'  negative of the applied summary.
-#' @return a vector with the extracted statistics
+#'  All the scores are negatively oriented which means
+#'  that smaller scores are better.
+#' @return A named numeric vector with the extracted statistics.
+#' @references
+#' Held, L. and Schrödle, B. and Rue, H. (2009).
+#' Posterior and Cross-validatory Predictive Checks:
+#' A Comparison of MCMC and INLA.
+#' Statistical Modelling and Regression Structures pp 91–110.
+#' \url{https://link.springer.com/chapter/10.1007/978-3-7908-2413-1_6}.
+#'
+#' Bolin, D. and Wallin, J. (2022) Local scale invariance
+#' and robustness of proper scoring rules. Statistical Science.
+#' \url{https://doi.org/10.1214/22-STS864}.
 #' @export
 #'
 #' @importFrom stats dnorm pnorm complete.cases
@@ -36,20 +83,20 @@ stats.inla <- function(m, i=NULL, y, fsummarize=mean) {
     if(is.null(i))
       i <- 1:length(m$dic$local.dic)
     r <- c(
-      DIC=fsummarize(m$dic$local.dic[i]),
-      WAIC=fsummarize(m$waic$local.waic[i]),
-      nPO=-fsummarize(dnorm(
+      dic=fsummarize(m$dic$local.dic[i]),
+      waic=fsummarize(m$waic$local.waic[i]),
+      lpo=-fsummarize(dnorm(
         y[i], m$summary.fitted.value$mean[i],
         sqrt(m$summary.fitted.value$sd[i]^2 +
               1/m$summary.hyperpar$mean[1]), log=TRUE)),
-      nCPO=-fsummarize(log(m$cpo$cpo[i])),
-      MSE=fsummarize((m$summary.fitted.value$mean[i]-y[i])^2),
-      MAE=fsummarize(abs(m$summary.fitted.value$mean[i]-y[i])),
-      nCRPS=-fsummarize(crps.g(
+      lcpo=-fsummarize(log(m$cpo$cpo[i])),
+      mse=fsummarize((m$summary.fitted.value$mean[i]-y[i])^2),
+      mae=fsummarize(abs(m$summary.fitted.value$mean[i]-y[i])),
+      crps=-fsummarize(crps.g(
                  y[i], m$summary.fitted.value$mean[i],
                  sqrt(m$summary.fitted.value$sd[i]^2 +
                  1/m$summary.hyperpar$mean[1]))),
-      nSCRPS=-fsummarize(scrps.g(
+      scrps=-fsummarize(scrps.g(
         y[i],
         m$summary.fitted.val$mean[i],
         sqrt(m$summary.fitted.val$sd[i]^2 +
