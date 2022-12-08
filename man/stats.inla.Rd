@@ -59,13 +59,13 @@ Cumulative Probability Distribution.
 . lpo \deqn{-\sum_i \log(\phi(z_i))/n}{%
  \sum_i \log(\phi(z_i))/n}
 
-. crps \deqn{\sum_i \log(r_i)/n}{%
- \sum_i \log(r_i)/n}
+. crps \deqn{\sum_i r_i/n}{%
+ \sum_i r_i/n}
 where \deqn{r_i=\sigma_i/\sqrt{\pi} - 2\sigma_i\phi(z_i) + (y_i-\mu_i)(1-2\psi(z_i))}{
  r_i=\sigma_i/\sqrt{\pi} - 2\sigma_i\phi(z_i) + (y_i-\mu_i)(1-2\psi(z_i))}
 
-. scrps \deqn{\sum_i \log(s_i)/n}{%
- \frac{\sum_i \log(s_i)}{n}}
+. scrps \deqn{\sum_i s_i/n}{%
+ \frac{\sum_i s_i}{n}}
 where \deqn{s_i=-\log(2\sigma_i/\sqrt{\pi})/2 -\sqrt{\pi}(\phi(z_i)-\sigma_iz_i/2+z_i\psi(z_i))}{
  s_i=-\log(2\sigma_i/\sqrt{\pi})/2 -\sqrt{\pi}(\phi(z_i)-\sigma_iz_i/2+z_i\psi(z_i))}
 }
