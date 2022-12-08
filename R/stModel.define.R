@@ -32,10 +32,9 @@ stModel.define <-
     dimension <- as.integer(substr(smesh$manifold, 2, 2))
     stopifnot(dimension>0)
 
-    alphas <- as.integer(strsplit(model, '')[[1]])
-    nu.t <- alphas[1]-1/2
-    alpha <- alphas[3] + alphas[2]*nu.t
-    nu.s <- alpha-dimension/2
+    alpha <- alphas[3] + alphas[2] * (alphas[1] - 0.5) 
+    nu.s <- alpha-dimension/2   
+    nu.t <-  min(alphas[1] - 0.5, nu.s / alpha[2]) 
 
     cc <- c(0.5*log(8*nu.s), -0.5*log(8*nu.t),
             0.5*(lgamma(nu.t) - lgamma(alphas[1]) -1.5*log(4*pi)))
