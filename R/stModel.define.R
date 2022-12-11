@@ -32,6 +32,7 @@ stModel.define <-
     dimension <- as.integer(substr(smesh$manifold, 2, 2))
     stopifnot(dimension>0)
 
+    alphas <- as.integer(strsplit(model, "")[[1]])
     alpha <- alphas[3] + alphas[2] * (alphas[1] - 0.5) 
     nu.s <- alpha-dimension/2   
     nu.t <-  min(alphas[1] - 0.5, nu.s / alpha[2]) 
