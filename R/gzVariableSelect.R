@@ -1,7 +1,9 @@
 #' @title Select the specified variable
 #' @description Select a specivied variable from a .gz file and
 #' save it into a .RData.
-#' @param gzfile the .gz file
+#' @param gzfile the daily data file file. E.g. 2021.csv.gz from
+#' \url{https://www.ncei.noaa.gov/pub/data/ghcn/daily/by_year/}
+#' see references bellow.
 #' @param variable a character indicating which variable to select.
 #' @param astype function to be used to type the data.
 #' Default is the current working directory.
@@ -9,8 +11,12 @@
 #' @param verbose logical to indicate if verbose mode is active
 #' @section Warning:
 #'  it can take time to execute if the data.table package is not available.
-#' @seealso [ghcnDownload()]
-#' @return it writes a new file
+#' @references
+#' Menne, M., Durre, I., Vose, R., Gleason, B. and Houston, T. (2012)
+#' An overview of the global historical climatology network-daily database.
+#' Journal of Atmospheric and Oceanic Technology, 897–910.
+#' @return array [days, stations, variables] if more than one variable
+#' or a matrix [days, stations] if one variable.
 #' @export
 gzVariableSelect <- function(gzfile, variable, astype=as.integer,
                              qflag='', verbose=TRUE) {

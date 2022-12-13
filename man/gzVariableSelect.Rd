@@ -13,7 +13,9 @@ gzVariableSelect(
 )
 }
 \arguments{
-\item{gzfile}{the .gz file}
+\item{gzfile}{the daily data file file. E.g. 2021.csv.gz from
+\url{https://www.ncei.noaa.gov/pub/data/ghcn/daily/by_year/}
+see references bellow.}
 
 \item{variable}{a character indicating which variable to select.}
 
@@ -25,7 +27,8 @@ Default is the current working directory.}
 \item{verbose}{logical to indicate if verbose mode is active}
 }
 \value{
-it writes a new file
+array \link{days, stations, variables} if more than one variable
+or a matrix \link{days, stations} if one variable.
 }
 \description{
 Select a specivied variable from a .gz file and
@@ -36,6 +39,8 @@ save it into a .RData.
 it can take time to execute if the data.table package is not available.
 }
 
-\seealso{
-\code{\link[=ghcnDownload]{ghcnDownload()}}
+\references{
+Menne, M., Durre, I., Vose, R., Gleason, B. and Houston, T. (2012)
+An overview of the global historical climatology network-daily database.
+Journal of Atmospheric and Oceanic Technology, 897–910.
 }

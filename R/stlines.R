@@ -1,7 +1,7 @@
 #' To visualize time series over space.
 #'
-#' Plot each time series over the map centered at the location.
-#'
+#' @aliases stlines
+#' @export
 #' @param stdata matrix with the data, each column is a location.
 #' @param spatial an object with one of class defined in the sp package.
 #' @param group an integer vector indicating to which spatial unit
@@ -30,7 +30,7 @@
 #' @section Warning:
 #'  if there are too many geographical locations, it will not look good
 #' @return add lines to an existing plot
-#' @export
+#' @describeIn Plot each time series over the map centered at the location.
 stlines <- function(stdata, spatial, group=NULL, nmax.group=NULL,
                     xscale=1, yscale=1, colour=NULL, ...) {
   loc <- sp::coordinates(spatial)
@@ -54,7 +54,7 @@ stlines <- function(stdata, spatial, group=NULL, nmax.group=NULL,
     u <- (r-0.5)/nd
     colour <- grDevices::rgb(u, 1-2*abs(u-0.5), 1-u, 0.5)
   }
-  for(i in 1:ns) {
+  for(i in 1:ns) { ### TO DO: vectorize with segments(..., colorij)
     xx <- seq(-s0, s0, length=nt)*xscale + loc[i,1]
     nj <- length(gspl[[i]])
     if(nj>0) {
@@ -68,3 +68,38 @@ stlines <- function(stdata, spatial, group=NULL, nmax.group=NULL,
   }
   return(invisible())
 }
+#' @aliases stpoints
+#' @export
+#' @describeIn Plot each time series over the map centered at the location.
+stpoints <- function(stdata, spatial, group=NULL, nmax.group=NULL,
+                    xscale=1, yscale=1, colour=NULL, ...) {
+  loc <- sp::coordinates(spatial)
+  ns <- nrow(loc)
+  nt <- nrow(stdata)
+  nd <- ncol(stdata)
+  if(is.null(group)) {
+    stopifnot(nrow(spatial)>=ncol(stdata))
+    gspl <- split(1:nd, 1:nd)
+  } else {
+    stopifnot(ncol(stdata)==length(group))
+    gspl <- split(1:nd, factor(group, 1:ns))
+  }
+  if(is.null(nmax.group)) nmax.group <- nd
+  b <- sp::bbox(spatial)
+  s0 <- 0.5*sqrt(diff(b[1,])^2 + diff(b[2,])^2)/(ns^0.8)
+  z <- scale(stdata, scale=FALSE)
+  z <- z/sqrt(mean(z^2, na.rm=TRUE))
+  if(is.null(colour)) {
+    r <- rank(attr(z, 'scaled:center'))
+    u <- (r-0.5)/nd
+    colour <- grDevices::rgb(u, 1-2*abs(u-0.5), 1-u, 0.5)
+  }
+  xx <- seq(-s0, s0, length = nt) * xscale +
+    rep(loc[group, 1], each = nt)
+  yy <- as.vector(z) * s0 * yscale +
+    rep(loc[group, 2], each = nt)
+  colour <- rep(colour, each=nt)
+  graphics::points(xx, yy, col=colour, ...)
+  return(invisible())
+}
+
