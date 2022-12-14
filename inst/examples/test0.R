@@ -21,11 +21,6 @@ M <- ~ -1 + Intercept(1) +
     field(list(space = cbind(s1, s2), time=time),
           mapper=stmapper, model=stmodel)
 
-### mapper from the model domain to the data
-stmapper <- bru_mapper_multi(
-    list(space = bru_mapper(smesh),
-         time = bru_mapper(tmesh, indexed=TRUE)))
-
 ### define the spacetime model
 stmodel <- stModel.define(
     smesh, tmesh, '121', 
@@ -33,6 +28,13 @@ stmodel <- stModel.define(
         prs=c(1, 0.0),
         prt=c(5, 0.0),
         psigma=c(1, 0.5)))
+
+### print number of non-zeros in Q_u
+cat("Number of non-zeros in Q_u:",
+    stmodel$f$cgeneric$data$matrices$xx[2], "\n")
+
+### define the mapper for the spacetime model
+stmapper <- bru_get_mapper(stmodel)
 
 ### likelihood precision prior
 lkprec <- list(prec=list(initial=10, fixed=TRUE))

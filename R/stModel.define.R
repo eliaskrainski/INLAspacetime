@@ -37,7 +37,7 @@ stModel.define <-
     alphas <- as.integer(strsplit(model, "")[[1]])
     alpha <- alphas[3] + alphas[2] * (alphas[1] - 0.5)
     nu.s <- alpha-dimension/2
-    nu.t <-  min(alphas[1] - 0.5, nu.s / alpha[2])
+    nu.t <-  min(alphas[1] - 0.5, nu.s / alphas[2])
 
     cc <- c(0.5*log(8*nu.s), -0.5*log(8*nu.t),
             0.5*(lgamma(nu.t) - lgamma(alphas[1]) -1.5*log(4*pi)))
