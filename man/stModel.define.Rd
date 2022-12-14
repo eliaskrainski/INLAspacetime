@@ -11,7 +11,8 @@ stModel.define(
   control.priors,
   debug = FALSE,
   verbose = FALSE,
-  useINLAprecomp = TRUE
+  useINLAprecomp = TRUE,
+  libpath = NULL
 )
 }
 \arguments{
@@ -35,7 +36,10 @@ If a=0 then U is taken to be the fixed value of the parameter.}
 \item{verbose}{logical indicating if to print parameter values.}
 
 \item{useINLAprecomp}{logical indicating if is to be used
-shared object pre-compiled by INLA.}
+shared object pre-compiled by INLA. Not considered if
+libpath is provided.}
+
+\item{libpath}{string to the shared object. Default is NULL.}
 }
 \value{
 objects to be used in the f() formula term in INLA.
