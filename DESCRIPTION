@@ -15,7 +15,7 @@ Depends:
     sp,
     R (>= 3.6)
 Imports:
-    INLA (>= 22.11.28),
+    INLA (>= 22.12.14),
     graphics,
     grDevices,
     methods,
