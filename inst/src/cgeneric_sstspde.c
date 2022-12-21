@@ -179,15 +179,22 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 					c3S += (1 + 2 * (double) k) / pow(gs2 + (double) ((k * (k + 1))), alpha);
 				}
 			}
-			c3 += 0.5 * log(c3S);
-		}
-		// g_e = sqrt(c12 / (sigma * g_t * g_s^{2a-d})) ;
-		// log(g_e) = c3 + log(sigma) + log(g_t) + (d-2a)log(g_s) ;
-		if (ifix[2] == 1) {
-			lg[2] = c3 + aaux * lg[0] - 0.5 * lg[1] - log(psigma->doubles[0]);
+			c3 += 0.5 * log(c3S); // this c3 already accounts for gamma_s
+			if (ifix[2] == 1) {
+				lg[2] = c3 - 0.5 * lg[1] - log(psigma->doubles[0]); 
+			} else {
+				lg[2] = c3 - 0.5 * lg[1] - theta[ith++];
+			}
 		} else {
-			lg[2] = c3 + aaux * lg[0] - 0.5 * lg[1] - theta[ith++];
+			// g_e = sqrt(c12 / (sigma * g_t * g_s^{2a-d})) ;
+			// log(g_e) = c3 + log(sigma) + log(g_t) + (d-2a)log(g_s) ;
+			if (ifix[2] == 1) {
+				lg[2] = c3 + aaux * lg[0] - 0.5 * lg[1] - log(psigma->doubles[0]);
+			} else {
+				lg[2] = c3 + aaux * lg[0] - 0.5 * lg[1] - theta[ith++];
+			}
 		}
+
 		assert(nth == ith);
 
 		for (int i = 0, k = 0; i < nm; i++) {
@@ -195,6 +202,7 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 			a2 = lg[1] * tt->x[k++];
 			params[i] = exp(2 * (lg[2] + a1 + a2)) * bb->doubles[i];
 		}
+
 		if (verbose) {
 			fprintf(stderr, "theta = ");
 			for(int i=0; i<nth; i++)
