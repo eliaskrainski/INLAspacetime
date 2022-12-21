@@ -179,7 +179,7 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 					c3S += (1 + 2 * (double) k) / pow(gs2 + (double) ((k * (k + 1))), alpha);
 				}
 			}
-			c3 += log(c3S);
+			c3 += 0.5 * log(c3S);
 		}
 		// g_e = sqrt(c12 / (sigma * g_t * g_s^{2a-d})) ;
 		// log(g_e) = c3 + log(sigma) + log(g_t) + (d-2a)log(g_s) ;
