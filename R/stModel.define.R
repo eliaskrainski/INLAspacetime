@@ -40,7 +40,8 @@ stModel.define <-
     nu.t <-  min(alphas[1] - 0.5, nu.s / alphas[2])
 
     cc <- c(0.5*log(8*nu.s), -0.5*log(8*nu.t),
-            0.5*(lgamma(nu.t) - lgamma(alphas[1]) -1.5*log(4*pi)))
+            0.5*(lgamma(nu.t) - lgamma(alphas[1]) -
+		 1.5*log(4*pi))) ## c3 part, for S2 (S1???), to be completed in C
     if(Rmanifold) {
         cc[3] <- 0.5*(lgamma(nu.t) + lgamma(nu.s) -
                        lgamma(alphas[1]) -lgamma(alpha) -(dimension/2+0.5)*log(4*pi))
