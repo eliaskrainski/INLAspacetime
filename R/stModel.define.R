@@ -47,7 +47,7 @@ stModel.define <-
                        lgamma(alphas[1]) -lgamma(alpha) -(dimension/2+0.5)*log(4*pi))
     } else {
 	cc[3] <- 0.5*(lgamma(nu.t) - lgamma(alphas[1]) - 1.5*log(4*pi)
-		     ) ## c3 part, for S2 (S1???), to be completed in C
+		     ) ## c3 part for S2 (S1???), to be completed in C
     }
 
     mm <- stModel.matrices(smesh, tmesh, model)
