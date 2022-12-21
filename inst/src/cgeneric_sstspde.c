@@ -64,7 +64,8 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 	double alphas = (double) aaa->ints[1];
 	double alpha = (double) aaa->ints[2] + alphas * ((double) aaa->ints[0] - 0.5);
 	int ialpha = ((double) ((int) alpha)) == alpha;
-	double aaux = 0.5*(double)dimension - alpha; 
+	if(((int)alpha)>4L) ialpha = 0L; // to work in the c3S computation
+	double aaux = 0.5*((double)dimension) - alpha; 
 
 	assert(!strcasecmp(data->ints[6]->name, "nm"));
 	int nm = data->ints[6]->ints[0];
@@ -151,31 +152,34 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 
 		// c3 (depends on the manifold) 
 		if (Rmanifold == 0) { // if sphere (Rmanifold==0)
+		        double c3S = 0.0; // the remainding c3 part that depends on gamma_s
+		        double gs2 = exp(2 * lg[0]);
 			if (ialpha & (((int) alpha) == 1L)) {
 				for (int k = 0; k < 50; k++) {
-					c3 += (2 * (double) k) / (exp(2 * lg[0]) + (double) ((k * (k + 1))));
+					c3S += (1 + 2 * (double) k) / (gs2 + (double) ((k * (k + 1))));
 				}
 			}
 			if (ialpha & (((int) alpha) == 2L)) {
 				for (int k = 0; k < 50; k++) {
-					c3 += (2 * (double) k) / pow2(exp(2 * lg[0]) + (double) ((k * (k + 1))));
+					c3S += (1 + 2 * (double) k) / pow2(gs2 + (double) ((k * (k + 1))));
 				}
 			}
 			if (ialpha & (((int) alpha) == 3L)) {
 				for (int k = 0; k < 50; k++) {
-					c3 += (2 * (double) k) / pow3(exp(2 * lg[0]) + (double) ((k * (k + 1))));
+					c3S += (1 + 2 * (double) k) / pow3(gs2 + (double) ((k * (k + 1))));
 				}
 			}
 			if (ialpha & (((int) alpha) == 4L)) {
 				for (int k = 0; k < 50; k++) {
-					c3 += (2 * (double) k) / pow4(exp(2 * lg[0]) + (double) ((k * (k + 1))));
+					c3S += (1 + 2 * (double) k) / pow4(gs2 + (double) ((k * (k + 1))));
 				}
 			}
-			if (!ialpha) {
+			if (!ialpha){
 				for (int k = 0; k < 50; k++) {
-					c3 += (2 * (double) k) / pow(exp(2 * lg[0]) + (double) ((k * (k + 1))), alpha);
+					c3S += (1 + 2 * (double) k) / pow(gs2 + (double) ((k * (k + 1))), alpha);
 				}
 			}
+			c3 += log(c3S);
 		}
 		// g_e = sqrt(c12 / (sigma * g_t * g_s^{2a-d})) ;
 		// log(g_e) = c3 + log(sigma) + log(g_t) + (d-2a)log(g_s) ;
