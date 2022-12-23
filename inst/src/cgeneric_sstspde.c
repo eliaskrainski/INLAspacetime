@@ -61,10 +61,11 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 	assert(!strcasecmp(data->ints[5]->name, "aaa"));
 	inla_cgeneric_vec_tp *aaa = data->ints[5];
 	assert(aaa->len == 3);
-	double alphas = (double) aaa->ints[1];
-	double alpha = (double) aaa->ints[2] + alphas * ((double) aaa->ints[0] - 0.5);
-	int ialpha = ((double) ((int) alpha)) == alpha;
-	if(((int)alpha)>4L) ialpha = 0L; // to work in the c3S computation
+	double alphas = ((double)aaa->ints[1]);
+	double alpha = ((double)aaa->ints[2]) + alphas * (((double)aaa->ints[0]) - 0.5);
+	int ialpha = ((int)alpha);
+	int isalphaInt = fabs(((double)ialpha) - alpha) < 0.0001;
+	if(ialpha>4L) isalphaInt = 0L; // to work in the c3S computation
 	double aaux = 0.5*((double)dimension) - alpha; 
 
 	assert(!strcasecmp(data->ints[6]->name, "nm"));
@@ -150,48 +151,61 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 			lg[1] = cc->doubles[1] + alphas * lg[0] + theta[ith++];
 		}
 
-		// c3 (depends on the manifold) 
+		// map to gamma_e depends on the manifold
 		if (Rmanifold == 0) { // if sphere (Rmanifold==0)
-		        double c3S = 0.0; // the remainding c3 part that depends on gamma_s
-		        double gs2 = exp(2 * lg[0]);
-			if (ialpha & (((int) alpha) == 1L)) {
-				for (int k = 0; k < 50; k++) {
-					c3S += (1 + 2 * (double) k) / (gs2 + (double) ((k * (k + 1))));
+		        double c3S = 0.0; // the remainding C.S2 part that depends on gamma_s
+					  // sum_k (1 + 2k) / [ gamma_s^2 + k(k+1) ]^alpha
+		        double gs2 = exp(2 * lg[0]); // gamma_s^2
+			double gs2small = 0.25, gs2big = 4.0;
+			if((gs2>gs2small) & (gs2<gs2big)) {
+				if (isalphaInt) {
+ 					if(ialpha == 1L) {
+						for (int k = 0; k < 50; k++) {
+							c3S += (1 + 2 * (double) k) / ( gs2 + (double) ((k * (k + 1))) );
+						}
+ 					}
+					if(ialpha == 2L) {
+						for (int k = 0; k < 50; k++) {
+							c3S += (1 + 2 * (double) k) / pow2(gs2 + (double) ((k * (k + 1))));
+						}
+					}
+					if (ialpha == 3L) {
+						for (int k = 0; k < 50; k++) {
+							c3S += (1 + 2 * (double) k) / pow3(gs2 + (double) ((k * (k + 1))));
+						}
+					}
+					if (ialpha == 4L) {
+						for (int k = 0; k < 50; k++) {
+							c3S += (1 + 2 * (double) k) / pow4(gs2 + (double) ((k * (k + 1))));
+						}
+					}
+				} else {
+					for (int k = 0; k < 50; k++) {
+						c3S += (1 + 2 * (double) k) / pow(gs2 + (double) ((k * (k + 1))), alpha);
+					}
+				}
+				c3S = 0.5 * log(c3S);
+			} else {
+				if(gs2<=gs2small) {
+					c3S = -0.5 * alpha * log(gs2); // approximation for small gamma_s
+				} else { // gs2 big
+					c3S = 0.5 * ( (1.0-alpha) * log(gs2) -log(alpha-1.0) );
 				}
 			}
-			if (ialpha & (((int) alpha) == 2L)) {
-				for (int k = 0; k < 50; k++) {
-					c3S += (1 + 2 * (double) k) / pow2(gs2 + (double) ((k * (k + 1))));
-				}
-			}
-			if (ialpha & (((int) alpha) == 3L)) {
-				for (int k = 0; k < 50; k++) {
-					c3S += (1 + 2 * (double) k) / pow3(gs2 + (double) ((k * (k + 1))));
-				}
-			}
-			if (ialpha & (((int) alpha) == 4L)) {
-				for (int k = 0; k < 50; k++) {
-					c3S += (1 + 2 * (double) k) / pow4(gs2 + (double) ((k * (k + 1))));
-				}
-			}
-			if (!ialpha){
-				for (int k = 0; k < 50; k++) {
-					c3S += (1 + 2 * (double) k) / pow(gs2 + (double) ((k * (k + 1))), alpha);
-				}
-			}
-			c3 += 0.5 * log(c3S); // this c3 already accounts for gamma_s
+
+			c3 += c3S; // now c3 accounts for gamma_s
 			if (ifix[2] == 1) {
 				lg[2] = c3 - 0.5 * lg[1] - log(psigma->doubles[0]); 
 			} else {
 				lg[2] = c3 - 0.5 * lg[1] - theta[ith++];
 			}
 		} else {
-			// g_e = sqrt(c12 / (sigma * g_t * g_s^{2a-d})) ;
-			// log(g_e) = c3 + log(sigma) + log(g_t) + (d-2a)log(g_s) ;
+			// g_e = sqrt(C.R C.R.d) / (sigma * sqrt(g_t) * g_s^{2a-d})) ;
+			// log(g_e) = 0.5 [ log(C.R) + log(C.R.d) - log(g_t) + (d-2a)log(g_s) ] - log(sigma) ;
 			if (ifix[2] == 1) {
-				lg[2] = c3 + aaux * lg[0] - 0.5 * lg[1] - log(psigma->doubles[0]);
+				lg[2] = c3 - 0.5 * lg[1] + aaux * lg[0] - log(psigma->doubles[0]);
 			} else {
-				lg[2] = c3 + aaux * lg[0] - 0.5 * lg[1] - theta[ith++];
+				lg[2] = c3 - 0.5 * lg[1] + aaux * lg[0] - theta[ith++];
 			}
 		}
 
@@ -203,7 +217,7 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 			params[i] = exp(2 * (lg[2] + a1 + a2)) * bb->doubles[i];
 		}
 
-		if (verbose) {
+		if (verbose | debug) {
 			fprintf(stderr, "theta = ");
 			for(int i=0; i<nth; i++)
 				fprintf(stderr, "%f ", theta[i]);

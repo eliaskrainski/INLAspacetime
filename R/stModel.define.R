@@ -39,16 +39,31 @@ stModel.define <-
     nu.s <- alpha-dimension/2
     nu.t <-  min(alphas[1] - 0.5, nu.s / alphas[2])
 
+    if(verbose) {
+	    print(c(alphas = alphas))
+	    print(c(alpha=alpha, nu.s=nu.s, nu.t=nu.t))
+    }	
+
+    log.C.t <- lgamma(alphas[1] - 0.5) - lgamma(alphas[1]) - 0.5 * log(4*pi)
     cc <- c(c1 = 0.5*log(8*nu.s), 
 	    c2 = -0.5*log(8*nu.t), 
 	    c3 = NA)
     if(Rmanifold) {
-        cc[3] <- 0.5*(lgamma(nu.t) + lgamma(nu.s) -
-                       lgamma(alphas[1]) -lgamma(alpha) -(dimension/2+0.5)*log(4*pi))
+	log.C.Rd <- lgamma(alpha - (dimension * 0.5)) - lgamma(alpha) -
+		(dimension * 0.5) * log(4*pi)
+        cc[3] <- 0.5 * ( log.C.t + log.C.Rd )
+	if(verbose) 
+		cat("R manifold, cc[3] = ", cc[3], "\n")
     } else {
-	cc[3] <- 0.5*(lgamma(nu.t) - lgamma(alphas[1]) - 1.5*log(4*pi)
+	log.C.S2.part <- -log(4*pi) ## S1???
+	cc[3] <- 0.5*(log.C.t + log.C.S2.part
 		     ) ## c3 part for S2 (S1???), to be completed in C
+	if(verbose) 
+		cat("S manifold, cc[3] = ", cc[3], "\n")
     }
+	if(verbose) {
+		print(c(cc=cc))
+	}
 
     mm <- stModel.matrices(smesh, tmesh, model)
     n <- smesh$n * tmesh$n
