@@ -74,7 +74,7 @@ stModel.define <-
 
         if(is.null(libpath)) {
             if(useINLAprecomp) {
-                libpath <- inla.external.lib("INLAspacetime")
+                libpath <- INLA::inla.external.lib("INLAspacetime")
             } else {
                 libpath <- system.file("libs", package = "INLAspacetime")
                 if(Sys.info()['sysname']=='Windows') {

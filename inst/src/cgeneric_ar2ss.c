@@ -30,7 +30,7 @@
 double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgeneric_data_tp * data)
 {
 
-	double *ret = NULL, a1, a2, a1s, sleng, lprec, prec, pcorrect;
+	double *ret = NULL, a1, a2, sleng, lprec, prec, pcorrect;
 
 	assert(!strcasecmp(data->ints[0]->name, "n"));
 	int N = data->ints[0]->ints[0];
@@ -47,6 +47,9 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 	assert(!strcasecmp(data->doubles[2]->name, "pcor"));
 	inla_cgeneric_vec_tp *pcor = data->doubles[2];
 	assert(pcor->len == 2);
+
+	assert(!strcasecmp(data-ints[1]->name, "toprint"));
+	int toprint = data->ints[1]->ints[0];
 
 	int npar = 0;
 	if (theta) {
@@ -70,20 +73,19 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 			a2 = (2.0 / (1.0 + exp(-theta[npar]))) - 1.0;
 			npar++;
 		}
-		a1 = -2 * sqrt(a2) * cos(2 * M_PI / sleng);
-		a1s = SQR(a1);
-		pcorrect = (1 + a2) / ((1.0 - a2) * (1.0 - a1 + a2) * (1.0 + a1 + a2));
+		a1 = -2.0 * sqrt(a2) * cos(2.0 * M_PI / sleng);
+		pcorrect = exp( log(1 + a2) - log(1.0 - a2) - log(1.0 - a1 + a2) - log(1.0 + a1 + a2) );
 	} else {
 		sleng = NAN;
 		prec = lprec = NAN;
 		a2 = NAN;
-		pcorrect = a1s = a1 = NAN;
+		pcorrect = a1 = NAN;
 	}
 
 	switch (cmd) {
 	case INLA_CGENERIC_GRAPH:
 	{
-		int M = N + N - 1, i = 1, k = 0;
+		int M = N + N - 1, k = 0;
 		if (N > 2) {
 			M += N - 2;
 		}
@@ -93,9 +95,13 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 		ret[k++] = M;				       /* number of (i <= j) */
 		// printf("graph : N = %g, M = %g, k = %d\n", ret[0], ret[1], k);
 
-		ret[k++] = 0;
-		ret[k++] = 0;
+		if (N == 1) {
+			ret[k++] = 0;
+			ret[k++] = 0;
+		}
 		if (N == 2) {
+			ret[k++] = 0;
+			ret[k++] = 0;
 			ret[k++] = 1;
 			ret[k++] = 0;
 			ret[k++] = 1;
@@ -103,33 +109,36 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 		}
 		// printf("G k = %d\n", k);
 		if (N > 2) {
-			ret[k++] = 0;
-			for (int i = 1; i < (N - 2); i++) {
+			if (toprint) 
+				fprintf(stderr, "graph\n");
+			for (int i = 0; i < (N - 2); i++) {
 				ret[k++] = i;	       /* i */
 				ret[k++] = i;	       /* i */
 				ret[k++] = i;	       /* i */
 			}
 			// printf("G k = %d\n", k);
-			ret[k++] = i;
-			ret[k++] = i;
-			ret[k++] = i + 1;
+			ret[k++] = N - 2;
+			ret[k++] = N - 2;
+			ret[k++] = N - 1;
 			for (int i = 0; i < (N - 2); i++) {
 				ret[k++] = i;		       /* j */
 				ret[k++] = i + 1;	       /* j */
 				ret[k++] = i + 2;	       /* j */
+				if(toprint)
+					fprintf(stderr, "%d %d %d %d\n", i, i, i+1, i+2);
 			}
-			ret[k++] = i;
-			ret[k++] = i + 1;
-			ret[k++] = i + 1;
+			ret[k++] = N - 2;
+			ret[k++] = N - 1;
+			ret[k++] = N - 1;
 			// printf("G k = %d\n", k);
 		}
 		assert((2 * M + 2) == k);
 	}
-		break;
+	break;
 
 	case INLA_CGENERIC_Q:
 	{
-		double q1, q2, q3, param = pcorrect * prec;
+		double q0, q1, q2, param = pcorrect * prec;
 		int M = N + N - 1;
 		if (N > 2)
 			M += N - 2;
@@ -140,42 +149,44 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 		ret[k++] = -1;
 		ret[k++] = M;
 		// printf("Q : ret = %g, M = %g, k = %d\n", ret[0], ret[1], k);
-		ret[k++] = param;
+
+		if(toprint) fprintf(stderr, "Q\n"); 
+		
+		if (N == 1) {
+			ret[k++] = param;
+		}
 		if (N == 2) {
-			ret[k++] = 0.5 * a1 * param;	       // convention: 0.5 * rho * (1-rho^2)/s2innovation
+			ret[k++] = param;
+			ret[k++] = 0.5 * a1 * param;	// convention: 0.5 * rho * (1-rho^2)/s2innovation
+			ret[k++] = param;
 		}
 		if (N > 2) {
+			ret[k++] = param;
 			ret[k++] = a1 * param;
-			ret[k++] = a2 * param;
-		}
-		if (N > 3) {
-			ret[k++] = (1.0 + a1s) * param;
-			ret[k++] = a1 * (1 + a2) * param;
-			ret[k++] = a2 * param;
-		// printf("q123 = %g, %g, %g\n", q1, q2, q3);
-		}
-		if (N > 4) {
-		        q1 = (1.0 + a1s + SQR(a2)) * param;
-			q2 = (a1 * (1.0 + a2)) * param;
-			q3 = a2 * param;
-			// printf("a = %g, %g\n", a1, a2);
-			// printf("q123 = %g, %g, %g\n", q1, q2, q3);
-			for (int i = 3; i < (N - 1); i++) {
+			q2 = a2 * param;
+			ret[k++] = q2; 
+			if (N > 3) {
+				ret[k++] = (1.0 + a1 * a1) * param;
+				q1 = a1 * (1.0 + a2) * param;
 				ret[k++] = q1;
 				ret[k++] = q2;
-				ret[k++] = q3;
+				if (N > 4) {
+					q0 = (1.0 + a1 * a1 + a2 * a2) * param;
+					for (int i = 3; i < (N - 1); i++) {
+						ret[k++] = q0;
+						ret[k++] = q1;
+						ret[k++] = q2;
+						if(toprint) 
+							fprintf(stderr, "%d %f %f %f\n", i, q0, q1, q2);
+					}
+				}
 			}
-		}
-		// printf("Q k = %d\n", k);
-		if (N > 2) {
-			ret[k++] = (1.0 + a1s) * param;
+			ret[k++] = (1.0 + a1 * a1) * param;
 			ret[k++] = a1 * param;
-		}
-		if (N > 1) {
 			ret[k++] = param;
 		}
 	}
-		break;
+	;break;
 
 	case INLA_CGENERIC_MU:
 	{
@@ -192,7 +203,7 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 			ret[++npar] = 0.0;		       // log(psigma->doubles[0] - 1);
 		}
 		if (!iszero(pleng->doubles[1])) {
-			ret[++npar] = 10.0;		       // log(pleng->doubles[0] + 1);
+			ret[++npar] = 1.0;		       // log(pleng->doubles[0] + 1);
 		}
 		if (!iszero(pcor->doubles[1])) {
 			ret[++npar] = 2.94445;		       // log((0.5+0.5*pcor->doubles[0])/(1-(0.5+0.5*pcor->doubles[0]))); 
