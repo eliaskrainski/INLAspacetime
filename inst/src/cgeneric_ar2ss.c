@@ -48,7 +48,7 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 	inla_cgeneric_vec_tp *pcor = data->doubles[2];
 	assert(pcor->len == 2);
 
-	assert(!strcasecmp(data-ints[1]->name, "toprint"));
+	assert(!strcasecmp(data->ints[1]->name, "toprint"));
 	int toprint = data->ints[1]->ints[0];
 
 	int npar = 0;
