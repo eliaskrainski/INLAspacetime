@@ -2,6 +2,7 @@
 ### for the piemonte dataset (Cameleti et. al. 2012)
 
 ### packages
+library(INLA)
 library(INLAspacetime)
 library(inlabru)
 
@@ -84,21 +85,15 @@ dataf <- data.frame(pdata[c('UTMX', 'UTMY', 'time')],
                     y=log(pdata$PM10))
 str(dataf)
 
-#### mappter from the model domain to the data
-stmapper <- bru_mapper_multi(
-    list(space = bru_mapper(smesh),
-         time = bru_mapper(tmesh, indexed=TRUE)))
-
 ### add a overall integrate-to-zero constraint (no need but helps)
 stConstr <- list(
-    A=matrix(diag(kronecker(
-        Diagonal(tmesh$n, colSums(inla.mesh.fem(tmesh)$c1)),
-        Diagonal(smesh$n, colSums(inla.mesh.fem(smesh)$c1)))), nrow=1), e=0)
+    A=kronecker(inla.mesh.fem(tmesh)$c0@x, 
+                inla.mesh.fem(smesh)$va[,1]), e=0)
 
 ### define the data Model
 M <- ~ -1 + Intercept(1) + A + WS + TEMP + HMIX + PREC + EMI + 
     field(list(space = cbind(UTMX, UTMY), time=time),
-          mapper=stmapper, model=stmodel, extraconstr=stConstr)
+          model=stmodel, extraconstr=stConstr)
 
 ### likelihood precision prior
 lkprec <- list(
