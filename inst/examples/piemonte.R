@@ -87,8 +87,8 @@ str(dataf)
 
 ### add a overall integrate-to-zero constraint (no need but helps)
 stConstr <- list(
-    A=kronecker(inla.mesh.fem(tmesh)$c0@x, 
-                inla.mesh.fem(smesh)$va[,1]), e=0)
+    A=matrix(kronecker(inla.mesh.fem(tmesh)$c0@x, 
+                       inla.mesh.fem(smesh)$va[,1]), 1), e=0)
 
 ### define the data Model
 M <- ~ -1 + Intercept(1) + A + WS + TEMP + HMIX + PREC + EMI + 
