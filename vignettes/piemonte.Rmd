@@ -1,0 +1,352 @@
+---
+title: "INLAspacetime: exploring with an example"
+author: "Elias T Krainski"
+date: "2023, Feb"
+output: rmarkdown::html_vignette
+bibliography: INLAspacetime.bib
+vignette: >
+  %\VignetteIndexEntry{INLAspacetime}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  dev = "png",
+  dev.args = list(type = "cairo-png"),
+  fig.width = 7,
+  fig.height = 5
+)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r cpackages}
+library(ggplot2)
+library(patchwork)
+```
+
+# Introduction 
+
+In this vignette we illustrate how to fit some of the spacetime models
+using the method proposed in @lindgren2023 
+for the piemonte dataset analysed in @cameletti2013.
+
+To perform this we will use the Bayesian paradigm with compuations done 
+with the **INLA** package using the features provided by the 
+**inlabru** package. 
+
+```{r packages, results = "hide"}
+library(INLA)
+library(INLAspacetime)
+library(inlabru)
+```
+
+We consider the following setting for **INLA**
+
+```{r inlasetup}
+inla.setOption(
+    inla.mode='compact',
+    smtp='pardiso',
+    pardiso.license='~/.pardiso.lic')
+
+ctri <- list(
+    int.strategy='ccd',
+    parallel.linesearch=TRUE)
+```
+
+We will ask it to return the WAIC, DIC and CPO 
+```{r ctrc}
+ctrc <- list(
+    config=TRUE,
+    waic=TRUE,
+    dic=TRUE,
+    cpo=TRUE)
+```
+
+# The dataset
+
+Set the filenames
+
+```{r filenames}
+u0 <- paste0(
+    'http://inla.r-inla-download.org/',
+    'r-inla.org/case-studies/Cameletti2012/')
+coofl <- 'coordinates.csv'
+datafl <- 'Piemonte_data_byday.csv'
+bordersfl <- 'Piemonte_borders.csv'
+```
+
+Download and read the borders file
+```{r downloadporders}
+### get the domain borders
+if(!file.exists(bordersfl))
+    download.file(paste0(u0, bordersfl), bordersfl)
+dim(pborders <- read.csv(bordersfl))
+```
+
+Download and read the dataset
+```{r downloaddata}
+### get the dataset
+if(!file.exists(datafl))
+    download.file(paste0(u0, datafl), datafl)
+dim(pdata <- read.csv(datafl))
+```
+
+Inspect the dataset
+```{r dinspect}
+head(pdata)
+```
+
+Prepare the time to be used
+```{r time}
+range(pdata$Date <- as.Date(pdata$Date, '%d/%m/%y'))
+pdata$time <- as.integer(difftime(
+    pdata$Date, min(pdata$Date), units='days'))+1
+```
+
+Standardize the covariates that will be used in the data analysis 
+and define a dataset including the needed information 
+where the outcome is the log of `PM10`, 
+as used in @cameletti2013.
+```{r covars}
+### prepare the covariates
+xnames <- c('A', 'WS', 'TEMP', 'HMIX', 'PREC', 'EMI')
+xmean <- colMeans(pdata[, xnames])
+xsd <- sapply(pdata[xnames], sd)
+
+### prepare the data (st loc, scale covariates and log PM10)
+dataf <- data.frame(pdata[c('UTMX', 'UTMY', 'time')],
+                    scale(pdata[xnames], xmean, xsd),
+                    y=log(pdata$PM10))
+str(dataf)
+```
+
+# The model definition 
+
+We consider the following linear mixed model for the outcome
+\[ 
+\mathbf{y} = \mathbf{W}\mathbf{\beta} + \matbhf{A}\mathbf{u} + \mathbf{e}
+\]
+where $\beta$ are fixed effects, or regression coefficients including the intercept, 
+for the matrix of covariates $\mathbf{W}$,
+$\mathbf{u}$ is the spatio-temporal random effect having the matrix
+$\mathbf{A}$ the projector matrix from the discredized domain to the data.
+The spatio-temporal random effect $\mathbf{u}$ is defined in a continuous 
+spacetime domain being discredized considering meshes over time and space.
+
+Define a temporal mesh
+```{r tmesh}
+nt <- max(pdata$time)
+tmesh <- inla.mesh.1d(1:nt, degree=1)
+tmesh$n
+```
+
+Define a spatial mesh
+```{r smesh}
+smesh <- inla.mesh.2d(
+    loc.domain=pborders,
+    max.edge=c(30, 300),
+    offset=c(10, 140),
+    cutoff=5,
+    min.angle=c(26, 21))
+smesh$n
+```
+
+Visualize the spatial mesh
+```{r smeshvis}
+par(mfrow=c(1,1), mar=c(0,0,1,0))
+plot(smesh, asp=1)
+lines(pborders, lwd=2, col='green4')
+```
+
+Add an overall integrate-to-zero constraint, 
+which is not need but helps, in order to illustrate how it is done.
+It has to consider the weights based on the mesh node volumes, 
+that is, we consider the temporal and spatial ones as follows:
+```{r stConstr}
+tva <- inla.mesh.fem(tmesh)$c0@x
+sva <- inla.mesh.fem(smesh)$va[,1]
+stConstr <- list(
+    A=matrix(kronecker(tva, sva), 1), e=0)
+```
+
+Considering the **inlabru** package we start by defining the model components
+```{r mcomp}
+M <- ~ -1 + Intercept(1) + A + WS + TEMP + HMIX + PREC + EMI +
+    field(list(space = cbind(UTMX, UTMY), time=time),
+          model=stmodel, extraconstr=stConstr)
+```
+
+We se the prior for the likelihood precision 
+considering a PC-prior, @pcprior, 
+using a probabilistic statement 
+P($\sigma_e > U_{\sigma_e}$) = $\alpha_{\sigma_e}$, 
+using $U_{\sigma_e}$ = 10 and $\alpha_{\sigma_e} = 0.01$. 
+
+```{r lprec}
+lkprec <- list(
+    prec=list(prior='pcprec', param=c(10, 0.1)))
+```
+
+The implementation of the spacetime model uses the `cgeneric` 
+interface in **INLA**, see its documentation for details. 
+Therefore we have a `C` code to mainly build the precision matrix and 
+compute the model parameter priors and compiled as static library. 
+We have this code included in the **INLAspacetime** package but it is also 
+being copied to the **INLA** package and compiled with the same compilers 
+in order to avoid possible mismatches. 
+In order to use it, we have to define the matrices and vectors needed, 
+including the prior parameter definitions.
+
+The class of models in @lindgren2023 have the spatial range, 
+temporal range and marginal standard deviation as parameters. 
+We consider the PC-prior for these parameters defined from the 
+probatility statements as 
+P($r_s<U_{r_s}$)=$\alpha_{r_s}$, 
+P($r_t<U_{r_t}$)=$\alpha_{r_t}$ and 
+P($\sigma<U_{\sigma}$)=$\alpha_{\sigma}$.
+We consider $U_{r_s}=30$, $U_{r_t}=1$ and $U_{\sigma}=10$.
+$\alpha_{r_s}=\alpha_{r_t}=\alpha_{\sigma}=0.01$
+
+The selection of one of the models in @lindgren2023 is by chosing the 
+$\alpha_t$, $\alpha_s$ and $\alpha_e$ as integer numbers. 
+We will start considering the model $\alpha_t=1$, $\alpha_s=0$ and $\alpha_t=2$, 
+which is a model with separable spatio-temporal covariance, 
+and then we fit some of the other models later.
+
+```{r stmodeldef, echo = FALSE, eval = FALSE}
+stmodel <- stModel.define(
+    smesh, tmesh, model,
+    control.priors=list(
+        prs=c(30, 0.01),
+        prt=c(1, 0.01),
+        psigma=c(10, 0.01)))
+```
+
+We define an object with the needed 
+use the function `stModel.define` 
+where the model is selected considering the values for 
+$\alpha_t$, $\alpha_s$ and $\alpha_e$ collapsed. 
+```{r m102}
+model <- "102"
+<<stmodeldef>>
+```
+
+```{r fit, echo = FALSE, eval = FALSE}
+  bru(M,
+      like(formula = y ~ .,
+           family="gaussian",
+           control.family = list(
+               hyper = lkprec),
+           data=dataf),
+      options = list(
+          control.inla=ctri,
+          control.compute=ctrc))
+```
+
+```{r fitobj, echo = FALSE, eval = TRUE}
+if(file.exists("fit102.rds")) {
+  fit102 <- readRDS("fit102.rds")
+} else {
+  fit102 <- 
+    <<fit>>
+  saveRDS(fit102, file = "fit102.rds")
+}
+```
+
+The code to fit the model through **inlabru** is
+```{r fit102, eval = FALSE}
+fit102 <- 
+  <<fit>>
+```
+
+The computing time is
+```{r cpu1}
+fit102$cpu
+```
+
+Summary of the posterior marginal distributions for the fixed effects 
+```{r sfixef}
+fit102$summary.fixed[, c(1, 2, 3, 5)]
+```
+
+For the hyperparameters, we first transform the posterior marginal distributions for the model hyperparameters
+in the internal scale, 
+$\log(1/\sigma^2_e)$, $\log(r_s)$, $\log(r_t)$ and $\log(\sigma)$,
+to the user scale parametrization:
+$\sigma_e$, $r_s$, $r_t$ and $\sigma$.
+```{r thyper}
+post.h <- list(
+  sigma_e = inla.tmarginal(function(x) exp(-x/2), fit102$internal.marginals.hyperpar[[1]]),
+  r_s = inla.tmarginal(function(x) exp(x), fit102$internal.marginals.hyperpar[[2]]),
+  r_t = inla.tmarginal(function(x) exp(x), fit102$internal.marginals.hyperpar[[3]]),
+  sigma = inla.tmarginal(function(x) exp(x), fit102$internal.marginals.hyperpar[[4]])
+)
+```
+
+Then we compute and show the summary of it
+```{r shyper}
+shyper <- t(sapply(post.h, function(m) 
+  unlist(inla.zmarginal(m, silent = TRUE))))
+shyper[, c(1, 2, 3, 7)]
+```
+
+However, it is better to look at the posterior marginal itself, with 
+```{r hyperpmd}
+pmdata <- do.call(
+  rbind, 
+  lapply(1:4, function(i) {
+    data.frame(param = names(post.h)[i], post.h[[i]])
+  })
+)
+
+ggplot(pmdata) +
+  geom_line(aes(x=x, y=y)) +
+  ylab("Density") + xlab("") + 
+  facet_wrap(~param, scales = "free")
+```
+
+
+# Comparing different models 
+
+We now fit the models $121$, $202$ and $220$. 
+Therefore the models we will be considering are named as 
+```{r models}
+models <- c("102", "121", "202", "220")
+```
+
+We create a list object and put each model fit 
+as element on it, starting with the previously fitted model 
+```{r fitl}
+lfit <- list("m102" = fit102)
+```
+
+```{r omodels, eval = FALSE}
+for(imodel in 2:4) { 
+  model <- models[imodel]
+  <<stmodeldef>>
+ lfit[[imodel]] <- 
+  <<fit>>
+}
+```
+```{r modelsobj, echo = FALSE, eval = TRUE}
+for(imodel in 2:4) { 
+  model <- models[imodel]
+  <<stmodeldef>>
+  flname <- paste0("fit", model, ".rds")
+ if(file.exists(flname)) {
+   lfit[[imodel]] <- readRDS(flname)
+ } else {
+   lfit[[imodel]] <-
+     <<fit>>
+     saveRDS(lfit[[imodel]], 
+             file = flname)
+ }
+}
+```
+
+
+
+# References

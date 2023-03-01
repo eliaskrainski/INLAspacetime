@@ -19,7 +19,7 @@
 #' 5. the model matrices `M_1`, ..., `M_m`
 #' @export
 stModel.matrices <-
-    function(smesh, tmesh, model)
+    function(smesh, tmesh, model, constr = FALSE)
 {
 
     stopifnot(inherits(smesh, "inla.mesh"))
@@ -190,6 +190,11 @@ stModel.matrices <-
 
     if(length(unique(diff(tmesh$loc)))>1) {
         warning('Edge correction for irregular are not OK yet!')
+    }
+
+    if(constr) {
+        val$constr.Ae <- list(
+            A=kronecker(tfe$va[, 1], sfe$va[, 1]), e=0)
     }
 
     return(val)

@@ -23,7 +23,7 @@
 #' @export
 stModel.define <-
     function(smesh, tmesh, model, control.priors,
-             debug=FALSE, verbose=FALSE,
+             constr = FALSE, debug=FALSE, verbose=FALSE,
              useINLAprecomp=TRUE, libpath=NULL)
 {
     stopifnot(model %in% c('102','121','202','220'))
@@ -42,23 +42,23 @@ stModel.define <-
     if(verbose) {
 	    print(c(alphas = alphas))
 	    print(c(alpha=alpha, nu.s=nu.s, nu.t=nu.t))
-    }	
+    }
 
     log.C.t <- lgamma(alphas[1] - 0.5) - lgamma(alphas[1]) - 0.5 * log(4*pi)
-    cc <- c(c1 = 0.5*log(8*nu.s), 
-	    c2 = -0.5*log(8*nu.t), 
+    cc <- c(c1 = 0.5*log(8*nu.s),
+	    c2 = -0.5*log(8*nu.t),
 	    c3 = NA)
     if(Rmanifold) {
 	log.C.Rd <- lgamma(alpha - (dimension * 0.5)) - lgamma(alpha) -
 		(dimension * 0.5) * log(4*pi)
         cc[3] <- 0.5 * ( log.C.t + log.C.Rd )
-	if(verbose) 
+	if(verbose)
 		cat("R manifold, cc[3] = ", cc[3], "\n")
     } else {
 	log.C.S2.part <- -log(4*pi) ## S1???
 	cc[3] <- 0.5*(log.C.t + log.C.S2.part
 		     ) ## c3 part for S2 (S1???), to be completed in C
-	if(verbose) 
+	if(verbose)
 		cat("S manifold, cc[3] = ", cc[3], "\n")
     }
 	if(verbose) {
