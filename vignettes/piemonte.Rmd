@@ -47,22 +47,23 @@ We consider the following setting for **INLA**
 
 ```{r inlasetup}
 inla.setOption(
-    inla.mode='compact',
-    smtp='pardiso',
-    pardiso.license='~/.pardiso.lic')
-
-ctri <- list(
-    int.strategy='ccd',
-    parallel.linesearch=TRUE)
+  inla.mode='compact',
+  smtp='pardiso',
+  pardiso.license='~/.pardiso.lic')
+```
+```{r irem, echo = FALSE}
+inla.setOption(
+#  inla.call = "remote", 
+  num.threads = "8:-1"
+)
 ```
 
 We will ask it to return the WAIC, DIC and CPO 
 ```{r ctrc}
 ctrc <- list(
-    config=TRUE,
-    waic=TRUE,
-    dic=TRUE,
-    cpo=TRUE)
+  waic=TRUE,
+  dic=TRUE,
+  cpo=TRUE)
 ```
 
 # The dataset
@@ -86,6 +87,14 @@ if(!file.exists(bordersfl))
 dim(pborders <- read.csv(bordersfl))
 ```
 
+Download and read the coordinates file
+```{r coords}
+### get the coordinates
+if(!file.exists(coofl))
+    download.file(paste0(u0, coofl), coofl)
+dim(locs <- read.csv(coofl))
+```
+
 Download and read the dataset
 ```{r downloaddata}
 ### get the dataset
@@ -103,7 +112,7 @@ Prepare the time to be used
 ```{r time}
 range(pdata$Date <- as.Date(pdata$Date, '%d/%m/%y'))
 pdata$time <- as.integer(difftime(
-    pdata$Date, min(pdata$Date), units='days'))+1
+    pdata$Date, min(pdata$Date), units='days')) + 1
 ```
 
 Standardize the covariates that will be used in the data analysis 
@@ -127,38 +136,42 @@ str(dataf)
 
 We consider the following linear mixed model for the outcome
 \[ 
-\mathbf{y} = \mathbf{W}\mathbf{\beta} + \matbhf{A}\mathbf{u} + \mathbf{e}
+\mathbf{y} = \mathbf{W}\mathbf{\beta} + \mathbf{A}\mathbf{u} + \mathbf{e}
 \]
 where $\beta$ are fixed effects, or regression coefficients including the intercept, 
 for the matrix of covariates $\mathbf{W}$,
 $\mathbf{u}$ is the spatio-temporal random effect having the matrix
-$\mathbf{A}$ the projector matrix from the discredized domain to the data.
+$\mathbf{A}$ the projector matrix from the discretized domain to the data.
 The spatio-temporal random effect $\mathbf{u}$ is defined in a continuous 
-spacetime domain being discredized considering meshes over time and space.
+spacetime domain being discretized considering meshes over time and space. 
+The difference from @cameletti2013 is that we now use the models in 
+@lindgren2023 for $\mathbf{u}$. 
 
-Define a temporal mesh
+Define a temporal mesh, with 1 knot per day.
 ```{r tmesh}
 nt <- max(pdata$time)
 tmesh <- inla.mesh.1d(1:nt, degree=1)
 tmesh$n
 ```
 
-Define a spatial mesh
+Define a spatial mesh, the same used in @cameletti2013.
 ```{r smesh}
 smesh <- inla.mesh.2d(
+    cbind(locs[,2], locs[,3]),
     loc.domain=pborders,
-    max.edge=c(30, 300),
+    max.edge=c(50, 300),
     offset=c(10, 140),
     cutoff=5,
     min.angle=c(26, 21))
 smesh$n
 ```
 
-Visualize the spatial mesh
+Visualize the spatial mesh, the border and the locations.
 ```{r smeshvis}
 par(mfrow=c(1,1), mar=c(0,0,1,0))
 plot(smesh, asp=1)
-lines(pborders, lwd=2, col='green4')
+lines(pborders, lwd = 2, col = 'green4')
+points(locs[, 2:3], pch = 12, col = "blue")
 ```
 
 Add an overall integrate-to-zero constraint, 
@@ -169,7 +182,7 @@ that is, we consider the temporal and spatial ones as follows:
 tva <- inla.mesh.fem(tmesh)$c0@x
 sva <- inla.mesh.fem(smesh)$va[,1]
 stConstr <- list(
-    A=matrix(kronecker(tva, sva), 1), e=0)
+    A=matrix(kronecker(tva, sva), 1), e = 0)
 ```
 
 Considering the **inlabru** package we start by defining the model components
@@ -187,7 +200,7 @@ using $U_{\sigma_e}$ = 10 and $\alpha_{\sigma_e} = 0.01$.
 
 ```{r lprec}
 lkprec <- list(
-    prec=list(prior='pcprec', param=c(10, 0.1)))
+    prec=list(prior='pcprec', param=c(1, 0.1)))
 ```
 
 The implementation of the spacetime model uses the `cgeneric` 
@@ -219,10 +232,10 @@ and then we fit some of the other models later.
 ```{r stmodeldef, echo = FALSE, eval = FALSE}
 stmodel <- stModel.define(
     smesh, tmesh, model,
-    control.priors=list(
-        prs=c(30, 0.01),
-        prt=c(1, 0.01),
-        psigma=c(10, 0.01)))
+    control.priors = list(
+        prs = c(50, 0.01),
+        prt = c(1, 0.01),
+        psigma = c(1, 0.01)))
 ```
 
 We define an object with the needed 
@@ -234,16 +247,22 @@ model <- "102"
 <<stmodeldef>>
 ```
 
+Initial values for the hyper-parameters help to fit the models in less computing time. 
+It is also important to consider in the light that each dataset has its own parameter scale. 
+For example, we have to consider that the spatial domain within a box of 
+around $203.7$ by $266.5$ kilometers, which we already did when building the 
+mesh and setti or $r_s$
+
+
 ```{r fit, echo = FALSE, eval = FALSE}
   bru(M,
       like(formula = y ~ .,
-           family="gaussian",
+           family = "gaussian",
            control.family = list(
                hyper = lkprec),
-           data=dataf),
+           data = dataf),
       options = list(
-          control.inla=ctri,
-          control.compute=ctrc))
+          control.compute = ctrc))
 ```
 
 ```{r fitobj, echo = FALSE, eval = TRUE}
@@ -272,7 +291,7 @@ Summary of the posterior marginal distributions for the fixed effects
 fit102$summary.fixed[, c(1, 2, 3, 5)]
 ```
 
-For the hyperparameters, we first transform the posterior marginal distributions for the model hyperparameters
+For the hyperparameters, we transform the posterior marginal distributions for the model hyperparameters
 in the internal scale, 
 $\log(1/\sigma^2_e)$, $\log(r_s)$, $\log(r_t)$ and $\log(\sigma)$,
 to the user scale parametrization:
@@ -293,60 +312,121 @@ shyper <- t(sapply(post.h, function(m)
 shyper[, c(1, 2, 3, 7)]
 ```
 
-However, it is better to look at the posterior marginal itself, with 
-```{r hyperpmd}
-pmdata <- do.call(
-  rbind, 
-  lapply(1:4, function(i) {
-    data.frame(param = names(post.h)[i], post.h[[i]])
-  })
-)
+However, it is better to look at the posterior marginal itself, 
+and we will visualize it later.
 
-ggplot(pmdata) +
-  geom_line(aes(x=x, y=y)) +
-  ylab("Density") + xlab("") + 
-  facet_wrap(~param, scales = "free")
+The model fitted in @cameletti2013 includes two more covariates and 
+setup a model for discrete temporal domain where the temporal correlation 
+is modeled as a first order autoregression with parameter $\rho$. 
+In the fitted model here is defined considering continuous temporal domain 
+with the range parameter $r_s$. 
+However, the first order autocorrelation could be taken as 
+$\rho = \exp(-2h/r_s)$, where $h$ is the temporal resolution used in 
+the temporal mesh. As we used $h=1$ we can 
+compare ou results with Table 3 in @cameletti2013 with
+
+```{r compare1}
+c(shyper[c(1, 4, 2), 1], 
+  a=exp(-sqrt(8*0.5)/shyper[3, 1]))
 ```
-
 
 # Comparing different models 
 
-We now fit the models $121$, $202$ and $220$. 
-Therefore the models we will be considering are named as 
-```{r models}
-models <- c("102", "121", "202", "220")
+We now fit the model $121$ as well, 
+using the same code, just building a new model object for $u$ 
+as follows
+```{r model121}
+model <- "121"
+<<stmodeldef>>
 ```
 
 We create a list object and put each model fit 
 as element on it, starting with the previously fitted model 
 ```{r fitl}
-lfit <- list("m102" = fit102)
+lfits <- vector("list", length = 2L) 
+names(lfits) <- c("102", "121")
+lfits[[1]] <- fit102
+rm(fit102)
 ```
 
 ```{r omodels, eval = FALSE}
-for(imodel in 2:4) { 
-  model <- models[imodel]
-  <<stmodeldef>>
- lfit[[imodel]] <- 
+lfits[[2]] <- 
   <<fit>>
-}
 ```
 ```{r modelsobj, echo = FALSE, eval = TRUE}
-for(imodel in 2:4) { 
-  model <- models[imodel]
-  <<stmodeldef>>
-  flname <- paste0("fit", model, ".rds")
- if(file.exists(flname)) {
-   lfit[[imodel]] <- readRDS(flname)
- } else {
-   lfit[[imodel]] <-
+<<stmodeldef>>
+flname <- paste0("fit", model, ".rds")
+if(file.exists(flname)) {
+   lfits[[2]] <- readRDS(flname)
+} else {
+  lfits[[2]] <-
      <<fit>>
-     saveRDS(lfit[[imodel]], 
-             file = flname)
- }
+  saveRDS(lfits[[2]], 
+           file = flname)
 }
 ```
 
+The internal scale hyper-parameters posterior mode for each model
+```{r modes}
+sapply(lfits, function(r) r$mode$theta)
+```
 
+We will transform the posterior marginal distribution for the hyper-parameters 
+as we did for the previous model 
+```{r h2pmd}
+posts.h2 <- lapply(1:2, function(m) vector("list", 4L))
+for(m in 1:2) {
+    posts.h2[[m]]$sigma_e =  
+      data.frame(
+        parameter = "sigma_e", 
+        inla.tmarginal(
+          function(x) exp(-x/2), 
+          lfits[[m]]$internal.marginals.hyperpar[[1]]))
+    for(p in 2:4) {
+      posts.h2[[m]][[p]] <-   
+      data.frame(
+        parameter = c(NA, "r_s", "r_t", "sigma")[p], 
+        inla.tmarginal(
+          function(x) exp(x), 
+          lfits[[m]]$internal.marginals.hyperpar[[p]])
+      )
+    }
+}
+```
+
+Join these all to make visualization easier
+```{r hjpmd}
+posts.df <- rbind(
+  data.frame(model = "102", do.call(rbind, posts.h2[[1]])),
+  data.frame(model = "121", do.call(rbind, posts.h2[[2]]))
+)
+
+ggplot(posts.df) +
+  geom_line(aes(x=x, y=y, group = model, color = model)) +
+  ylab("Density") + xlab("") + 
+  facet_wrap(~parameter, scales = "free")
+```
+
+The comparison of the model parameters of $\mathbf{u}$ 
+for different models have to be done in light with the 
+covariance functions as illustrated in @lindgren2023. 
+The fitted $\sigma_e$ by the different models are comparable
+and we can see that when considing model $121$ for $\mathbf{u}$, 
+its posterior marginal are concentrated in values lower than 
+when considering model $102$. 
+
+We can also check fitting statistics such as DIC, WAIC, 
+the negative of the log of the probability ordinates (LPO) 
+and its cross-validated version (LCPO), 
+summarized as the mean. 
+
+```{r sfits}
+t(sapply(lfits, function(r) {
+  c(DIC = mean(r$dic$local.dic, na.rm = TRUE),
+    WAIC = mean(r$waic$local.waic, na.rm = TRUE),
+    LPO = -mean(r$po$po, na.rm = TRUE), 
+    LCPO = -mean(r$cpo$cpo, na.rm = TRUE))
+}))
+```
 
 # References
