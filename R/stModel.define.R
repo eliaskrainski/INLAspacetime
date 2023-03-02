@@ -65,7 +65,7 @@ stModel.define <-
 		print(c(cc=cc))
 	}
 
-    mm <- stModel.matrices(smesh, tmesh, model)
+    mm <- stModel.matrices(smesh, tmesh, model, constr)
     n <- smesh$n * tmesh$n
     nm <- ncol(mm$TT)
         stopifnot(nm == length(mm$bb))
@@ -111,6 +111,8 @@ stModel.define <-
             xx = t(lmats$xx)
           )
         )
+        if(constr)
+          the_model$f$extraconstr <- mm$extraconstr
         # Prepend specialised model class identifier, for bru_mapper use:
         class(the_model) <- c("stModel_cgeneric", class(the_model))
         # Add objects needed by bru_get_mapper.stModel_cgeneric:

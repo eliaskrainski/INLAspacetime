@@ -9,6 +9,7 @@ stModel.define(
   tmesh,
   model,
   control.priors,
+  constr = FALSE,
   debug = FALSE,
   verbose = FALSE,
   useINLAprecomp = TRUE,

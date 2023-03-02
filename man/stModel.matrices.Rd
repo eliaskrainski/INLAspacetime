@@ -4,7 +4,7 @@
 \alias{stModel.matrices}
 \title{Define the spacetime model matrices.}
 \usage{
-stModel.matrices(smesh, tmesh, model)
+stModel.matrices(smesh, tmesh, model, constr = FALSE)
 }
 \arguments{
 \item{smesh}{a mesh object over the spatial domain.}

@@ -171,7 +171,7 @@ Visualize the spatial mesh, the border and the locations.
 par(mfrow=c(1,1), mar=c(0,0,1,0))
 plot(smesh, asp=1)
 lines(pborders, lwd = 2, col = 'green4')
-points(locs[, 2:3], pch = 12, col = "blue")
+points(locs[, 2:3], pch = 19, col = "blue")
 ```
 
 Add an overall integrate-to-zero constraint, 
@@ -196,11 +196,11 @@ We se the prior for the likelihood precision
 considering a PC-prior, @pcprior, 
 using a probabilistic statement 
 P($\sigma_e > U_{\sigma_e}$) = $\alpha_{\sigma_e}$, 
-using $U_{\sigma_e}$ = 10 and $\alpha_{\sigma_e} = 0.01$. 
+using $U_{\sigma_e}$ = 1 and $\alpha_{\sigma_e} = 0.05$. 
 
 ```{r lprec}
 lkprec <- list(
-    prec=list(prior='pcprec', param=c(1, 0.1)))
+    prec=list(prior='pcprec', param=c(1, 0.05)))
 ```
 
 The implementation of the spacetime model uses the `cgeneric` 
@@ -220,8 +220,8 @@ probatility statements as
 P($r_s<U_{r_s}$)=$\alpha_{r_s}$, 
 P($r_t<U_{r_t}$)=$\alpha_{r_t}$ and 
 P($\sigma<U_{\sigma}$)=$\alpha_{\sigma}$.
-We consider $U_{r_s}=30$, $U_{r_t}=1$ and $U_{\sigma}=10$.
-$\alpha_{r_s}=\alpha_{r_t}=\alpha_{\sigma}=0.01$
+We consider $U_{r_s}=100$, $U_{r_t}=5$ and $U_{\sigma}=2$.
+$\alpha_{r_s}=\alpha_{r_t}=\alpha_{\sigma}=0.05$
 
 The selection of one of the models in @lindgren2023 is by chosing the 
 $\alpha_t$, $\alpha_s$ and $\alpha_e$ as integer numbers. 
@@ -233,9 +233,9 @@ and then we fit some of the other models later.
 stmodel <- stModel.define(
     smesh, tmesh, model,
     control.priors = list(
-        prs = c(50, 0.01),
-        prt = c(1, 0.01),
-        psigma = c(1, 0.01)))
+        prs = c(100, 0.05),
+        prt = c(5, 0.05),
+        psigma = c(2, 0.05)))
 ```
 
 We define an object with the needed 
@@ -265,7 +265,7 @@ mesh and setti or $r_s$
           control.compute = ctrc))
 ```
 
-```{r fitobj, echo = FALSE, eval = TRUE}
+```{r fit102, echo = FALSE, eval = TRUE}
 if(file.exists("fit102.rds")) {
   fit102 <- readRDS("fit102.rds")
 } else {
@@ -276,7 +276,7 @@ if(file.exists("fit102.rds")) {
 ```
 
 The code to fit the model through **inlabru** is
-```{r fit102, eval = FALSE}
+```{r fit102c, eval = FALSE}
 fit102 <- 
   <<fit>>
 ```
@@ -335,40 +335,43 @@ c(shyper[c(1, 4, 2), 1],
 We now fit the model $121$ as well, 
 using the same code, just building a new model object for $u$ 
 as follows
-```{r model121}
+```{r model121def}
 model <- "121"
 <<stmodeldef>>
 ```
 
 We create a list object and put each model fit 
 as element on it, starting with the previously fitted model 
-```{r fitl}
-lfits <- vector("list", length = 2L) 
-names(lfits) <- c("102", "121")
-lfits[[1]] <- fit102
-rm(fit102)
+```{r lfits}
+lfits <- list("u102" = fit102)
 ```
 
-```{r omodels, eval = FALSE}
-lfits[[2]] <- 
+```{r 121fitc, eval = FALSE}
+lfits$u121 <- 
   <<fit>>
 ```
-```{r modelsobj, echo = FALSE, eval = TRUE}
+```{r fit121, echo = FALSE, eval = TRUE}
 <<stmodeldef>>
 flname <- paste0("fit", model, ".rds")
 if(file.exists(flname)) {
-   lfits[[2]] <- readRDS(flname)
+   lfits$u121 <- readRDS(flname)
 } else {
-  lfits[[2]] <-
+  lfits$u121 <-
      <<fit>>
-  saveRDS(lfits[[2]], 
-           file = flname)
+  saveRDS(lfits$u121, 
+          file = flname)
 }
 ```
 
-The internal scale hyper-parameters posterior mode for each model
-```{r modes}
-sapply(lfits, function(r) r$mode$theta)
+The computing time for each model fit
+```{r cpu}
+sapply(lfits, function(r) r$cpu)
+```
+
+However, one needs to consider the number of 
+fn-calls during the optimization 
+```{r nfn}
+sapply(lfits, function(r) r$misc$nfunc)
 ```
 
 We will transform the posterior marginal distribution for the hyper-parameters 
@@ -395,7 +398,7 @@ for(m in 1:2) {
 ```
 
 Join these all to make visualization easier
-```{r hjpmd}
+```{r hpmds2}
 posts.df <- rbind(
   data.frame(model = "102", do.call(rbind, posts.h2[[1]])),
   data.frame(model = "121", do.call(rbind, posts.h2[[2]]))

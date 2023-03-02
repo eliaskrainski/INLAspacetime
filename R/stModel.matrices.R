@@ -193,8 +193,10 @@ stModel.matrices <-
     }
 
     if(constr) {
-        val$constr.Ae <- list(
-            A=kronecker(tfe$va[, 1], sfe$va[, 1]), e=0)
+        val$extraconstr <- list(
+            A=kronecker(tfe$c0@x, sfe$va[, 1]), e=0)
+        val$extraconstr$A <-
+            matrix(val$extraconstr$A / sum(val$extraconstr$A), 1)
     }
 
     return(val)

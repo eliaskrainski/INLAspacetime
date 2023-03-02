@@ -17,7 +17,6 @@ ctri <- list(
     parallel.linesearch=TRUE)
 
 ctrc <- list(
-    config=TRUE,
     waic=TRUE,
     dic=TRUE,
     cpo=TRUE)
@@ -85,15 +84,10 @@ dataf <- data.frame(pdata[c('UTMX', 'UTMY', 'time')],
                     y=log(pdata$PM10))
 str(dataf)
 
-### add a overall integrate-to-zero constraint (no need but helps)
-stConstr <- list(
-    A=matrix(kronecker(inla.mesh.fem(tmesh)$c0@x, 
-                       inla.mesh.fem(smesh)$va[,1]), 1), e=0)
-
 ### define the data Model
 M <- ~ -1 + Intercept(1) + A + WS + TEMP + HMIX + PREC + EMI + 
     field(list(space = cbind(UTMX, UTMY), time=time),
-          model=stmodel, extraconstr=stConstr)
+          model=stmodel)
 
 ### likelihood precision prior
 lkprec <- list(
@@ -117,7 +111,8 @@ for(m in 1:2) {
         control.priors=list(
             prs=c(70, 0.5),
             prt=c(50, 0.5),
-            psigma=c(20, 0.5)))
+            psigma=c(20, 0.5)),
+        constr = TRUE) ## no need but helps
 
 ### fit 
     results[[m]] <- 
@@ -142,8 +137,12 @@ sapply(results, function(r) r$cpu)
 sapply(results, function(r) r$misc$nfunc)
 sapply(results, function(r) unname(r$mode$theta))
 
-### compare with Table 2 (UTMX and UTMY were not included here)
+### compare with Table 2 of Cameletti et. al. 2013
+## (UTMX and UTMY were not included here)
 round(results$'102'$summary.fixed[, c(1,2,3,4,5)], 4)
+
+### with the non-separable
+round(results$'121'$summary.fixed[, c(1,2,3,4,5)], 4)
 
 ### user parametrization marginals
 marginals <- lapply(results, function(r)
@@ -162,16 +161,18 @@ marginals <- lapply(results, function(r)
 
 ### user interpretable parameters summary
 margz <- lapply(marginals, lapply, function(m)
-        unlist(inla.zmarginal(m, silent=TRUE)))
-lapply(margz, data.frame)
+    unlist(inla.zmarginal(m, silent=TRUE)))
+lapply(lapply(margz, data.frame), function(x)
+    round(t(x), 2))
 
-### compare with Table 3 in Cameletti et. al. 2022
+### Compare ing "102" with Table 3 in Cameletti et. al. 2022
+### Consider the temporal range relation and `a` as `a = exp(-2/r_s)`
 c(s2e=margz$'102'$sigma.e[1]^2,
   s2w=margz$'102'$sigma.u[1]^2,
   rho=margz$'102'$srange[1],
   a=exp(-sqrt(8*0.5)/margz$'102'$trange[1]))
 
 ### fit statistics
-sapply(results, stats.inla, y=log(pdata$PM10),
-       fsummarize=function(x) mean(x, na.rm=TRUE))
+round(t(sapply(results, stats.inla, y=log(pdata$PM10),
+               fsummarize=function(x) mean(x, na.rm=TRUE))), 4)
 
