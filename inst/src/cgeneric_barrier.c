@@ -99,14 +99,13 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 		        sigma = exp(theta[ith++]);
 		}
 
-		double pi2 = 9.86960440109;
-		double s2 = SQR(sigma);
+		double pi6s2 = 1.9098593171 / SQR(sigma) ; // 6 / ( pi * sigma^2) 
 		double r2 = SQR(range);
 		  
-		params[0] = 12 / (pi2 * s2 * r2); 
-		params[1] = 12 / (pi2 * s2 * 8);
-		params[2] = 12 / (pi2 * s2 * 8);
-		params[3] = r2 * 12 / (pi2 * s2 * 16);
+		params[0] = pi6s2 / (r2); 
+		params[1] = pi6s2 / (8);
+		params[2] = pi6s2 / (8);
+		params[3] = r2 * pi6s2 / (64);
 
 		assert(nth == ith);
 
@@ -194,7 +193,7 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 		double daux = 2 * 0.5;
 		if (ifix[0] == 0) {
 			double lam1 = -log(prs->doubles[1]) / prs->doubles[0];
-			ret[0] += log(lam1) - daux * theta[ith] - lam1 * exp(-daux * theta[ith]) + log(daux);
+			ret[0] += log(lam1 * daux) - daux * theta[ith] - lam1 * exp(-daux * theta[ith]) + log(daux);
 			ith++;
 		}
 		if (ifix[1] == 0) {
