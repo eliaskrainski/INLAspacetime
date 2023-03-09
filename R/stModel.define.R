@@ -11,6 +11,8 @@
 #' corresponding PC-prior such that
 #' P(r_s<U)=a, P(r_t<U)=a or P(sigma>U)=a.
 #' If a=0 then U is taken to be the fixed value of the parameter.
+#' @param constr logical to indicate if the integral of the field
+#' over the domain is to be constrained to zero. Default value is FALSE.
 #' @param debug logical indicating if to run in debug mode.
 #' @param verbose logical indicating if to print parameter values.
 #' @param useINLAprecomp logical indicating if is to be used

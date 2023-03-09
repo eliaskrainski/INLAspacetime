@@ -9,14 +9,14 @@ bru_get_mapper.stModel_cgeneric(model, ...)
 }
 \arguments{
 \item{model}{The model object (of class \code{stModel_cgeneric}, from
-\code{stModel.define})}
+\code{stModel.define} or \code{barrierModel_cgeneric}, from \code{barrierModel.define})}
 
 \item{\dots}{Unused.}
 }
 \value{
 A \code{bru_mapper} object of class \code{bru_mapper_multi} with
 sub-mappers \code{space} and \code{time} based on the model \code{smesh} and \code{tmesh}
-objects.
+or \code{mesh} objects.
 }
 \description{
 Return an \code{inlabru} \code{bru_mapper} object that can be used for computing

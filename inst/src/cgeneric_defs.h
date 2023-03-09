@@ -1,7 +1,7 @@
 
 /* cgeneric_defs.h
  * 
- * Copyright (C) 2022-2022 Elias Krainski
+ * Copyright (C) 2022-2023 Elias Krainski
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,9 +67,10 @@ typedef int fortran_charlen_t;
 void dgemv_(char *trans, int *M, int *N, double *alpha, double *A, int *LDA, double *x,
 	    int *incx, double *beta, double *y, int *incy, fortran_charlen_t);
 double ddot_(int *N, double *DX, int *INCX, double *DY, int *INCY);
+
 inla_cgeneric_func_tp inla_cgeneric_ar2ss_model;
-inla_cgeneric_func_tp inla_cgeneric_st121_model;
 inla_cgeneric_func_tp inla_cgeneric_sstspde;
+inla_cgeneric_func_tp inla_cgeneric_barrier;
 
 __END_DECLS
 #endif
