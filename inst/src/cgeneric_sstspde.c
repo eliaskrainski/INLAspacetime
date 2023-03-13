@@ -27,8 +27,53 @@
 
 #include "cgeneric_defs.h"
 
-// This function uses the padded matrices with zeroes
+double gSconstant(double lgs, int alpha) {
+  double c3S = 0.0; // the remainding C.S2 part that depends on gamma_s:
+  // sum_k (1 + 2k) / [ gamma_s^2 + k(k+1) ]^alpha
+  double gs2 = exp(2 * lgs); // gamma_s^2
+  double gs2small = 0.25, gs2big = 4.0;
+  int ialpha = ((int)alpha);
+  int isalphaInt = fabs(((double)ialpha) - alpha) < 0.0001;
+  if(ialpha>4L) isalphaInt = 0L; // to work in the c3S computation
+  if(gs2<gs2small) { 
+    c3S = -0.5 * alpha * log(gs2); // approximation for small gamma_s
+  } else {
+    if(gs2<gs2big) {
+      if (isalphaInt) {
+	if(ialpha == 1L) {
+	  for (int k = 0; k < 50; k++) {
+	    c3S += (1 + 2 * (double) k) / ( gs2 + (double) ((k * (k + 1))) );
+	  }
+	}
+	if(ialpha == 2L) {
+	  for (int k = 0; k < 50; k++) {
+	    c3S += (1 + 2 * (double) k) / pow2(gs2 + (double) ((k * (k + 1))));
+	  }
+	}
+	if (ialpha == 3L) {
+	  for (int k = 0; k < 50; k++) {
+	    c3S += (1 + 2 * (double) k) / pow3(gs2 + (double) ((k * (k + 1))));
+	  }
+	}
+	if (ialpha == 4L) {
+	  for (int k = 0; k < 50; k++) {
+	    c3S += (1 + 2 * (double) k) / pow4(gs2 + (double) ((k * (k + 1))));
+	  }
+	}
+      } else {
+	for (int k = 0; k < 50; k++) {
+	  c3S += (1 + 2 * (double) k) / pow(gs2 + (double) ((k * (k + 1))), alpha);
+	}
+      }
+      c3S = 0.5 * log(c3S);
+    } else {
+      c3S = 0.5 * ( (1.0-alpha) * log(gs2) -log(alpha-1.0) ); // large gamma_s
+    }
+  }
+  return(c3S);  
+}
 
+// This function uses the padded matrices with zeroes
 double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgeneric_data_tp * data)
 {
 
@@ -63,9 +108,9 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 	assert(aaa->len == 3);
 	double alphas = ((double)aaa->ints[1]);
 	double alpha = ((double)aaa->ints[2]) + alphas * (((double)aaa->ints[0]) - 0.5);
-	int ialpha = ((int)alpha);
-	int isalphaInt = fabs(((double)ialpha) - alpha) < 0.0001;
-	if(ialpha>4L) isalphaInt = 0L; // to work in the c3S computation
+	//	int ialpha = ((int)alpha);
+	//	int isalphaInt = fabs(((double)ialpha) - alpha) < 0.0001;
+	//if(ialpha>4L) isalphaInt = 0L; // to work in the c3S computation
 	double aaux = 0.5*((double)dimension) - alpha; 
 
 	assert(!strcasecmp(data->ints[6]->name, "nm"));
@@ -153,47 +198,7 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 
 		// map to gamma_e depends on the manifold
 		if (Rmanifold == 0) { // if sphere (Rmanifold==0)
-		        double c3S = 0.0; // the remainding C.S2 part that depends on gamma_s
-					  // sum_k (1 + 2k) / [ gamma_s^2 + k(k+1) ]^alpha
-		        double gs2 = exp(2 * lg[0]); // gamma_s^2
-			double gs2small = 0.25, gs2big = 4.0;
-			if(gs2<gs2small) { 
-				c3S = -0.5 * alpha * log(gs2); // approximation for small gamma_s
-			} else {
-				if(gs2<gs2big) {
-					if (isalphaInt) {
- 						if(ialpha == 1L) {
-							for (int k = 0; k < 50; k++) {
-								c3S += (1 + 2 * (double) k) / ( gs2 + (double) ((k * (k + 1))) );
-							}
- 						}
-						if(ialpha == 2L) {
-							for (int k = 0; k < 50; k++) {
-								c3S += (1 + 2 * (double) k) / pow2(gs2 + (double) ((k * (k + 1))));
-							}
-						}
-						if (ialpha == 3L) {
-							for (int k = 0; k < 50; k++) {
-								c3S += (1 + 2 * (double) k) / pow3(gs2 + (double) ((k * (k + 1))));
-							}
-						}
-						if (ialpha == 4L) {
-							for (int k = 0; k < 50; k++) {
-								c3S += (1 + 2 * (double) k) / pow4(gs2 + (double) ((k * (k + 1))));
-							}
-						}
-					} else {
-						for (int k = 0; k < 50; k++) {
-							c3S += (1 + 2 * (double) k) / pow(gs2 + (double) ((k * (k + 1))), alpha);
-						}
-					}
-					c3S = 0.5 * log(c3S);
-				} else {
-					c3S = 0.5 * ( (1.0-alpha) * log(gs2) -log(alpha-1.0) ); // large gamma_s
-				}
-			}
-
-			c3 += c3S; // now c3 accounts for gamma_s
+			c3 += gSconstant(lg[0], alpha) ; // now c3 accounts for gamma_s
 			if (ifix[2] == 1) {
 				lg[2] = c3 - 0.5 * lg[1] - log(psigma->doubles[0]); 
 			} else {
