@@ -1,3 +1,4 @@
+#' @aliases mesh.dual
 #' Extracts the dual of a mesh object.
 #'
 #' Creates a polygons list with the dual of a mesh object.

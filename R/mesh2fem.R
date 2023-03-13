@@ -1,79 +1,123 @@
 #' Illustrative code for Finite Element matrices of a mesh in 2d domain.
-#'
-#' Creates a list of matrices object.
-#'
+#' @aliases mesh2fem
 #' @param mesh a 2d mesh object.
 #' @param order the desired order.
-#' @section Warning:
-#'  This is just for illustration purpose and one should consider the
-#'  efficient function available a the INLA package.
+#' @param barrierTriangles integer index to specify the
+#' triangles in the barrier domain
 #' @return a list object containing the FE matrices.
 #' @export
-mesh2fem <- function(mesh, order=2, old = FALSE) {
-  heron <- function(x, y) {
-    ### function to compute the area of a triangle
-    aa <- sqrt((x[2]-x[1])^2 + (y[2]-y[1])^2)
-    bb <- sqrt((x[3]-x[2])^2 + (y[3]-y[2])^2)
-    cc <- sqrt((x[1]-x[3])^2 + (y[1]-y[3])^2)
-    s <- 0.5*(aa+bb+cc)
-    sqrt(s*(s-aa)*(s-bb)*(s-cc))
-  }
-  areapl <- function(xy) {
-    n <- nrow(xy)
-    abs(0.5*sum(xy[1:n,1]*xy[c(2:n,1),2]-
-                  xy[1:n,2]*xy[c(2:n,1),1]))
-  }
-  stiffness <- function(x, y) {
-    d <- rbind(c(x[3]-x[2], x[1]-x[3], x[2]-x[1]),
-               c(y[3]-y[2], y[1]-y[3], y[2]-y[1]))
-    crossprod(d)/4
-  }
+mesh2fem <- function(mesh, order=2, barrierTriangles = NULL) {
+  if(!is.null(barrierTriangles))
+    return(mesh2fem.barrier(mesh, order, barrierTriangles))
   n <- nrow(mesh$loc)
-  c0 <- double(n)
-  c1aux <- matrix(1, 3, 3) + diag(3)
   ntv <- nrow(mesh$graph$tv)
-  if(old) {
-    g1 <- c1 <- matrix(0, n, n)
-    for (j in 1:ntv) {
-      it <- mesh$graph$tv[j,]
-      h <- heron(mesh$loc[it,1], mesh$loc[it,2])
-      c0[it] <- c0[it] + h/3
-      c1[it, it] <- c1[it, it] + h*c1aux/12
-      g1[it, it] <- g1[it, it] +
-        stiffness(mesh$loc[it, 1],
-                  mesh$loc[it, 2])/h
-    }
-    res <- list(c0=Matrix::sparseMatrix(i=1:n, j=1:n, x=c0, repr = "T"),
-              c1=INLA::inla.as.dgTMatrix(Matrix::Matrix(c1, sparse=TRUE)),
-              g1=INLA::inla.as.dgTMatrix(Matrix::Matrix(g1, sparse=TRUE)))
-  } else {
-    g1.ii <- c1.ii <- g1.jj <- c1.jj <- integer(n * 3)
-
+  ta <- rep(0, ntv)
+  c1aux <- matrix(1, 3, 3) + diag(3)
+  ii0 <- rep(1:3, each = 3)
+  jj0 <- rep(1:3, 3)
+  c0 <- double(n)
+  jj <- ii <- integer(n * 9L)
+  g1x <- c1x <- double(n * 9L)
+  ncg <- 0
+  for (j in 1:ntv) {
+    it <- mesh$graph$tv[j,]
+    h <- INLAspacetime:::Heron(mesh$loc[it,1], mesh$loc[it,2])
+    ta[j] <- h
+    c0[it] <- c0[it] + h/3
+    ii[ncg + 1:9] <- it[ii0]
+    jj[ncg + 1:9] <- it[jj0]
+    c1x[ncg + 1:9] <- h * c1aux/12
+    g1x[ncg + 1:9] <- INLAspacetime:::Stiffness(
+      mesh$loc[it, 1],
+      mesh$loc[it, 2])/h
+    ncg <- ncg + 9L
   }
+  ijx <- which((ii>0) | (jj>0))
+  res <- list(
+    c0=Matrix::sparseMatrix(i=1:n, j=1:n, x=c0, repr = "T"),
+    c1=INLA::inla.as.dgTMatrix(Matrix::sparseMatrix(
+      i = ii[ijx], j = jj[ijx], x = c1x[ijx], dims = c(n, n))),
+    g1=INLA::inla.as.dgTMatrix(Matrix::sparseMatrix(
+      i = ii[ijx], j = jj[ijx], x = g1x[ijx], dims = c(n, n)))
+  )
   order <- floor(order)
-  if (order>1) {
+  if(order>1) {
     for (o in 2:order) {
-      g1s <- res$g1 %*% Matrix::Diagonal(n, 1/c0)
-      res[[2+o]] <- INLA::inla.as.dgTMatrix(
-        Matrix::crossprod(
-          g1s,
-          res[[o+1]])
-      )
+      g1s <- res$g1 %*% Diagonal(n, 1/c0)
+      res[[2+o]] <- INLA::inla.as.dgTMatrix(g1s %*% res[[o+1]])
     }
     names(res)[4:(order+2)] <- paste0('g', 2:order)
+    res$va <- matrix(c0, ncol = 1)
+    res$ta <- matrix(ta, ncol = 1)
   }
-  res$va <- matrix(c0, ncol=1)
-  if (is.null(mesh$SP)) {
-    ##mesh$SP <- sp::SpatialPolygons(
-    ##   lapply(1:nrow(mesh$graph$tv), function(j) {
-    ##     p <- sp::Polygon(mesh$loc[mesh$graph$tv[j, ], 1:2])
-    ##    sp::Polygons(list(p), paste(j))
-    ##}))
-    ##mesh$centroids <- sp::coordinates(mesh$SP)
-    mesh$ta <-  NULL
-  } else {
-    res$ta <- matrix(sapply(mesh$SP@polygons, function(p)
-      p@area), ncol=1)
+  return(res)
+}
+#' @aliases mesh2fem.barrier
+#' @return a list object containing the FE matrices
+#' for the barrier problem.
+#' @export
+mesh2fem.barrier <- function(mesh, order=2, barrierTriangles = NULL) {
+  if(is.null(barrierTriangles))
+    return(mesh2fem(mesh, order))
+  barrierTriangles <- unique(sort(barrierTriangles))
+  itv <- list(setdiff(
+    1:nrow(mesh$graph$tv),
+    barrierTriangles),
+    barrierTriangles)
+  ntv <- sapply(itv, length)
+  n <- nrow(mesh$loc)
+
+  c1aux <- c(2,2,2, 1,1,1)
+  ii0c <- c(1,2,3, 1,1, 2)
+  jj0c <- c(1,2,3, 2,3, 3)
+  ii0g <- rep(1:3, each = 3)
+  jj0g <- rep(1:3, 3)
+
+  res <- list(
+    I = Diagonal(n, x = rep(0.0, n)),
+    D = vector("list", 2L),
+    C = vector("list", 2L),
+    hdim = 0L)
+
+  for(o in 1:2) {
+    c0 <- double(n)
+    jjc <- iic <- integer(ntv[o] * 6L)
+    jjg <- iig <- integer(ntv[o] * 9L)
+    g1x <- double(ntv[o] * 9L)
+    c1x <- double(ntv[o] * 6L)
+
+    ng <- nc <- 0
+    for (j in itv[[o]]) {
+      it <- mesh$graph$tv[j,]
+      h <- INLAspacetime:::Heron(mesh$loc[it,1], mesh$loc[it,2])
+
+      c0[it] <- c0[it] + h/3
+      iic[nc + 1:6] <- it[ii0c]
+      jjc[nc + 1:6] <- it[jj0c]
+      c1x[nc + 1:6] <- h * c1aux/24
+
+      iig[ng + 1:9] <- it[ii0g]
+      jjg[ng + 1:9] <- it[jj0g]
+      g1x[ng + 1:9] <- INLAspacetime:::Stiffness(
+        mesh$loc[it, 1],
+        mesh$loc[it, 2])/h
+
+      nc <- nc + 6L
+      ng <- ng + 9L
+    }
+
+    ijxc <- which((iic>0) | (jjc>0))
+    ijxg <- which((iig>0) | (jjg>0))
+    res$I <- res$I +
+      INLA::inla.as.dgTMatrix(Matrix::sparseMatrix(
+        i = iic[ijxc], j = jjc[ijxc], x = c1x[ijxc], dims = c(n, n)))
+    res$D[[o]] <- INLA::inla.as.dgTMatrix(Matrix::sparseMatrix(
+      i = iig[ijxg], j = jjg[ijxg], x = g1x[ijxg], dims = c(n, n)))
+    res$C[[o]] <- c0 * 3
+    res$hdim <- res$hdim + 1L
   }
+  res$I <- INLA::inla.as.dgTMatrix(res$I)
+  res$D[[1]] <- INLA::inla.as.dgTMatrix(res$D[[1]])
+  res$D[[2]] <- INLA::inla.as.dgTMatrix(res$D[[2]])
   return(res)
 }
