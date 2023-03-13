@@ -160,7 +160,7 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 			if(gs2<gs2small) { 
 				c3S = -0.5 * alpha * log(gs2); // approximation for small gamma_s
 			} else {
-				if(gs2<gs2bib) {
+				if(gs2<gs2big) {
 					if (isalphaInt) {
  						if(ialpha == 1L) {
 							for (int k = 0; k < 50; k++) {
