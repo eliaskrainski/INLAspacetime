@@ -9,7 +9,7 @@
 #'  efficient function available a the INLA package.
 #' @return a list object containing the FE matrices.
 #' @export
-mesh2fem <- function(mesh, order=2) {
+mesh2fem <- function(mesh, order=2, old = FALSE) {
   heron <- function(x, y) {
     ### function to compute the area of a triangle
     aa <- sqrt((x[2]-x[1])^2 + (y[2]-y[1])^2)
@@ -32,19 +32,24 @@ mesh2fem <- function(mesh, order=2) {
   c0 <- double(n)
   c1aux <- matrix(1, 3, 3) + diag(3)
   ntv <- nrow(mesh$graph$tv)
-  g1 <- c1 <- matrix(0, n, n)
-  for (j in 1:ntv) {
-    it <- mesh$graph$tv[j,]
-    h <- heron(mesh$loc[it,1], mesh$loc[it,2])
-    c0[it] <- c0[it] + h/3
-    c1[it, it] <- c1[it, it] + h*c1aux/12
-    g1[it, it] <- g1[it, it] +
-      stiffness(mesh$loc[it, 1],
-                mesh$loc[it, 2])/h
-  }
-  res <- list(c0=Matrix::sparseMatrix(i=1:n, j=1:n, x=c0, repr = "T"),
+  if(old) {
+    g1 <- c1 <- matrix(0, n, n)
+    for (j in 1:ntv) {
+      it <- mesh$graph$tv[j,]
+      h <- heron(mesh$loc[it,1], mesh$loc[it,2])
+      c0[it] <- c0[it] + h/3
+      c1[it, it] <- c1[it, it] + h*c1aux/12
+      g1[it, it] <- g1[it, it] +
+        stiffness(mesh$loc[it, 1],
+                  mesh$loc[it, 2])/h
+    }
+    res <- list(c0=Matrix::sparseMatrix(i=1:n, j=1:n, x=c0, repr = "T"),
               c1=INLA::inla.as.dgTMatrix(Matrix::Matrix(c1, sparse=TRUE)),
               g1=INLA::inla.as.dgTMatrix(Matrix::Matrix(g1, sparse=TRUE)))
+  } else {
+    g1.ii <- c1.ii <- g1.jj <- c1.jj <- integer(n * 3)
+
+  }
   order <- floor(order)
   if (order>1) {
     for (o in 2:order) {

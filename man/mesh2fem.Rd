@@ -4,7 +4,7 @@
 \alias{mesh2fem}
 \title{Illustrative code for Finite Element matrices of a mesh in 2d domain.}
 \usage{
-mesh2fem(mesh, order = 2)
+mesh2fem(mesh, order = 2, old = FALSE)
 }
 \arguments{
 \item{mesh}{a 2d mesh object.}

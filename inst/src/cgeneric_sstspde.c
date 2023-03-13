@@ -157,39 +157,39 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 					  // sum_k (1 + 2k) / [ gamma_s^2 + k(k+1) ]^alpha
 		        double gs2 = exp(2 * lg[0]); // gamma_s^2
 			double gs2small = 0.25, gs2big = 4.0;
-			if((gs2>gs2small) & (gs2<gs2big)) {
-				if (isalphaInt) {
- 					if(ialpha == 1L) {
-						for (int k = 0; k < 50; k++) {
-							c3S += (1 + 2 * (double) k) / ( gs2 + (double) ((k * (k + 1))) );
-						}
- 					}
-					if(ialpha == 2L) {
-						for (int k = 0; k < 50; k++) {
-							c3S += (1 + 2 * (double) k) / pow2(gs2 + (double) ((k * (k + 1))));
-						}
-					}
-					if (ialpha == 3L) {
-						for (int k = 0; k < 50; k++) {
-							c3S += (1 + 2 * (double) k) / pow3(gs2 + (double) ((k * (k + 1))));
-						}
-					}
-					if (ialpha == 4L) {
-						for (int k = 0; k < 50; k++) {
-							c3S += (1 + 2 * (double) k) / pow4(gs2 + (double) ((k * (k + 1))));
-						}
-					}
-				} else {
-					for (int k = 0; k < 50; k++) {
-						c3S += (1 + 2 * (double) k) / pow(gs2 + (double) ((k * (k + 1))), alpha);
-					}
-				}
-				c3S = 0.5 * log(c3S);
+			if(gs2<gs2small) { 
+				c3S = -0.5 * alpha * log(gs2); // approximation for small gamma_s
 			} else {
-				if(gs2<=gs2small) {
-					c3S = -0.5 * alpha * log(gs2); // approximation for small gamma_s
-				} else { // gs2 big
-					c3S = 0.5 * ( (1.0-alpha) * log(gs2) -log(alpha-1.0) );
+				if(gs2<gs2bib) {
+					if (isalphaInt) {
+ 						if(ialpha == 1L) {
+							for (int k = 0; k < 50; k++) {
+								c3S += (1 + 2 * (double) k) / ( gs2 + (double) ((k * (k + 1))) );
+							}
+ 						}
+						if(ialpha == 2L) {
+							for (int k = 0; k < 50; k++) {
+								c3S += (1 + 2 * (double) k) / pow2(gs2 + (double) ((k * (k + 1))));
+							}
+						}
+						if (ialpha == 3L) {
+							for (int k = 0; k < 50; k++) {
+								c3S += (1 + 2 * (double) k) / pow3(gs2 + (double) ((k * (k + 1))));
+							}
+						}
+						if (ialpha == 4L) {
+							for (int k = 0; k < 50; k++) {
+								c3S += (1 + 2 * (double) k) / pow4(gs2 + (double) ((k * (k + 1))));
+							}
+						}
+					} else {
+						for (int k = 0; k < 50; k++) {
+							c3S += (1 + 2 * (double) k) / pow(gs2 + (double) ((k * (k + 1))), alpha);
+						}
+					}
+					c3S = 0.5 * log(c3S);
+				} else {
+					c3S = 0.5 * ( (1.0-alpha) * log(gs2) -log(alpha-1.0) ); // large gamma_s
 				}
 			}
 
