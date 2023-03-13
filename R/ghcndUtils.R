@@ -7,6 +7,7 @@
 #' if it does not exists locally yet.
 #' @return a named character vector with the local file names:
 #' daily.data, stations.all, elevation.
+#' @export
 downloadUtilFiles <- function(data.dir, year=2022, force=FALSE)
 {
   ### 1. daily weather data for one year
@@ -68,6 +69,7 @@ downloadUtilFiles <- function(data.dir, year=2022, force=FALSE)
 #' the data.table package is not available.
 #' @return array [days, stations, variables] if more than one variable
 #' or a matrix [days, stations] if one variable.
+#' @export
 ghcndSelect <- function(gzfile,
                         variable = c("TMIN", "TAVG", "TMAX"),
                         qflag = "",

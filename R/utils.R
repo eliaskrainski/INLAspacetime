@@ -25,11 +25,11 @@ Stiffness <- function(x, y) {
   crossprod(d)/4
 }
 #' @aliases gsConstant
-#' @param lgammas the SPDE parameters log(gamma_s, gamma_t, gamma_e)
+#' @param lgammas the SPDE parameters log(gamma.s, gamma.t, gamma.e)
 #' @param smanifold spatial domain.
 #' Values could be "S1", "S2", "R1", "R2" and "R3".
-#' @return the part of sigma due to spatial constant and gamma_s
-gsConstant <- function(lgammas, manifold, alpha) {
+#' @return the part of sigma due to spatial constant and gamma.s
+gsConstant <- function(lgammas, smanifold, alpha) {
   stopifnot(substr(smanifold,1,1) %in% c("R", "S"))
   d <- as.integer(substr(smanifold, 2, 2))
   nu.s <- alpha - d/2
@@ -61,6 +61,7 @@ gsConstant <- function(lgammas, manifold, alpha) {
 #' @param alpha.e spatial order of the spatial differential operator
 #' in the separable part.
 #' @return log(spatial range, temporal range, sigma)
+#' @export
 #' @examples
 #'  gamma2params(log(c(0, 0, 0)), 1, 2, 1, "R2")
 gammas2params <- function(lgammas, alpha.t, alpha.s, alpha.e, smanifold = "R2") {
@@ -68,15 +69,16 @@ gammas2params <- function(lgammas, alpha.t, alpha.s, alpha.e, smanifold = "R2") 
   stopifnot(substr(smanifold,1,1) %in% c("R", "S"))
   d <- as.integer(substr(smanifold, 2, 2))
   nu.s <- alpha - d/2
-  nu.t <- min(alpha_t - 0.5, nu.s / alpha.s)
-  lct <- lgamma(alpha_t-0.5) - lgamma(alpha.t) -0.5 * log(4*pi)
-  lgsCs <- gsConstant(lgammas, manifold, alpha)
+  nu.t <- min(alpha.t - 0.5, nu.s / alpha.s)
+  lct <- lgamma(alpha.t-0.5) - lgamma(alpha.t) -0.5 * log(4*pi)
+  lgsCs <- gsConstant(lgammas, smanifold, alpha)
   return(c(lrs = 0.5 * log(8 * nu.s) - lgammas[1],
            lrt = 0.5 * log(8 * nu.t) - alpha.s * lgammas[1] + lgammas[2],
            lsigma = lct + lgsCs + lgammas[2] - 2*lgammas[3]))
 }
 #' @param lparams log(spatial range, temporal range, sigma)
-#' @return log(gamma_s, gamma_t, gamma_e)
+#' @return log(gamma.s, gamma.t, gamma.e)
+#' @export
 #' @examples
 #'  params2gammas(log(c(1, 1, 1)), 1, 2, 1, "R2")
 params2gammas <- function(lparams, alpha.t, alpha.s, alpha.e, smanifold = "R2") {
@@ -84,9 +86,9 @@ params2gammas <- function(lparams, alpha.t, alpha.s, alpha.e, smanifold = "R2") 
   stopifnot(substr(smanifold,1,1) %in% c("R", "S"))
   d <- as.integer(substr(smanifold, 2, 2))
   nu.s <- alpha - d/2
-  nu.t <- min(alpha_t - 0.5, nu.s / alpha.s)
-  lct <- lgamma(alpha_t - 0.5) - lgamma(alpha.t) -0.5 * log(4*pi)
-  lcRd <- lgamma(alpha_s - d/2) - lgamma(alpha.s) -(d/2) * log(4*pi)
+  nu.t <- min(alpha.t - 0.5, nu.s / alpha.s)
+  lct <- lgamma(alpha.t - 0.5) - lgamma(alpha.t) -0.5 * log(4*pi)
+  lcRd <- lgamma(alpha.s - d/2) - lgamma(alpha.s) -(d/2) * log(4*pi)
   lg <- c(rs = 0.5 * log(8 * nu.s),
           rt = -0.5 * log(8 * nu.t),
           sigma = 0.5 * (lct + lcRd))
@@ -103,7 +105,7 @@ params2gammas <- function(lparams, alpha.t, alpha.s, alpha.e, smanifold = "R2") 
       }
     }
   }
-  aaux <- 0.5 * d - a
+  aaux <- 0.5 * d - alpha
   lg[3] <- lg[3]  + aaux * lg[1] - 0.5 * lg[2] - lparams[3]
   return(lg)
 }
