@@ -29,7 +29,7 @@ barrierModel.define <-
              useINLAprecomp = TRUE, libpath = NULL)
 {
 
-      bfem <- INLA::inla.barrier.fem(mesh, barrierTriangles)
+      bfem <- INLAspacetime::mesh2fem.barrier(mesh, order = 2, barrierTriangles)
       n <- nrow(bfem$I)
 
       Imat <- bfem$I
