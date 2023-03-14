@@ -56,9 +56,9 @@ mesh2fem <- function(mesh, order=2, barrierTriangles = NULL) {
 #' @return a list object containing the FE matrices
 #' for the barrier problem.
 #' @export
-mesh2fem.barrier <- function(mesh, order=2, barrierTriangles = NULL) {
+mesh2fem.barrier <- function(mesh, barrierTriangles = NULL) {
   if(is.null(barrierTriangles))
-    return(mesh2fem(mesh, order))
+    return(mesh2fem(mesh, order = 2L))
   barrierTriangles <- unique(sort(barrierTriangles))
   itv <- list(setdiff(
     1:nrow(mesh$graph$tv),
