@@ -67,9 +67,9 @@ mesh2fem.barrier <- function(mesh, order=2, barrierTriangles = NULL) {
   ntv <- sapply(itv, length)
   n <- nrow(mesh$loc)
 
-  c1aux <- c(2,2,2, 1,1,1)
-  ii0c <- c(1,2,3, 1,1, 2)
-  jj0c <- c(1,2,3, 2,3, 3)
+  c1aux <- c(2,2,2, 1,1,1, 1,1,1)
+  ii0c <- c(1,2,3, 1,2,1,3, 2,3)
+  jj0c <- c(1,2,3, 2,1,3,1, 3,2)
   ii0g <- rep(1:3, each = 3)
   jj0g <- rep(1:3, 3)
 
@@ -81,10 +81,10 @@ mesh2fem.barrier <- function(mesh, order=2, barrierTriangles = NULL) {
 
   for(o in 1:2) {
     c0 <- double(n)
-    jjc <- iic <- integer(ntv[o] * 6L)
+    jjc <- iic <- integer(ntv[o] * 9L)
     jjg <- iig <- integer(ntv[o] * 9L)
     g1x <- double(ntv[o] * 9L)
-    c1x <- double(ntv[o] * 6L)
+    c1x <- double(ntv[o] * 9L)
 
     ng <- nc <- 0
     for (j in itv[[o]]) {
@@ -92,9 +92,9 @@ mesh2fem.barrier <- function(mesh, order=2, barrierTriangles = NULL) {
       h <- INLAspacetime:::Heron(mesh$loc[it,1], mesh$loc[it,2])
 
       c0[it] <- c0[it] + h/3
-      iic[nc + 1:6] <- it[ii0c]
-      jjc[nc + 1:6] <- it[jj0c]
-      c1x[nc + 1:6] <- h * c1aux/24
+      iic[nc + 1:9] <- it[ii0c]
+      jjc[nc + 1:9] <- it[jj0c]
+      c1x[nc + 1:9] <- h * c1aux/12
 
       iig[ng + 1:9] <- it[ii0g]
       jjg[ng + 1:9] <- it[jj0g]
@@ -102,7 +102,7 @@ mesh2fem.barrier <- function(mesh, order=2, barrierTriangles = NULL) {
         mesh$loc[it, 1],
         mesh$loc[it, 2])/h
 
-      nc <- nc + 6L
+      nc <- nc + 9L
       ng <- ng + 9L
     }
 

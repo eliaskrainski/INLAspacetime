@@ -4,22 +4,19 @@
 \alias{mesh2fem}
 \title{Illustrative code for Finite Element matrices of a mesh in 2d domain.}
 \usage{
-mesh2fem(mesh, order = 2, old = FALSE)
+mesh2fem(mesh, order = 2, barrierTriangles = NULL)
 }
 \arguments{
 \item{mesh}{a 2d mesh object.}
 
 \item{order}{the desired order.}
+
+\item{barrierTriangles}{integer index to specify the
+triangles in the barrier domain}
 }
 \value{
 a list object containing the FE matrices.
 }
 \description{
-Creates a list of matrices object.
+Illustrative code for Finite Element matrices of a mesh in 2d domain.
 }
-\section{Warning}{
-
-This is just for illustration purpose and one should consider the
-efficient function available a the INLA package.
-}
-
