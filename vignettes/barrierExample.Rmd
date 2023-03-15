@@ -24,12 +24,66 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Abstract
 
-This illustrates the model proposed in
-@bakka2019barrier
-as a re-implementation of the barrier model
-illustrated [here](https://haakonbakkagit.github.io/index.html).  
+In this tutorial we illustrate a case when there is one (potentially more) barrier
+in the spatial domain and one needs to account for this when defining the model.
+This illustrates the model proposed in @bakka2019barrier
+as a re-implementation of the barrier model illustrated
+[here](https://haakonbakkagit.github.io/index.html).
 
 # Introduction
+
+When there is a barrier in the spatial domain, 
+the correlation between locations in each side of the barrier is affected. 
+One should consider models where the correlation between points 
+in two different sides of the barrier should decay to zero 
+and "does not cross the domain". 
+
+In order to illustrate the problem, 
+let us define a rectangle as our spatial domain: 
+```{r domain}
+rxy <- c(10, 7) 
+bb <- rbind(
+    c(0, 1)*rxy[1],
+    c(0, 1)*rxy[2])
+p.domain <- cbind(
+    c(0, 1, 1, 0, 0) * rxy[1],
+    c(0, 0, 1, 1, 0) * rxy[2])
+``` 
+
+We will set a barrier defined as another rectangle as follows
+```{r bdomain}
+b.domain <- cbind(
+    c(0.40, 1.50, 1.50, 0.40, 0.40) * rxy[1],
+    c(0.45, 0.45, 0.55, 0.55, 0.45) * rxy[2])
+b.domain <- cbind(
+  c(0.45, 0.55, 0.55, 0.45, 0.45) * rxy[1], 
+  c(-1, -1, 2, 2, -1) * rxy[2]
+)
+```
+
+We can visualize these two rectangles in order to make the problem clear:
+```{r domainvis}
+par(mar = c(2, 2, 0, 0), mgp = c(2, 0.5, 0), las=1)
+plot(t(bb), bty="n", type = "n")
+polygon(p.domain, col = rgb(0.5,0.7,1))
+polygon(b.domain, col = rgb(0.3,0.2,0.1))
+```
+
+The problem is to model data in both sides of the barrier considering that the 
+correlation between then should account for the barrier. 
+The proposed method in @bakka2019barrier is based in the 
+Stochastic Partial Differential Approach - SPDE, see @lindgren2011explicit.
+It actually models the entire domain, including the barrier, 
+by setting the correlation range to be much shorter over the barrier domain 
+than the one at the domain of interest. 
+
+In the implementation illustrated this a tutorial from this 
+[link](https://haakonbakkagit.github.io/index.html) 
+the solution is defined by setting a fraction of the range 
+to be used to set the range in the barrier. 
+One should be aware on how this choice interplay with the width of the 
+barrier in order to choose a small enough fraction but also not too 
+small in order to prevent numerical problems. 
 
 We first load the packages that will be used in this tutorial.
 
@@ -46,25 +100,12 @@ inla.setOption(
 )
 ```
 
-The domain setup, a rectangle
-```{r domain}
-rxy <- c(10, 7)
-bb <- rbind(
-    c(0, 1)*rxy[1],
-    c(0, 1)*rxy[2])
-p.domain <- cbind(
-    c(0, 1, 1, 0, 0) * rxy[1],
-    c(0, 0, 1, 1, 0) * rxy[2])
-``` 
-and the barrier domain
+# Mesh and triangles
 
-```{r bdomain}
-b.domain <- cbind(
-    c(0.35, 10.0, 10.0, 0.35, 0.35) * rxy[1],
-    c(0.47, 0.47, 0.52, 0.52, 0.47) * rxy[2])
-```
-
-We start defining a mesh 
+The solution consider a discretization of the spatial domain and 
+the simplest one is using triangles. 
+Therefore we start with the following mesh made up of small triangles 
+in the domain and bigger around it.
 ```{r mesh}
 mesh <- inla.mesh.2d(
     loc.domain = p.domain, 
@@ -74,7 +115,8 @@ mesh <- inla.mesh.2d(
 mesh$n
 ```
 
-We compue the centers for each mesh triangle
+The solution needs the triangles inside the barrier domain to be identified. 
+We start computing the center of each mesh triangle with
 ```{r triCenters}
 triCenters <- 
     cbind(
@@ -85,38 +127,51 @@ triCenters <-
         mesh$loc[mesh$graph$tv[,2], 2] +
         mesh$loc[mesh$graph$tv[,3], 2])/3
 ``` 
-and create a vector to identify to wich domain is each triangle center inside
-```{r tr}
-tr.barrier <- ifelse(
-    splancs::inout(triCenters, b.domain),
-    "Barrier",
-    "Domain")
+
+For each triangle center we check if it is inside or not of the barrier domain 
+and and create a vector to identify to which domain is each triangle center inside
+```{r ibarrier}
+isInBarrier <- splancs::inout(triCenters, b.domain)
 ``` 
 
-We define a integer vector to identify which of the triangles 
-have centers inside the barrier. 
-```{r ibarrier}
-triBarrier <- which(tr.barrier == "Barrier")
-length(triBarrier)
-```
-
-We can visualise taking advantage of functions in **inlabru** package
+We can visualize the mesh and colour the triangle centers 
+using the **ggplot** methods from the **inlabru** package
 ```{r vmesh}
 ggplot() +
     gg(mesh) +
     geom_point(aes(
-        x=triCenters[,1],
+        x = triCenters[,1],
         y = triCenters[,2],
-        color = tr.barrier)) + 
-  theme_minimal()
+        color = isInBarrier, 
+        pointsize = 0.05)) + 
+  theme_minimal() + xlab("") + ylab("")
 ```
 
 # Data simulation 
 
-We will simulate data considering the barrier model. 
-Lets start defining the model. 
-For that, we have to compute the 
-Finite Element Matrices
+In order to simulate some data, 
+we have to define a model first. 
+Let us consider that there is an underlying 
+random field over the specified domain 
+and one have observed some data at some locations there.
+
+We first sample from the random field distribution. 
+There are several algorithms to sample from a random field 
+specified over a continuous domain without barriers. 
+We will define the barrier model as 
+proposed in @bakka2019barrier 
+and use it to simulate. 
+
+We start defining 
+a integer vector to identify which of the triangles 
+have centers inside the barrier. 
+```{r triBarrier}
+triBarrier <- which(isInBarrier) 
+length(triBarrier)
+```
+
+Then we compute the Finite Element Matrices 
+for discretizing the SPDE as in @bakka2019barrier 
 ```{r bfem}
 bfem <- mesh2fem.barrier(mesh, triBarrier)
 ```
@@ -124,7 +179,7 @@ bfem <- mesh2fem.barrier(mesh, triBarrier)
 Then we have to define the range over the domain and in the barrier. 
 We consider the range for the barrier as a fraction of the range over the domain. 
 ```{r rangesQ}
-(ranges <- mean(rxy) * c(1, 0.1))
+(ranges <- mean(rxy) * c(0.5, 0.05)) 
 ```
 
 We use this to build the precision matrix
@@ -144,11 +199,12 @@ pgrid <- inla.mesh.projector(
     ylim = bb[2, ],
     dims = round(300 * rxy/rxy[1]))
 
+par(mar = c(2, 2, 0, 0), mgp = c(1.5, 0.5, 0), las = 1)
 image(pgrid$x,
       pgrid$y,
-      inla.mesh.project(pgrid, field = u))
-lines(b.domain,
-      lwd = 2)
+      inla.mesh.project(pgrid, field = u), 
+      xlab = "", ylab = "")
+lines(b.domain, lwd = 2)
 ```
 
 We define a initial set of locations
@@ -261,9 +317,10 @@ The posterior mean of the field can be visualized with
 u.mean <- inla.mesh.project(
     pgrid,
     result$summary.random$field$mean)
+par(mar = c(2, 2, 0, 0), mgp = c(1.5, 0.5, 0), las = 1)
 image(pgrid$x,
       pgrid$y,
-      u.mean)
-lines(b.domain,
-      lwd = 2)
+      u.mean, 
+      xlab = "", ylab = "")
+polygon(b.domain, col = "white")
 ```
