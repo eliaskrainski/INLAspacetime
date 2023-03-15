@@ -26,26 +26,26 @@ Stiffness <- function(x, y) {
 }
 #' @aliases gsConstant
 #' @param lgammas the SPDE parameters log(gamma.s, gamma.t, gamma.e)
-#' @param smanifold spatial domain.
+#' @param smanifold spatial domain manifold.
+#' @param alpha the resulting spatial order.
 #' Values could be "S1", "S2", "R1", "R2" and "R3".
 #' @return the part of sigma due to spatial constant and gamma.s
-gsConstant <- function(lgammas, smanifold, alpha) {
+gsConstant <- function(lgammas, alpha, smanifold) {
   stopifnot(substr(smanifold,1,1) %in% c("R", "S"))
   d <- as.integer(substr(smanifold, 2, 2))
   nu.s <- alpha - d/2
   if(substr(smanifold, 1, 1) == "R") {
     gsCs <- (2*alpha-d)*lgammas[1] +
       lgamma(nu.s) - lgamma(alpha) - (d/2) * log(4*pi)
-  }
-  if(substr(smanifold, 1, 1) == "S") {
-    pi4d <- (4*pi)^(d/2)
-    if(lgamma[1]<0.5) {
-      gsCs <- (2*alpha-d)*lgammas[1] - 2 * alpha * log(pi4d)
+  } else {
+    pi.d <- (4*pi)##^(d/2)
+    if(lgamma[1]<log(0.5)) {
+      gsCs <- -2*alpha*lgammas[1] -log(pi.d)
     } else {
       if(d==1) warning("fix this")
       if(lgamma[1]<2) {
         gs2 <- exp(lgammas[1]*2)
-        k0 <- 0:60
+        k0 <- 0:50
         gsCs <- log(sum((1 + 2*k0)/(pi4d*(gs2 + k0*(k0+1)))))
       } else {
         gsCs <- 2*(alpha-1)*lgammas[1] - log(alpha-1) - log(pi4d)
@@ -71,10 +71,10 @@ gammas2params <- function(lgammas, alpha.t, alpha.s, alpha.e, smanifold = "R2") 
   nu.s <- alpha - d/2
   nu.t <- min(alpha.t - 0.5, nu.s / alpha.s)
   lct <- lgamma(alpha.t-0.5) - lgamma(alpha.t) -0.5 * log(4*pi)
-  lgsCs <- gsConstant(lgammas, smanifold, alpha)
+  lgsCs <- gsConstant(lgammas, alpha, smanifold)
   return(c(lrs = 0.5 * log(8 * nu.s) - lgammas[1],
-           lrt = 0.5 * log(8 * nu.t) - alpha.s * lgammas[1] + lgammas[2],
-           lsigma = lct + lgsCs + lgammas[2] - 2*lgammas[3]))
+           lrt = 0.5 * log(8 * (alpha.t-0.5)) - alpha.s * lgammas[1] + lgammas[2],
+           lsigma = lct + lgsCs - lgammas[2] - 2*lgammas[3]))
 }
 #' @param lparams log(spatial range, temporal range, sigma)
 #' @return log(gamma.s, gamma.t, gamma.e)

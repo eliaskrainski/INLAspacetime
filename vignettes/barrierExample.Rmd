@@ -162,31 +162,32 @@ We will define the barrier model as
 proposed in @bakka2019barrier 
 and use it to simulate. 
 
-We start defining 
-a integer vector to identify which of the triangles 
+We will based on the mesh we have defined. 
+First we have to define which of the triangles 
 have centers inside the barrier. 
+For that we define an integer vector:
 ```{r triBarrier}
 triBarrier <- which(isInBarrier) 
 length(triBarrier)
 ```
 
-Then we compute the Finite Element Matrices 
-for discretizing the SPDE as in @bakka2019barrier 
+Then we compute the Finite Element Matrices needed to 
+discretise the SPDE as in @bakka2019barrier 
 ```{r bfem}
 bfem <- mesh2fem.barrier(mesh, triBarrier)
 ```
 
-Then we have to define the range over the domain and in the barrier. 
+In order to build the precision matrix, we have to define the range over the domain. 
+We also define the rage in the barrier so that the method works.  
 We consider the range for the barrier as a fraction of the range over the domain. 
+We just use half of the average rectangle edges as the range in the domain 
+and 10% of it in the barrier. 
 ```{r rangesQ}
 (ranges <- mean(rxy) * c(0.5, 0.05)) 
-```
-
-We use this to build the precision matrix
-```{r q}
 Q <- inla.barrier.q(bfem, ranges)
 ```
-and to simulate the field at the mesh nodes with 
+
+We can now simulate the field at the mesh nodes with 
 ```{r sample}
 u <- inla.qsample(1, Q, seed = 1)[,1]
 ```
@@ -207,39 +208,60 @@ image(pgrid$x,
 lines(b.domain, lwd = 2)
 ```
 
-We define a initial set of locations
+Notice that we also visualize a simulated process in the barrier because it 
+is also defined there. 
+We can look at this image to check if the simulated process follows the 
+desired property.
+That is, we can see that, because the range in the barrier is small enough, 
+the correlation between points in the two sides of the barrier are independent.
+
+We define a initial set of locations 
+to consider that we observe the field at these locations. 
+We start with a set of locations chosen completly at random in the rectangle 
+domain, including a barrier part
 ```{r locs0}
 xy0 <- cbind(
   runif(350, bb[1, 1], bb[1, 2]),
   runif(350, bb[2, 1], bb[2, 2])
 )
 ``` 
-Check if some of these is inside the barrier 
+
+Then we check which of these is inside the barrier 
 ```{r ib}
 xy.b <- splancs::inout(xy0, b.domain)
 ii <- which(!xy.b)
 ``` 
 
-Create a dataset with locations in the desired domain
+The locations to form the data consider only the locations in the desired domain 
+and outside the barrier
 ```{r locs}
 dataset <- data.frame(
   x = xy0[ii, 1], y = xy0[ii, 2]
 )
 (n <- nrow(dataset))
 ```
-project the field to this locations and some noise 
+
+To simulate the outcome, we project the field to these locations, 
+add an intercept and some random noise 
 ```{r dataset}
-dataset$outcome <- 10 +
+dataset$outcome <- 
     drop(inla.mesh.project(
         mesh,
         loc = cbind(dataset$x, dataset$y),
-        field = u)) + rnorm(n, 0.0, 0.3)
+        field = u)) + 
+  10 + rnorm(n, 0.0, 0.3)
 ```
 
 # Model fitting 
 
-In order to fit the model, 
-we first define the model object
+Here we illustrate the use of the function in **INLAspacetime** to 
+implement the barrier model as in @bakka2019barrier. 
+Our implementation consider the `cgeneric` computational method that 
+is useful to implement new models with **INLA**. 
+This method allows the computations in **INLA** to take full advantage of 
+parallel computations, making it faster than the original implementation.
+
+We define the model object with
 ```{r bmodel}
 bmodel <- barrierModel.define(
     mesh, triBarrier,
@@ -250,12 +272,14 @@ bmodel <- barrierModel.define(
         fraction = 0.1)
 ``` 
 
-Then we define the model formula, in the **inlabru** way as 
+Then we define the model formula, in the **inlabru** way, 
+where the `field` will be the name for the spatial effect:
 ```{r mformulae}
 model <- outcome ~ Intercept(1) +
     field(cbind(x, y), model = bmodel)
 ```
-and fit the model with
+
+The **inlabru** main function will use these to run `inla` with 
 ```{r fit}
 result <- bru(
     model, dataset, family = "gaussian")
