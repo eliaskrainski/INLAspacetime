@@ -1,0 +1,269 @@
+---
+title: "A barrier simulated example"
+author: "Elias T Krainski"
+date: "2023, March"
+output: rmarkdown::html_vignette
+bibliography: INLAspacetime.bib
+vignette: >
+  %\VignetteIndexEntry{INLAspacetime}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  dev = "png",
+  dev.args = list(type = "cairo-png"),
+  fig.width = 7,
+  fig.height = 5
+)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Abstract
+
+This illustrates the model proposed in
+@bakka2019barrier
+as a re-implementation of the barrier model
+illustrated [here](https://haakonbakkagit.github.io/index.html).  
+
+# Introduction
+
+We first load the packages that will be used in this tutorial.
+
+```{r packages}
+library(INLA)
+library(INLAspacetime)
+library(inlabru)
+library(ggplot2)
+```
+
+```{r lic, echo = FALSE}
+inla.setOption(
+    pardiso.license = "~/.pardiso.lic" 
+)
+```
+
+The domain setup, a rectangle
+```{r domain}
+rxy <- c(10, 7)
+bb <- rbind(
+    c(0, 1)*rxy[1],
+    c(0, 1)*rxy[2])
+p.domain <- cbind(
+    c(0, 1, 1, 0, 0) * rxy[1],
+    c(0, 0, 1, 1, 0) * rxy[2])
+``` 
+and the barrier domain
+
+```{r bdomain}
+b.domain <- cbind(
+    c(0.35, 10.0, 10.0, 0.35, 0.35) * rxy[1],
+    c(0.47, 0.47, 0.52, 0.52, 0.47) * rxy[2])
+```
+
+We start defining a mesh 
+```{r mesh}
+mesh <- inla.mesh.2d(
+    loc.domain = p.domain, 
+    max.edge = c(0.2, 0.7),
+    offset = c(0.3, 2),
+    cutoff = 0.1)
+mesh$n
+```
+
+We compue the centers for each mesh triangle
+```{r triCenters}
+triCenters <- 
+    cbind(
+        mesh$loc[mesh$graph$tv[,1], 1] +
+        mesh$loc[mesh$graph$tv[,2], 1] +
+        mesh$loc[mesh$graph$tv[,3], 1],
+        mesh$loc[mesh$graph$tv[,1], 2] +
+        mesh$loc[mesh$graph$tv[,2], 2] +
+        mesh$loc[mesh$graph$tv[,3], 2])/3
+``` 
+and create a vector to identify to wich domain is each triangle center inside
+```{r tr}
+tr.barrier <- ifelse(
+    splancs::inout(triCenters, b.domain),
+    "Barrier",
+    "Domain")
+``` 
+
+We define a integer vector to identify which of the triangles 
+have centers inside the barrier. 
+```{r ibarrier}
+triBarrier <- which(tr.barrier == "Barrier")
+length(triBarrier)
+```
+
+We can visualise taking advantage of functions in **inlabru** package
+```{r vmesh}
+ggplot() +
+    gg(mesh) +
+    geom_point(aes(
+        x=triCenters[,1],
+        y = triCenters[,2],
+        color = tr.barrier)) + 
+  theme_minimal()
+```
+
+# Data simulation 
+
+We will simulate data considering the barrier model. 
+Lets start defining the model. 
+For that, we have to compute the 
+Finite Element Matrices
+```{r bfem}
+bfem <- mesh2fem.barrier(mesh, triBarrier)
+```
+
+Then we have to define the range over the domain and in the barrier. 
+We consider the range for the barrier as a fraction of the range over the domain. 
+```{r rangesQ}
+(ranges <- mean(rxy) * c(1, 0.1))
+```
+
+We use this to build the precision matrix
+```{r q}
+Q <- inla.barrier.q(bfem, ranges)
+```
+and to simulate the field at the mesh nodes with 
+```{r sample}
+u <- inla.qsample(1, Q, seed = 1)[,1]
+```
+
+We can visualize the sample by projecting it into small pixesl with 
+```{r gproj}
+pgrid <- inla.mesh.projector(
+    mesh,
+    xlim = bb[1, ],
+    ylim = bb[2, ],
+    dims = round(300 * rxy/rxy[1]))
+
+image(pgrid$x,
+      pgrid$y,
+      inla.mesh.project(pgrid, field = u))
+lines(b.domain,
+      lwd = 2)
+```
+
+We define a initial set of locations
+```{r locs0}
+xy0 <- cbind(
+  runif(350, bb[1, 1], bb[1, 2]),
+  runif(350, bb[2, 1], bb[2, 2])
+)
+``` 
+Check if some of these is inside the barrier 
+```{r ib}
+xy.b <- splancs::inout(xy0, b.domain)
+ii <- which(!xy.b)
+``` 
+
+Create a dataset with locations in the desired domain
+```{r locs}
+dataset <- data.frame(
+  x = xy0[ii, 1], y = xy0[ii, 2]
+)
+(n <- nrow(dataset))
+```
+project the field to this locations and some noise 
+```{r dataset}
+dataset$outcome <- 10 +
+    drop(inla.mesh.project(
+        mesh,
+        loc = cbind(dataset$x, dataset$y),
+        field = u)) + rnorm(n, 0.0, 0.3)
+```
+
+# Model fitting 
+
+In order to fit the model, 
+we first define the model object
+```{r bmodel}
+bmodel <- barrierModel.define(
+    mesh, triBarrier,
+    useINLAprecomp = FALSE, 
+    control.priors = list(
+        prs = c(1, 0.01),
+        psigma = c(1, 0.01)),
+        fraction = 0.1)
+``` 
+
+Then we define the model formula, in the **inlabru** way as 
+```{r mformulae}
+model <- outcome ~ Intercept(1) +
+    field(cbind(x, y), model = bmodel)
+```
+and fit the model with
+```{r fit}
+result <- bru(
+    model, dataset, family = "gaussian")
+```
+
+# Results 
+
+We can see the summary for the posterior marginal distribution for the intercept with 
+```{r sfix}
+result$summary.fix
+``` 
+and for the hyperparameters in the internal scale with 
+```{r shyp}
+result$summary.hyper
+```
+
+However, we can transform the hyperparameters from the internal 
+marginal scales, from $\log(1/\sigma_e^2)$ to $\sigma$, 
+from log of range to range and from log($\sigma$) to $\sigma$, 
+with 
+```{r pmargs}
+pmarginals <- 
+    list(
+        data.frame(
+            param = "sigma.e",
+            inla.tmarginal(
+                function(x) exp(-x/2),
+                result$internal.marginals.hyperpar[[1]])),
+        data.frame(
+            param = "range",
+            inla.tmarginal(
+                function(x) exp(x),
+                result$internal.marginals.hyperpar[[2]])),
+        data.frame(
+            param = "sigma",
+            inla.tmarginal(
+                function(x) exp(x),
+                result$internal.marginals.hyperpar[[3]]))
+    )
+```
+and extract a summary to compare with the values used to sample 
+```{r psummar}
+rbind(true = c(sigma.e = 0.3, range = ranges[1], sigma = 1),
+      sapply(pmarginals, function(m)
+             unlist(inla.zmarginal(m[, -1], TRUE))[1:2]))
+```
+and plot these posterior marginal distributions with 
+```{r pmargsvis}
+ggplot(do.call(rbind, pmarginals)) + 
+    geom_line(aes(x=x, y=y)) + 
+    facet_wrap(~param, scales = "free") +
+    theme_minimal()
+```
+
+### The fitted field
+
+The posterior mean of the field can be visualized with 
+```{r umean}
+u.mean <- inla.mesh.project(
+    pgrid,
+    result$summary.random$field$mean)
+image(pgrid$x,
+      pgrid$y,
+      u.mean)
+lines(b.domain,
+      lwd = 2)
+```
