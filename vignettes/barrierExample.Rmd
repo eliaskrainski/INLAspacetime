@@ -16,74 +16,88 @@ knitr::opts_chunk$set(
   comment = "#>",
   dev = "png",
   dev.args = list(type = "cairo-png"),
-  fig.width = 7,
-  fig.height = 5
+  fig.width = 10,
+  fig.height = 7, 
+  out.width = "99%"
 )
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Abstract
 
-In this tutorial we illustrate a case when there is one (potentially more) barrier
-in the spatial domain and one needs to account for this when defining the model.
-This illustrates the model proposed in @bakka2019barrier
-as a re-implementation of the barrier model illustrated
-[here](https://haakonbakkagit.github.io/index.html).
+In this tutorial we illustrate a new implementation of the model proposed in @bakka2019barrier. 
+This model specify a model over a spatial domain accounting for physical barriers. 
+There is a implementation available in 
+[this tutorial](https://haakonbakkagit.github.io/btopic128.html).
+The re-implementation consider a new (faster) computational method 
+available in the **INLA** package.
 
 # Introduction
 
-When there is a barrier in the spatial domain, 
-the correlation between locations in each side of the barrier is affected. 
-One should consider models where the correlation between points 
-in two different sides of the barrier should decay to zero 
-and "does not cross the domain". 
+Suppose that there is a phenomena that varies over a spatial domain. 
+Models usually consider correlation between observations made. 
+Considering a pair of observations, the correlation is usually specified as 
+a function of the distance between the location sites
+from where these observations were collected. 
+If there is a barrier in the spatial domain, 
+this correlation for a pair of observations taken from sites in different 
+sides of the barrier shall consider the barrier. 
+In resume, it should no longer be just a function of the distance.
+Basically, the correlation between points 
+in two different sides of the barrier should decay faster (than the usual) 
+to zero and "does not cross the domain". 
 
 In order to illustrate the problem, 
 let us define a rectangle as our spatial domain: 
 ```{r domain}
 rxy <- c(10, 7) 
+r <- mean(rxy)
 bb <- rbind(
     c(0, 1)*rxy[1],
     c(0, 1)*rxy[2])
-p.domain <- cbind(
+domain <- cbind(
     c(0, 1, 1, 0, 0) * rxy[1],
     c(0, 0, 1, 1, 0) * rxy[2])
 ``` 
 
-We will set a barrier defined as another rectangle as follows
+We will now set the barrier as the two polygons defined as follows
 ```{r bdomain}
-b.domain <- cbind(
-    c(0.40, 1.50, 1.50, 0.40, 0.40) * rxy[1],
-    c(0.45, 0.45, 0.55, 0.55, 0.45) * rxy[2])
-b.domain <- cbind(
-  c(0.45, 0.55, 0.55, 0.45, 0.45) * rxy[1], 
-  c(-1, -1, 2, 2, -1) * rxy[2]
-)
+barrier1 <- cbind(
+  c(0.38, 0.42, 0.42, 0.38, 0.38) * rxy[1], 
+  c(0.55, 0.55, 1.50, 1.50, 0.55) * rxy[2])
+barrier2 <- cbind(
+  c(0.50, 1.50, 1.50, 0.50, 0.50) * rxy[1],
+  c(0.35, 0.35, 0.40, 0.40, 0.35) * rxy[2])
 ```
 
-We can visualize these two rectangles in order to make the problem clear:
+We can visualize these polygons in order to make the problem clear:
 ```{r domainvis}
 par(mar = c(2, 2, 0, 0), mgp = c(2, 0.5, 0), las=1)
-plot(t(bb), bty="n", type = "n")
-polygon(p.domain, col = rgb(0.5,0.7,1))
-polygon(b.domain, col = rgb(0.3,0.2,0.1))
+plot(t(bb), bty="n", type = "n", asp = 1)
+polygon(domain, col = rgb(0.5,0.7,1))
+polygon(barrier1, col = rgb(0.3,0.2,0.1, 0.5))
+polygon(barrier2, col = rgb(0.3,0.2,0.1, 0.5))
 ```
 
 The problem is to model data in both sides of the barrier considering that the 
 correlation between then should account for the barrier. 
-The proposed method in @bakka2019barrier is based in the 
-Stochastic Partial Differential Approach - SPDE, see @lindgren2011explicit.
-It actually models the entire domain, including the barrier, 
-by setting the correlation range to be much shorter over the barrier domain 
-than the one at the domain of interest. 
+The proposed method in @bakka2019barrier 
+models the entire domain, including the barrier. 
+To deal with the barrier, the correlation range is set to be reasonable shorter 
+over the barrier domain than the one at the domain of interest. 
+This idea is simple and does not add any parameter in the usual stationary model. 
+Furthermore, it can be implemented with any inferential method.
 
-In the implementation illustrated this a tutorial from this 
-[link](https://haakonbakkagit.github.io/index.html) 
-the solution is defined by setting a fraction of the range 
-to be used to set the range in the barrier. 
-One should be aware on how this choice interplay with the width of the 
-barrier in order to choose a small enough fraction but also not too 
-small in order to prevent numerical problems. 
+In @bakka2019barrier, the proposed method consider the 
+Stochastic Partial Differential Equations - SPDE 
+approach proposed in @lindgren2011explicit.
+The implementation illustrated in
+[this tutorial](https://haakonbakkagit.github.io/btopic128.html) 
+deals with a discretization of the domain. 
+The discretization should be considered with some care.
+The fraction fixed for the analysis interplay with the width of the barrier. 
+One should choose a small enough fraction, 
+see details in @bakka2019barrier.
 
 We first load the packages that will be used in this tutorial.
 
@@ -92,6 +106,10 @@ library(INLA)
 library(INLAspacetime)
 library(inlabru)
 library(ggplot2)
+```
+
+```{r inlaversioncheck, echo = FALSE}
+iV <- grep("^Version", readLines(system.file("DESCRIPTION", package = "INLA")), value = TRUE)
 ```
 
 ```{r lic, echo = FALSE}
@@ -103,13 +121,13 @@ inla.setOption(
 # Mesh and triangles
 
 The solution consider a discretization of the spatial domain and 
-the simplest one is using triangles. 
+the simplest one is using triangles.
 Therefore we start with the following mesh made up of small triangles 
 in the domain and bigger around it.
 ```{r mesh}
 mesh <- inla.mesh.2d(
-    loc.domain = p.domain, 
-    max.edge = c(0.2, 0.7),
+    loc.domain = domain, 
+    max.edge = c(0.2, 0.5),
     offset = c(0.3, 2),
     cutoff = 0.1)
 mesh$n
@@ -128,13 +146,14 @@ triCenters <-
         mesh$loc[mesh$graph$tv[,3], 2])/3
 ``` 
 
-For each triangle center we check if it is inside or not of the barrier domain 
+For each triangle center we check if it is inside or not of the barrier domain
 and and create a vector to identify to which domain is each triangle center inside
 ```{r ibarrier}
-isInBarrier <- splancs::inout(triCenters, b.domain)
+isInBarrier <- (splancs::inout(triCenters, barrier1)) |
+  (splancs::inout(triCenters, barrier2))
 ``` 
 
-We can visualize the mesh and colour the triangle centers 
+We can visualize the mesh and color the triangle centers 
 using the **ggplot** methods from the **inlabru** package
 ```{r vmesh}
 ggplot() +
@@ -142,12 +161,16 @@ ggplot() +
     geom_point(aes(
         x = triCenters[,1],
         y = triCenters[,2],
-        color = isInBarrier, 
-        pointsize = 0.05)) + 
-  theme_minimal() + xlab("") + ylab("")
+        color = isInBarrier)) + 
+  theme_minimal() + xlab("") + ylab("") 
 ```
 
-# Data simulation 
+Notice that the mesh goes beyond the domain area including a boundary extension.
+Then we also had defined the barrier so that it is also defined in this boundary.
+Therefore, when building the model over this discretization, the barrier will
+be well defined and the behavior of the process will be as intended.
+
+# Data simulation
 
 In order to simulate some data, 
 we have to define a model first. 
@@ -155,110 +178,136 @@ Let us consider that there is an underlying
 random field over the specified domain 
 and one have observed some data at some locations there.
 
-We first sample from the random field distribution. 
-There are several algorithms to sample from a random field 
-specified over a continuous domain without barriers. 
-We will define the barrier model as 
-proposed in @bakka2019barrier 
-and use it to simulate. 
+## Random field discretization
 
-We will based on the mesh we have defined. 
-First we have to define which of the triangles 
-have centers inside the barrier. 
-For that we define an integer vector:
+We first sample from the random field distribution.
+There are several algorithms to sample from a random field 
+specified over a continuous domain without barriers.
+We will define the barrier model as
+proposed in @bakka2019barrier
+and use it to simulate.
+The parameters in this model are the range and the marginal variance,
+We also define the range parameter in the barrier so that the method works.
+We consider the range for the barrier as a fraction of the range over the domain.
+We just use half of the average rectangle edges as the range in the domain
+and 10% of it in the barrier. 
+```{r rfparams}
+sigma <- 1
+(ranges <- r * c(0.5, 0.05)) 
+```
+
+We will implement the model with the mesh previously defined.
+This start with defining which triangles have centers in the barrier.
 ```{r triBarrier}
 triBarrier <- which(isInBarrier) 
 length(triBarrier)
 ```
 
-Then we compute the Finite Element Matrices needed to 
-discretise the SPDE as in @bakka2019barrier 
+Then we compute the Finite Element matrices needed for the
+model discretization, as detailed in @bakka2019barrier.
 ```{r bfem}
 bfem <- mesh2fem.barrier(mesh, triBarrier)
 ```
 
-In order to build the precision matrix, we have to define the range over the domain. 
-We also define the rage in the barrier so that the method works.  
-We consider the range for the barrier as a fraction of the range over the domain. 
-We just use half of the average rectangle edges as the range in the domain 
-and 10% of it in the barrier. 
-```{r rangesQ}
-(ranges <- mean(rxy) * c(0.5, 0.05)) 
-Q <- inla.barrier.q(bfem, ranges)
+We now build the precision matrix with
+```{r Q}
+Q <- inla.barrier.q(bfem, ranges = ranges, sigma = sigma)
 ```
 
-We can now simulate the field at the mesh nodes with 
+## A random field sample
+
+We can now simulate the field at the mesh nodes with
 ```{r sample}
 u <- inla.qsample(1, Q, seed = 1)[,1]
 ```
 
-We can visualize the sample by projecting it into small pixesl with 
+These values sampled at the mesh nodes can be projected to a set of small pixels 
+for visualization purpose
 ```{r gproj}
 pgrid <- inla.mesh.projector(
     mesh,
     xlim = bb[1, ],
     ylim = bb[2, ],
-    dims = round(300 * rxy/rxy[1]))
-
-par(mar = c(2, 2, 0, 0), mgp = c(1.5, 0.5, 0), las = 1)
-image(pgrid$x,
-      pgrid$y,
-      inla.mesh.project(pgrid, field = u), 
-      xlab = "", ylab = "")
-lines(b.domain, lwd = 2)
+    dims = round(500 * rxy/r)) 
+ugrid.sim <- inla.mesh.project(pgrid, field = u)
 ```
 
-Notice that we also visualize a simulated process in the barrier because it 
-is also defined there. 
-We can look at this image to check if the simulated process follows the 
-desired property.
-That is, we can see that, because the range in the barrier is small enough, 
-the correlation between points in the two sides of the barrier are independent.
+```{r beval, echo = FALSE}
+<<ggbarriers>>
+```
 
-We define a initial set of locations 
-to consider that we observe the field at these locations. 
-We start with a set of locations chosen completly at random in the rectangle 
+We can now visualize the projected simulated values at the small pixels, 
+inclusive those values in the barriers.
+```{r uviz}
+grid.df <- data.frame(
+  x = rep(pgrid$x, times = length(pgrid$y)), 
+  y = rep(pgrid$y, each = length(pgrid$x)), 
+  u = as.vector(ugrid.sim))
+ggplot() + 
+  geom_raster(
+    data = grid.df, 
+    aes(x = x, y = y, fill = u)) + 
+  add.b0 + gg.add ## look to the appendix for the code for this
+```
+
+The visualized values of the simulated process in the barrier
+allows a visual inspection to check if the simulated process 
+follows the desired property.
+The process in different sides of the barriers 
+seen to be independent, 
+if considering it far enough from the tips of the barriers, 
+near the center of the domain.
+This signs that the range in the barrier was set small enough.
+
+## Sampling a set of observations
+
+We define a initial set of locations
+to consider that we observe the field at these locations.
+We start with a set of locations chosen completely at random in the rectangle
 domain, including a barrier part
 ```{r locs0}
+n0 <- 500
+set.seed(2)
 xy0 <- cbind(
-  runif(350, bb[1, 1], bb[1, 2]),
-  runif(350, bb[2, 1], bb[2, 2])
-)
+  runif(n0, bb[1, 1], bb[1, 2]),
+  runif(n0, bb[2, 1], bb[2, 2]))
 ``` 
 
-Then we check which of these is inside the barrier 
+Then we check which of these is inside the barrier
 ```{r ib}
-xy.b <- splancs::inout(xy0, b.domain)
+xy.b <- (splancs::inout(xy0, barrier1)) |
+  (splancs::inout(xy0, barrier2))
 ii <- which(!xy.b)
 ``` 
 
-The locations to form the data consider only the locations in the desired domain 
+The locations to form the data consider only the locations in the desired domain
 and outside the barrier
 ```{r locs}
 dataset <- data.frame(
-  x = xy0[ii, 1], y = xy0[ii, 2]
-)
+  x = xy0[ii, 1], y = xy0[ii, 2])
 (n <- nrow(dataset))
 ```
 
-To simulate the outcome, we project the field to these locations, 
-add an intercept and some random noise 
+To simulate the outcome, we project the field to these locations,
+add an intercept and some random noise
 ```{r dataset}
+sigma.e <- 1
+set.seed(3)
 dataset$outcome <- 
     drop(inla.mesh.project(
         mesh,
         loc = cbind(dataset$x, dataset$y),
         field = u)) + 
-  10 + rnorm(n, 0.0, 0.3)
+  10 + rnorm(n, 0.0, sigma.e)
 ```
 
-# Model fitting 
+# Model fitting
 
-Here we illustrate the use of the function in **INLAspacetime** to 
-implement the barrier model as in @bakka2019barrier. 
-Our implementation consider the `cgeneric` computational method that 
-is useful to implement new models with **INLA**. 
-This method allows the computations in **INLA** to take full advantage of 
+Here we illustrate the use of the function in **INLAspacetime** to
+implement the barrier model as in @bakka2019barrier.
+This implementation consider the `cgeneric` computational method that
+is useful to implement new models with **INLA**.
+This method allows the computations in **INLA** to take full advantage of
 parallel computations, making it faster than the original implementation.
 
 We define the model object with
@@ -272,34 +321,31 @@ bmodel <- barrierModel.define(
         fraction = 0.1)
 ``` 
 
-Then we define the model formula, in the **inlabru** way, 
+We use the model formula in the **inlabru** way,
 where the `field` will be the name for the spatial effect:
 ```{r mformulae}
 model <- outcome ~ Intercept(1) +
     field(cbind(x, y), model = bmodel)
 ```
 
-The **inlabru** main function will use these to run `inla` with 
-```{r fit}
+The **inlabru** main function can be supplied with only the 
+model formula, the data and the family, as follows
+```{r fit, warning = FALSE}
 result <- bru(
     model, dataset, family = "gaussian")
 ```
 
-# Results 
+# Results
 
-We can see the summary for the posterior marginal distribution for the intercept with 
+We can see the summary for the posterior marginal distribution for the intercept with
 ```{r sfix}
 result$summary.fix
 ``` 
-and for the hyperparameters in the internal scale with 
-```{r shyp}
-result$summary.hyper
-```
 
-However, we can transform the hyperparameters from the internal 
-marginal scales, from $\log(1/\sigma_e^2)$ to $\sigma$, 
-from log of range to range and from log($\sigma$) to $\sigma$, 
-with 
+For the hyper-parameters the computations were performed in an internal scale.
+That is log of range and log($\sigma$), and $\log(1/\sigma_e^2)$.
+However, we can transform each of the hyper-parameters from the
+internal marginal scale to its scale with
 ```{r pmargs}
 pmarginals <- 
     list(
@@ -320,13 +366,16 @@ pmarginals <-
                 result$internal.marginals.hyperpar[[3]]))
     )
 ```
-and extract a summary to compare with the values used to sample 
+
+From these transformed posterior marginal distributions we
+can extract a summary to compare with the values used to sample the data:
 ```{r psummar}
 rbind(true = c(sigma.e = 0.3, range = ranges[1], sigma = 1),
       sapply(pmarginals, function(m)
              unlist(inla.zmarginal(m[, -1], TRUE))[1:2]))
 ```
-and plot these posterior marginal distributions with 
+
+We can also visualize these these posterior marginal distributions with
 ```{r pmargsvis}
 ggplot(do.call(rbind, pmarginals)) + 
     geom_line(aes(x=x, y=y)) + 
@@ -336,15 +385,88 @@ ggplot(do.call(rbind, pmarginals)) +
 
 ### The fitted field
 
-The posterior mean of the field can be visualized with 
+We can visualize summaries from the fitted field.
+The posterior mean and the standard error can be projected into small pixels
+and added to the raster data with
 ```{r umean}
-u.mean <- inla.mesh.project(
+grid.df$u.mean <- as.vector(
+  inla.mesh.project(
     pgrid,
-    result$summary.random$field$mean)
-par(mar = c(2, 2, 0, 0), mgp = c(1.5, 0.5, 0), las = 1)
-image(pgrid$x,
-      pgrid$y,
-      u.mean, 
-      xlab = "", ylab = "")
-polygon(b.domain, col = "white")
+    result$summary.random$field$mean))
+grid.df$u.sd <- as.vector(
+  inla.mesh.project(
+    pgrid,
+    result$summary.random$field$sd))
+``` 
+
+To help the visualization, we will filter the grid pixels 
+considering the barriers.
+```{r ibarrierpix}
+gInBarrier <- 
+  (splancs::inout(cbind(grid.df$x, grid.df$y), barrier1)) |
+  (splancs::inout(cbind(grid.df$x, grid.df$y), barrier2))
 ```
+
+We can now visualize the posterior mean with
+```{r umeanviz}
+ggplot() + 
+  geom_raster(
+    data = grid.df[!gInBarrier, ], 
+    aes(x = x, y = y, fill = u.mean)) + 
+  gg.add ## look to the appendix for the code for this
+``` 
+
+The estimated field, considering the posterior mean shown,
+exhibits a different pattern in each side of the barrier,
+particularly far from its tip.
+Therefore we successfully accounted for the barrier in the model.
+See [this tutorial](https://haakonbakkagit.github.io/btopic128.html)
+for details and how to visualize the implied correlation between two points.
+
+Similarly, we can plot the posterior standard deviation of the field,
+and the data locations used to estimate the model.
+This has lower values around more densely sampled locations and
+higher values otherwise.
+The highest are near the boundaries,
+including the boundary at the barriers,
+and far from observed locations.
+
+```{r usdviz}
+ggplot() + 
+  geom_raster(
+    data = grid.df[!gInBarrier, ], 
+    aes(x = x, y = y, fill = u.sd)) + 
+  geom_point(data = dataset, aes(x = x, y = y)) +
+  gg.add ## look to the appendix for the code for this
+```
+
+# Appendix A: re-used code
+
+The additional **ggplot2** code used
+```{r ggbarriers}
+gg.add <- list(
+  scale_fill_distiller(
+    type = "div", 
+    palette = "RdBu"),
+  xlab(""),
+  ylab(""),
+  theme_minimal(),
+  coord_fixed()
+)
+add.b0 <- list(
+  geom_polygon(
+    mapping = aes(
+      x = pmin(barrier1[,1], bb[1, 2]), 
+      y = pmin(barrier1[,2], bb[2, 2])), 
+    colour = "black", 
+    fill = "transparent"),
+  geom_polygon(
+    mapping = aes(
+      x = pmin(barrier2[,1], bb[1, 2]), 
+      y = pmin(barrier2[,2], bb[2,2])), 
+    colour = "black", 
+    fill = "transparent")
+)
+```
+
+# References
