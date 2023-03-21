@@ -74,7 +74,7 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 			npar++;
 		}
 		a1 = -2.0 * sqrt(a2) * cos(2.0 * M_PI / sleng);
-		pcorrect = exp( log(1 + a2) - log(1.0 - a2) - log(1.0 - a1 + a2) - log(1.0 + a1 + a2) );
+		pcorrect = exp(log(1 + a2) - log(1.0 - a2) - log(1.0 - a1 + a2) - log(1.0 + a1 + a2));
 	} else {
 		sleng = NAN;
 		prec = lprec = NAN;
@@ -109,12 +109,12 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 		}
 		// printf("G k = %d\n", k);
 		if (N > 2) {
-			if (toprint) 
+			if (toprint)
 				fprintf(stderr, "graph\n");
 			for (int i = 0; i < (N - 2); i++) {
-				ret[k++] = i;	       /* i */
-				ret[k++] = i;	       /* i */
-				ret[k++] = i;	       /* i */
+				ret[k++] = i;		       /* i */
+				ret[k++] = i;		       /* i */
+				ret[k++] = i;		       /* i */
 			}
 			// printf("G k = %d\n", k);
 			ret[k++] = N - 2;
@@ -124,8 +124,8 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 				ret[k++] = i;		       /* j */
 				ret[k++] = i + 1;	       /* j */
 				ret[k++] = i + 2;	       /* j */
-				if(toprint)
-					fprintf(stderr, "%d %d %d %d\n", i, i, i+1, i+2);
+				if (toprint)
+					fprintf(stderr, "%d %d %d %d\n", i, i, i + 1, i + 2);
 			}
 			ret[k++] = N - 2;
 			ret[k++] = N - 1;
@@ -134,7 +134,7 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 		}
 		assert((2 * M + 2) == k);
 	}
-	break;
+		break;
 
 	case INLA_CGENERIC_Q:
 	{
@@ -150,21 +150,22 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 		ret[k++] = M;
 		// printf("Q : ret = %g, M = %g, k = %d\n", ret[0], ret[1], k);
 
-		if(toprint) fprintf(stderr, "Q\n"); 
-		
+		if (toprint)
+			fprintf(stderr, "Q\n");
+
 		if (N == 1) {
 			ret[k++] = param;
 		}
 		if (N == 2) {
 			ret[k++] = param;
-			ret[k++] = 0.5 * a1 * param;	// convention: 0.5 * rho * (1-rho^2)/s2innovation
+			ret[k++] = 0.5 * a1 * param;	       // convention: 0.5 * rho * (1-rho^2)/s2innovation
 			ret[k++] = param;
 		}
 		if (N > 2) {
 			ret[k++] = param;
 			ret[k++] = a1 * param;
 			q2 = a2 * param;
-			ret[k++] = q2; 
+			ret[k++] = q2;
 			if (N > 3) {
 				ret[k++] = (1.0 + a1 * a1) * param;
 				q1 = a1 * (1.0 + a2) * param;
@@ -176,7 +177,7 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 						ret[k++] = q0;
 						ret[k++] = q1;
 						ret[k++] = q2;
-						if(toprint) 
+						if (toprint)
 							fprintf(stderr, "%d %f %f %f\n", i, q0, q1, q2);
 					}
 				}
@@ -186,7 +187,8 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 			ret[k++] = param;
 		}
 	}
-	;break;
+		;
+		break;
 
 	case INLA_CGENERIC_MU:
 	{

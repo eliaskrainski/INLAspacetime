@@ -90,19 +90,19 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 		if (ifix[0] == 1) {
 			range = prs->doubles[0];
 		} else {
-     		        range = exp(theta[ith++]);
+			range = exp(theta[ith++]);
 		}
 
 		if (ifix[1] == 1) {
-		        sigma = prs->doubles[0];
+			sigma = prs->doubles[0];
 		} else {
-		        sigma = exp(theta[ith++]);
+			sigma = exp(theta[ith++]);
 		}
 
-		double pi6s2 = 1.9098593171 / SQR(sigma) ; // 6 / ( pi * sigma^2) 
+		double pi6s2 = 1.9098593171 / SQR(sigma);      // 6 / ( pi * sigma^2) 
 		double r2 = SQR(range);
-		  
-		params[0] = pi6s2 / (r2); 
+
+		params[0] = pi6s2 / (r2);
 		params[1] = pi6s2 / (8);
 		params[2] = pi6s2 / (8);
 		params[3] = r2 * pi6s2 / (64);
@@ -111,7 +111,7 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 
 		if (verbose | debug) {
 			fprintf(stderr, "theta = ");
-			for(int i=0; i<nth; i++)
+			for (int i = 0; i < nth; i++)
 				fprintf(stderr, "%f ", theta[i]);
 			fprintf(stderr, "range = %f, sigma = %f\n", range, sigma);
 		}
