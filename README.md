@@ -15,6 +15,8 @@ https://arxiv.org/abs/2006.04917
 https://doi.org/10.1016/j.spasta.2019.01.002
 
 # Install with 
-remotes::install_github("eliaskranski/INLAspacetime")
+```
+remotes::install_github("eliaskrainski/INLAspacetime")
+```
 
 # See the vignettes for examples
