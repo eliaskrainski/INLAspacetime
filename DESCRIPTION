@@ -1,13 +1,17 @@
 Package: INLAspacetime
 Type: Package
-Title: Functions to fit spatio-temporal models using INLA
+Title: Functions to fit spatial and spatio-temporal models using INLA
 Version: 0.1.3
 Authors@R: c(
-  person("Elias Teixeira", "Krainski", email = "elias@r-inla.org",
-         role = c("cre", "aut", "cph")),
+  person("Elias Teixeira", "Krainski", email = "eliaskrainski@gmail.com",
+         role = c("cre", "aut", "cph"), 
+         comment = c(ORCID = "0000-0002-7063-2615")),
   person("Finn", "Lindgren", email = "finn.lindgren@gmail.com",
          role = c("aut"),
-         comment = c(ORCID = "0000-0002-5833-2011"))
+         comment = c(ORCID = "0000-0002-5833-2011")),
+  person("Haavard", "Rue", email = "haavard.rue@kaust.edu.sa",
+         role = c("aut"),
+         comment = c(ORCID = "0000-0002-0222-1881"))
   )
 Description: Functions to fit spatio-temporal models using INLA.
 Depends:
@@ -36,5 +40,5 @@ BuildVignettes: true
 License: GPL (>=2) 
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE)

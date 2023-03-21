@@ -68,11 +68,9 @@ gammas2params <- function(lgammas, alpha.t, alpha.s, alpha.e, smanifold = "R2") 
   alpha <- alpha.e + alpha.s * (alpha.t - 0.5)
   stopifnot(substr(smanifold,1,1) %in% c("R", "S"))
   d <- as.integer(substr(smanifold, 2, 2))
-  nu.s <- alpha - d/2
-  nu.t <- min(alpha.t - 0.5, nu.s / alpha.s)
   lct <- lgamma(alpha.t-0.5) - lgamma(alpha.t) -0.5 * log(4*pi)
   lgsCs <- gsConstant(lgammas, alpha, smanifold)
-  return(c(lrs = 0.5 * log(8 * nu.s) - lgammas[1],
+  return(c(lrs = 0.5 * log(8 * (alpha - d/2)) - lgammas[1],
            lrt = 0.5 * log(8 * (alpha.t-0.5)) - alpha.s * lgammas[1] + lgammas[2],
            lsigma = lct + lgsCs - lgammas[2] - 2*lgammas[3]))
 }
