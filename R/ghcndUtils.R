@@ -33,7 +33,7 @@ downloadUtilFiles <- function(data.dir, year=2022, force=FALSE)
       url = paste0(ghcnd, sfl),
       destfile = loc.sfl)
 
-  ### elevation data (the finner grid: ETOPO2)
+  ### elevation data
   efl <- "ETOPO2.RData"
   loc.efl <- file.path(data.dir, efl)
   if(force | (!file.exists(loc.efl)))

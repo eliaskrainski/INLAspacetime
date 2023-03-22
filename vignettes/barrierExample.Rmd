@@ -2,10 +2,10 @@
 title: "A barrier model illustration"
 author: "Elias T Krainski"
 date: "2023, March"
-output: rmarkdown::html_vignette
+output: rmarkdown::pdf_document
 bibliography: INLAspacetime.bib
 vignette: >
-  %\VignetteIndexEntry{INLAspacetime}
+  %\VignetteIndexEntry{A barrier model illustration}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,8 +17,10 @@ knitr::opts_chunk$set(
   dev = "png",
   dev.args = list(type = "cairo-png"),
   fig.width = 10,
-  fig.height = 7, 
-  out.width = "99%"
+  fig.height = 7,
+  dpi = 300,
+  out.width = "99%",
+  fig.align = "center"
 )
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -50,7 +52,7 @@ to zero and "does not cross the domain".
 In order to illustrate the problem, 
 let us define a rectangle as our spatial domain: 
 ```{r domain}
-rxy <- c(10, 7) 
+rxy <- c(10, 6)
 r <- mean(rxy)
 bb <- rbind(
     c(0, 1)*rxy[1],
@@ -63,11 +65,11 @@ domain <- cbind(
 We will now set the barrier as the two polygons defined as follows
 ```{r bdomain}
 barrier1 <- cbind(
-  c(0.25, 0.65, 0.63, 0.23, 0.25) * rxy[1], 
-  c(0.45, 0.80, 0.85, 0.50, 0.45) * rxy[2])
+  cos(seq(0, 2*pi, length=50)) * 0.7 + 0.50 * rxy[1], 
+  sin(seq(0, 2*pi, length=50)) * 1.0 + 0.75 * rxy[2])
 barrier2 <- cbind(
   c(0.50, 1.50, 1.50, 0.50, 0.50) * rxy[1],
-  c(0.35, 0.35, 0.40, 0.40, 0.35) * rxy[2])
+  c(0.33, 0.33, 0.40, 0.40, 0.33) * rxy[2])
 ```
 
 We can visualize these polygons in order to make the problem clear:
@@ -139,9 +141,9 @@ in the domain and bigger around it.
 ```{r mesh}
 mesh <- inla.mesh.2d(
     loc.domain = domain, 
-    max.edge = c(0.2, 0.5),
-    offset = c(0.3, 2),
-    cutoff = 0.1)
+    max.edge = c(0.03, 0.1) * r,
+    offset = c(0.1, 0.3) * r,
+    cutoff = 0.01 * r)
 mesh$n
 ```
 
@@ -246,8 +248,8 @@ dim(mcorrels)
 We have the correlation from each mesh node to each of the specified locations.
 We would like to visualize it as an image so that we have these correlation 
 from the location to "everywhere".
-Let us build a projector to project any vector from the mesh nodes to 
-a fine grid and project the computed correlations with this.
+Let us build a projector to project any vector from the mesh nodes to a fine grid
+and projected with
 ```{r pgrid}
 pgrid <- inla.mesh.projector(
     mesh,
@@ -255,43 +257,42 @@ pgrid <- inla.mesh.projector(
     ylim = bb[2, ],
     dims = round(500 * rxy/r)) 
 gcorrels <- as.matrix(inla.mesh.project(
-  pgrid, field = mcorrels))
-```
-
-In order to help the visualization of correlations, 
-we will set the small correlation values as NA so that 
-these values will not dominate the image later.
-```{r gcorrels}
-for(i in 1:ncol(gcorrels)) {
-  ii <- which(abs(gcorrels[, i]) < 0.1)
-  gcorrels[ii, i] <- NA
-}
+  pgrid, field = mcorrels
+))
 ```
 
 We can now create a `data.frame` with the expanded coordinates of the pixels
-and join the correlations with 
 ```{r grid.df}
 grid.df <- data.frame(
   x = rep(pgrid$x, times = length(pgrid$y)), 
-  y = rep(pgrid$y, each = length(pgrid$x)),
- correl = gcorrels)
+  y = rep(pgrid$y, each = length(pgrid$x)))
 ```
 
+The correlations can be projected and prepared for plotting with 
+```{r gcorrels}
+ggcorrels <- do.call(
+  rbind, 
+  lapply(1:4, function(l) 
+    data.frame(grid.df, 
+               loc = paste(sprintf("%1.1f", locs[l, 1]), 
+                           sprintf("%1.1f", locs[l, 2]), sep = ", "), 
+               correlation = gcorrels[, l])))
+```
+
+
+In order to help the visualization of correlations, 
+we will dropped the pixels with small correlations, less than $0.1$.
 We can now visualize the images with
 ```{r beval, echo = FALSE}
 <<ggbarriers>>
 ```
-```{r ggcorrel}
-ggc <- lapply(1:ncol(gcorrels), function(i) {
-  ggplot() + 
-    geom_raster(
-      data = grid.df, 
-      aes(x = x, y = y, fill = grid.df[, 2 + i])) + 
-    labs(fill="Correlation") +
-    geom_point(aes(x = locs[i, 1], y = locs[i, 2])) +
-    add.b0 + gg.add ## look to the appendix for the code for this
-  })
-wrap_plots(ggc)
+```{r ggcorrels}
+ggplot() +  
+  geom_raster(
+    data = ggcorrels[ggcorrels$correlation>0.1, ], 
+    mapping = aes(x = x, y = y, fill = correlation)) + 
+  facet_wrap(~ loc) + 
+  add.b0 + gg.add ## look to the appendix for the code for this
 ```
 
 Notice that the model is also defined in the barrier domain.
@@ -347,7 +348,7 @@ to consider that we observe the field at these locations.
 We start with a set of locations chosen completely at random in the rectangle
 domain, including a barrier part
 ```{r locs0}
-n0 <- 300
+n0 <- 500
 set.seed(2)
 xy0 <- cbind(
   runif(n0, bb[1, 1], bb[1, 2]),
@@ -416,6 +417,7 @@ model formula, the data and the family, as follows
 ```{r fit, warning = FALSE}
 result <- bru(
     model, dataset, family = "gaussian")
+result$cpu 
 ```
 
 # Results
@@ -453,13 +455,13 @@ pmarginals <-
 From these transformed posterior marginal distributions we
 can extract a summary to compare with the values used to sample the data:
 ```{r psummar}
-rbind(true = c(sigma.e = 0.3, range = ranges[1], sigma = 1),
+rbind(true = c(sigma.e = sigma.e, range = ranges[1], sigma = 1),
       sapply(pmarginals, function(m)
              unlist(inla.zmarginal(m[, -1], TRUE))[1:2]))
 ```
 
 We can also visualize these these posterior marginal distributions with
-```{r pmargsvis}
+```{r pmargsvis, fig.width = 7, fig.height = 4, out.width = "69%"}
 ggplot(do.call(rbind, pmarginals)) + 
     geom_line(aes(x=x, y=y)) + 
     facet_wrap(~param, scales = "free") +
@@ -469,7 +471,7 @@ ggplot(do.call(rbind, pmarginals)) +
 ### The fitted field
 
 We can visualize summaries from the fitted field.
-The posterior mean and the standard error can be projected into small pixels
+The posterior mean and the standard deviation can be projected into small pixels
 and added to the raster data with
 ```{r umean}
 grid.df$u.mean <- as.vector(
@@ -539,17 +541,19 @@ gg.add <- list(
 )
 add.b0 <- list(
   geom_polygon(
-    mapping = aes(
+    mapping = aes(x, y), 
+    data = data.frame(
       x = pmin(barrier1[,1], bb[1, 2]), 
-      y = pmin(barrier1[,2], bb[2, 2])), 
-    colour = "black", 
-    fill = "transparent"),
+      y = pmin(barrier1[,2], bb[2, 2])
+    ), colour = "black", 
+  fill = gray(0.9, 0.5)), ##"transparent"),
   geom_polygon(
-    mapping = aes(
+    mapping = aes(x, y), 
+    data = data.frame(
       x = pmin(barrier2[,1], bb[1, 2]), 
-      y = pmin(barrier2[,2], bb[2,2])), 
-    colour = "black", 
-    fill = "transparent")
+      y = pmin(barrier2[,2], bb[2, 2]) 
+    ), colour = "black", 
+    fill = gray(0.9, 0.5))##"transparent")
 )
 ```
 
