@@ -7,8 +7,7 @@
 #' Defalt is the Mollweide projection with units in kilometers.
 #' @return the world map
 #' @references
-#'  the world map data is from the maps R package:
-#'  \url{https://cran.r-project.org/web/packages/maps/index.html}
+#'  the world map data is from the maps R package.
 #' @examples
 #' wmap <- worldMap()
 #' sp::plot(wmap)

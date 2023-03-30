@@ -1,6 +1,6 @@
 Package: INLAspacetime
 Type: Package
-Title: Functions to fit spatial and spatio-temporal models using INLA
+Title: Functions to Fit Spatial and Spatio-Temporal Models using INLA
 Version: 0.1.3
 Authors@R: c(
   person("Elias Teixeira", "Krainski", email = "eliaskrainski@gmail.com",
@@ -19,13 +19,13 @@ Depends:
     sp,
     R (>= 3.6)
 Imports:
-    INLA (>= 22.12.14),
     graphics,
     grDevices,
     methods,
     stats,
     utils
 Suggests:
+    INLA (>= 22.12.14),
     inlabru (>= 2.6.0),
     knitr,
     ggplot2,
@@ -35,6 +35,7 @@ Suggests:
     maps,
     maptools,
     rgdal
+Additional_repositories: https://inla.r-inla-download.org/R/testing
 VignetteBuilder: knitr
 BuildVignettes: true
 License: GPL (>=2) 
@@ -42,3 +43,4 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE)
+URL: https://github.com/eliaskrainski/INLAspacetime

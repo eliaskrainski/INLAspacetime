@@ -66,7 +66,7 @@
 #'
 #' Bolin, D. and Wallin, J. (2022) Local scale invariance
 #' and robustness of proper scoring rules. Statistical Science.
-#' \url{https://doi.org/10.1214/22-STS864}.
+#' \doil{10.1214/22-STS864}.
 #' @export
 #'
 #' @importFrom stats dnorm pnorm complete.cases

@@ -22,6 +22,5 @@ wmap <- worldMap()
 sp::plot(wmap)
 }
 \references{
-the world map data is from the maps R package:
-\url{https://cran.r-project.org/web/packages/maps/index.html}
+the world map data is from the maps R package.
 }
