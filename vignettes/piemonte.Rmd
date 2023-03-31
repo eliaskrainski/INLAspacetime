@@ -5,7 +5,7 @@ date: "2023, Feb"
 output: rmarkdown::html_vignette
 bibliography: INLAspacetime.bib
 vignette: >
-  %\VignetteIndexEntry{INLAspacetime}
+  %\VignetteIndexEntry{The piemonte dataset}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

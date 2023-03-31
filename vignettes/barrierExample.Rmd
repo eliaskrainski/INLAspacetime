@@ -412,12 +412,27 @@ model <- outcome ~ Intercept(1) +
     field(cbind(x, y), model = bmodel)
 ```
 
-The **inlabru** main function can be supplied with only the 
-model formula, the data and the family, as follows
-```{r fit, warning = FALSE}
+```{r mfitcode, echo = FALSE, warning = FALSE}
 result <- bru(
     model, dataset, family = "gaussian")
-result$cpu 
+```
+```{r mfit, echo = FALSE}
+sresfl <- "result_barrier.R"
+if(file.exists(sresfl)) {
+  source(sresfl)
+} else {
+  <<mfitcode>>
+  snams <- c("cpu", "summary.fixed", "summary.random", 
+             "internal.marginals.hyperpar")
+  result <- result[snams]
+  dump("result", file = sresfl)
+}
+```
+
+The **inlabru** main function can be supplied with only the 
+model formula, the data and the family, as follows
+```{r fit, eval = FALSE}
+<<mfitcode>>
 ```
 
 # Results
