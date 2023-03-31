@@ -25,7 +25,7 @@ Imports:
     stats,
     utils
 Suggests:
-    INLA (>= 22.12.14),
+    INLA (>= 23.03.26),
     inlabru (>= 2.6.0),
     knitr,
     ggplot2,
@@ -40,7 +40,7 @@ VignetteBuilder: knitr
 BuildVignettes: true
 License: GPL (>=2) 
 Encoding: UTF-8
-LazyData: true
+LazyData: false
 RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE)
 URL: https://github.com/eliaskrainski/INLAspacetime

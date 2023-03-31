@@ -2,12 +2,14 @@
 title: "INLAspacetime: exploring with an example"
 author: "Elias T Krainski"
 date: "2023, Feb"
-output: rmarkdown::html_vignette
-bibliography: INLAspacetime.bib
+output:
+  rmarkdown::html_vignette:
+  rmarkdown::pdf_document:
 vignette: >
-  %\VignetteIndexEntry{The piemonte dataset}
+  %\VignetteIndexEntry{The Piemonte dataset}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: INLAspacetime.bib
 ---
 
 ```{r setup, include = FALSE}
@@ -26,7 +28,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 In this vignette we illustrate how to fit some of the spacetime models
 using the method proposed in @lindgren2023 
-for the piemonte dataset analysed in @cameletti2013.
+for the Piemonte dataset analysed in @cameletti2013.
 
 To perform this we will use the Bayesian paradigm with computations using the
 **INLA** package using the features provided by the 

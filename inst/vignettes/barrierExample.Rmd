@@ -2,12 +2,14 @@
 title: "A barrier model illustration"
 author: "Elias T Krainski"
 date: "2023, March"
-output: rmarkdown::pdf_document
-bibliography: INLAspacetime.bib
+output:
+  rmarkdown::html_vignette:
+  rmarkdown::pdf_document:
 vignette: >
   %\VignetteIndexEntry{A barrier model illustration}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: INLAspacetime.bib
 ---
 
 ```{r setup, include = FALSE}
@@ -422,7 +424,7 @@ if(file.exists(sresfl)) {
   source(sresfl)
 } else {
   <<mfitcode>>
-  snams <- c("cpu", "summary.fixed", "summary.random", 
+  snams <- c("summary.fixed", "summary.random", 
              "internal.marginals.hyperpar")
   result <- result[snams]
   dump("result", file = sresfl)

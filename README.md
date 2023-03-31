@@ -77,10 +77,10 @@ dataf <- data.frame(
     y    = rnorm(n, 0, 1))
 str(dataf)
 #> 'data.frame':    5 obs. of  4 variables:
-#>  $ s1  : num  0.734 -0.486 -0.888 0.436 -0.267
-#>  $ s2  : num  0.62 0.677 -0.137 0.525 0.676
-#>  $ time: num  3.17 3.16 1.31 2.07 2.92
-#>  $ y   : num  0.268 -2.007 -0.691 -1.299 -0.227
+#>  $ s1  : num  0.588 -0.453 -0.973 0.398 0.833
+#>  $ s2  : num  -0.7447 -0.5511 -0.0729 0.4581 0.9561
+#>  $ time: num  3.62 1.42 2.55 3.99 1.25
+#>  $ y   : num  0.157 1.385 2.036 -0.295 0.963
 ```
 
 Loading the packages:
@@ -167,15 +167,15 @@ Summary of the model parameters
 
 ``` r
 result$summary.fixed
-#>               mean       sd 0.025quant 0.5quant 0.975quant     mode kld
-#> Intercept -2.22475 2.784909  -7.683071 -2.22475   3.233571 -2.22475   0
+#>                mean       sd 0.025quant  0.5quant 0.975quant      mode kld
+#> Intercept 0.5619682 2.149405  -3.650789 0.5619682   4.774725 0.5619682   0
 result$summary.hyperpar
-#>                                                 mean           sd   0.025quant
-#> Precision for the Gaussian observations 18357.635910 1.821321e+04 1235.1530589
-#> Theta1 for field                            1.074957 2.974335e-01    0.4171646
-#> Theta2 for field                            1.041119 1.605054e-01    0.7479686
-#>                                             0.5quant   0.975quant         mode
-#> Precision for the Gaussian observations 12849.815853 66931.602229 3390.1755102
-#> Theta1 for field                            1.085790     1.600244    1.1738131
-#> Theta2 for field                            1.033319     1.380794    0.9998743
+#>                                                  mean           sd   0.025quant
+#> Precision for the Gaussian observations 18329.3225260 1.807974e+04 1233.6322877
+#> Theta1 for field                            2.3183849 3.508814e-01    1.5331198
+#> Theta2 for field                           -0.3303781 3.479795e-01   -0.8930268
+#>                                              0.5quant   0.975quant        mode
+#> Precision for the Gaussian observations 12865.9846347 6.651524e+04 3388.114014
+#> Theta1 for field                            2.3553357 2.890631e+00    2.515316
+#> Theta2 for field                           -0.3689591 4.502314e-01   -0.534043
 ```
