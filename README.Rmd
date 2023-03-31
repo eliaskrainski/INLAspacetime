@@ -68,7 +68,7 @@ remotes::install_github("eliaskrainski/INLAspacetime")
 # See the vignettes for examples
 
 We will have  tutorials and examples at
-[https://eliaskrainski.github.io/INLAspacetime/articles/](https://eliaskrainski.github.io/INLAspacetime/articles/)
+[https://eliaskrainski.github.io/INLAspacetime/](https://eliaskrainski.github.io/INLAspacetime/)
 
 # Example
 
@@ -78,10 +78,10 @@ The model fitting using **inlabru** facilitates coding.
 ```{r fakedata}
 n <- 5
 dataf <- data.frame(
-    s1=runif(n, -1, 1),
-    s2=runif(n, -1, 1),
-    time=runif(n, 1, 4),
-    y=rnorm(n, 0, 1))
+    s1   = runif(n, -1, 1),
+    s2   = runif(n, -1, 1),
+    time = runif(n, 1, 4),
+    y    = rnorm(n, 0, 1))
 str(dataf)
 ```
 
@@ -94,26 +94,35 @@ library(inlabru)
 
 Define spatial and temporal discretization meshes
 ```{r meshes}
-smesh <- inla.mesh.2d(cbind(0,0), max.edge=5, offset=2)
-tmesh <- inla.mesh.1d(0:5)
+smesh <- inla.mesh.2d(
+  loc = cbind(0,0), 
+  max.edge = 5, 
+  offset = 2)
+tmesh <- inla.mesh.1d(
+  loc = 0:5)
 ```
 
 Define the spacetime model object to be used
 ```{r stmodel}
 stmodel <- stModel.define(
-    smesh, tmesh, '121', 
-    control.priors=list(
-        prs=c(1, 0.5),
-        prt=c(5, 0.5),
-        psigma=c(1, 0.5)))
+    smesh = smesh, ## spatial mesh
+    tmesh = tmesh, ## temporal mesh
+    model = '121', ## model, see the paper
+    control.priors = list(
+        prs = c(1, 0.1), ## P(spatial range < 1) = 0.1
+        prt = c(5, 0), ## fixed to 5
+        psigma = c(1, 0.1) ## P(sigma > 1) = 0.1
+        )
+    )
 ```
 
 
 Define the data model: the linear predictor terms
 ```{r dmodel}
-M <- ~ -1 + Intercept(1) +
-    field(list(space = cbind(s1, s2), time=time),
-          model=stmodel)
+linpred <- ~ Intercept +
+    field(list(space = cbind(s1, s2), 
+               time = time),
+          model = stmodel)
 ```
 
 Setting the likelihood 
@@ -132,7 +141,7 @@ Fitting
 ```{r fitting}
 result <- 
   bru(
-    components = M,
+    components = linpred,
     datalike,
     options = list(
       control.inla = list(

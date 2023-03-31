@@ -61,7 +61,7 @@ remotes::install_github("eliaskrainski/INLAspacetime")
 # See the vignettes for examples
 
 We will have tutorials and examples at
-<https://eliaskrainski.github.io/INLAspacetime/articles/>
+<https://eliaskrainski.github.io/INLAspacetime/>
 
 # Example
 
@@ -71,16 +71,16 @@ The model fitting using **inlabru** facilitates coding.
 ``` r
 n <- 5
 dataf <- data.frame(
-    s1=runif(n, -1, 1),
-    s2=runif(n, -1, 1),
-    time=runif(n, 1, 4),
-    y=rnorm(n, 0, 1))
+    s1   = runif(n, -1, 1),
+    s2   = runif(n, -1, 1),
+    time = runif(n, 1, 4),
+    y    = rnorm(n, 0, 1))
 str(dataf)
 #> 'data.frame':    5 obs. of  4 variables:
-#>  $ s1  : num  -0.571 0.447 -0.442 -0.386 -0.63
-#>  $ s2  : num  -0.937 -0.194 0.267 -0.285 0.947
-#>  $ time: num  1.2 3.53 3.18 3.34 3.52
-#>  $ y   : num  0.136 -0.17 -1.593 -0.794 -2.121
+#>  $ s1  : num  0.407 0.139 -0.414 0.783 0.615
+#>  $ s2  : num  0.2447 -0.2356 -0.4195 -0.251 -0.0736
+#>  $ time: num  1.27 3.36 3.71 2.74 3.77
+#>  $ y   : num  0.4555 0.0205 0.5885 -0.435 0.3406
 ```
 
 Loading the packages:
@@ -101,27 +101,36 @@ library(inlabru)
 Define spatial and temporal discretization meshes
 
 ``` r
-smesh <- inla.mesh.2d(cbind(0,0), max.edge=5, offset=2)
-tmesh <- inla.mesh.1d(0:5)
+smesh <- inla.mesh.2d(
+  loc = cbind(0,0), 
+  max.edge = 5, 
+  offset = 2)
+tmesh <- inla.mesh.1d(
+  loc = 0:5)
 ```
 
 Define the spacetime model object to be used
 
 ``` r
 stmodel <- stModel.define(
-    smesh, tmesh, '121', 
-    control.priors=list(
-        prs=c(1, 0.5),
-        prt=c(5, 0.5),
-        psigma=c(1, 0.5)))
+    smesh = smesh, ## spatial mesh
+    tmesh = tmesh, ## temporal mesh
+    model = '121', ## model, see the paper
+    control.priors = list(
+        prs = c(1, 0.1), ## P(spatial range < 1) = 0.1
+        prt = c(5, 0), ## fixed to 5
+        psigma = c(1, 0.1) ## P(sigma > 1) = 0.1
+        )
+    )
 ```
 
 Define the data model: the linear predictor terms
 
 ``` r
-M <- ~ -1 + Intercept(1) +
-    field(list(space = cbind(s1, s2), time=time),
-          model=stmodel)
+linpred <- ~ Intercept +
+    field(list(space = cbind(s1, s2), 
+               time = time),
+          model = stmodel)
 ```
 
 Setting the likelihood
@@ -142,7 +151,7 @@ Fitting
 ``` r
 result <- 
   bru(
-    components = M,
+    components = linpred,
     datalike,
     options = list(
       control.inla = list(
@@ -150,6 +159,9 @@ result <-
         ),
       verbose = !TRUE)
     )
+#> Warning in add_mapper(component$main, label = component$label, lhoods = lh, : All covariate evaluations for 'Intercept' are NULL; an intercept component was likely intended.
+#>   Implicit latent intercept component specification is deprecated since version 2.1.14.
+#>   Use explicit notation '+ Intercept(1)' instead (or '+1' for '+ Intercept(1)').
 #> Warning in inla.model.properties.generic(inla.trim.family(model), mm[names(mm) == : Model 'cgeneric' in section 'latent' is marked as 'experimental'; changes may appear at any time.
 #>   Use this model with extra care!!! Further warnings are disabled.
 ```
@@ -158,17 +170,15 @@ Summary of the model parameters
 
 ``` r
 result$summary.fixed
-#>                 mean        sd 0.025quant   0.5quant 0.975quant       mode kld
-#> Intercept -0.6008767 0.7269845   -2.02574 -0.6008767  0.8239867 -0.6008767   0
+#>                mean        sd 0.025quant  0.5quant 0.975quant      mode kld
+#> Intercept 0.4255185 0.7908248   -1.12447 0.4255185   1.975507 0.4255185   0
 result$summary.hyperpar
 #>                                                  mean           sd   0.025quant
-#> Precision for the Gaussian observations  1.806235e+04 1.809052e+04 1232.7375106
-#> Theta1 for field                         8.890266e-02 4.414888e-01   -0.8970600
-#> Theta2 for field                        -3.945975e-01 1.100128e+00   -2.6341394
-#> Theta3 for field                         1.154106e+00 3.986351e-01    0.4281037
+#> Precision for the Gaussian observations 18696.2506579 1.829504e+04 1260.8341270
+#> Theta1 for field                            1.1712970 4.644044e-01    0.1081085
+#> Theta2 for field                           -0.3979248 3.232725e-01   -0.9445650
 #>                                              0.5quant   0.975quant         mode
-#> Precision for the Gaussian observations 12582.6392583 6.637983e+04 3393.4055569
-#> Theta1 for field                            0.1210754 8.377859e-01    0.2947973
-#> Theta2 for field                           -0.3788068 1.741826e+00   -0.3108136
-#> Theta3 for field                            1.1357565 2.005462e+00    1.0465864
+#> Precision for the Gaussian observations 13185.8321128 6.739467e+04 3463.8715237
+#> Theta1 for field                            1.2316224 1.886025e+00    1.5039060
+#> Theta2 for field                           -0.4276381 3.129119e-01   -0.5510897
 ```
