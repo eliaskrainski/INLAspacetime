@@ -24,9 +24,9 @@ gsConstant <- function(lgammas, alpha, smanifold) {
       if(lgamma[1]<2) {
         gs2 <- exp(lgammas[1]*2)
         k0 <- 0:50
-        gsCs <- log(sum((1 + 2*k0)/(pi4d*(gs2 + k0*(k0+1)))))
+        gsCs <- log(sum((1 + 2*k0)/(pi.d*(gs2 + k0*(k0+1)))))
       } else {
-        gsCs <- 2*(alpha-1)*lgammas[1] - log(alpha-1) - log(pi4d)
+        gsCs <- 2*(alpha-1)*lgammas[1] - log(alpha-1) - log(pi.d)
       }
     }
   }

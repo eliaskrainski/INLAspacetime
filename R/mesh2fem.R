@@ -24,13 +24,13 @@ mesh2fem <- function(mesh, order=2, barrierTriangles = NULL) {
   ncg <- 0
   for (j in 1:ntv) {
     it <- mesh$graph$tv[j,]
-    h <- INLAspacetime:::Heron(mesh$loc[it,1], mesh$loc[it,2])
+    h <- Heron(mesh$loc[it,1], mesh$loc[it,2])
     ta[j] <- h
     c0[it] <- c0[it] + h/3
     ii[ncg + 1:9] <- it[ii0]
     jj[ncg + 1:9] <- it[jj0]
     c1x[ncg + 1:9] <- h * c1aux/12
-    g1x[ncg + 1:9] <- INLAspacetime:::Stiffness(
+    g1x[ncg + 1:9] <- Stiffness(
       mesh$loc[it, 1],
       mesh$loc[it, 2])/h
     ncg <- ncg + 9L
@@ -98,7 +98,7 @@ mesh2fem.barrier <- function(mesh, barrierTriangles = NULL) {
     ng <- nc <- 0
     for (j in itv[[o]]) {
       it <- mesh$graph$tv[j,]
-      h <- INLAspacetime:::Heron(mesh$loc[it,1], mesh$loc[it,2])
+      h <- Heron(mesh$loc[it,1], mesh$loc[it,2])
 
       c0[it] <- c0[it] + h/3
       iic[nc + 1:9] <- it[ii0c]
@@ -107,7 +107,7 @@ mesh2fem.barrier <- function(mesh, barrierTriangles = NULL) {
 
       iig[ng + 1:9] <- it[ii0g]
       jjg[ng + 1:9] <- it[jj0g]
-      g1x[ng + 1:9] <- INLAspacetime:::Stiffness(
+      g1x[ng + 1:9] <- Stiffness(
         mesh$loc[it, 1],
         mesh$loc[it, 2])/h
 

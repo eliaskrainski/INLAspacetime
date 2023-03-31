@@ -44,7 +44,7 @@ outDetect <- function(x, weights=NULL, ff = c(7,7))
   }
   weights <- c(rev(weights), 0, weights)
   m <- mean(x, na.rm=TRUE)
-  s <- sd(x, na.rm=TRUE)
+  s <- stats::sd(x, na.rm=TRUE)
   x <- x - m
   xx <- c(rep(NA, h), x, rep(NA, h))
   xs <- x*0
@@ -56,7 +56,7 @@ outDetect <- function(x, weights=NULL, ff = c(7,7))
       xs[i] <- sum(xw, na.rm = TRUE)/sw
     }
   }
-  ss <- sd(x - xs, na.rm = TRUE)
+  ss <- stats::sd(x - xs, na.rm = TRUE)
   ### check for outliers in the centered and smoothed data
   r <- (abs(x / s) > ff[1]) | (abs((x - xs) / ss) > ff[2])
   attr(r, "m") <- m
@@ -83,7 +83,7 @@ stdSubs <- function(x, nsub=12, fs=15)
   ## compute stdev for each segment of the time series
   st <- sapply(split(x, 0:(n-1)%/%nsub), function(xw) {
     if(mean(is.na(xw))>0.5) return(NA)
-    return(sd(xw, na.rm=TRUE))
+    return(stats::sd(xw, na.rm=TRUE))
   })
   st.m <- mean(st, na.rm=TRUE)
   r <- any((st/st.m)>fs, na.rm = TRUE) |

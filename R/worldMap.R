@@ -40,8 +40,8 @@ worldMap <- function(crs=sp::CRS("+proj=moll +units=km")) {
     pl1 <- rbind(pl0[1:(n0-1), ], cbind(long0, lat0), pl0[n0,,drop=FALSE])
 
 ### substitude polygon
-    wrld_sp@polygons[[ii]] <- SpatialPolygons(list(
-        Polygons(list(Polygon(cbind(pl1))), '0')))@polygons[[1]]
+    wrld_sp@polygons[[ii]] <- sp::SpatialPolygons(list(
+        sp::Polygons(list(sp::Polygon(cbind(pl1))), '0')))@polygons[[1]]
 
 ### fix the wrap around
     sp::proj4string(wrld_sp) <- "+proj=longlat +datum=WGS84"

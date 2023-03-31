@@ -109,12 +109,12 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 
 		assert(nth == ith);
 
-		if (verbose | debug) {
-			fprintf(stderr, "theta = ");
-			for (int i = 0; i < nth; i++)
-				fprintf(stderr, "%f ", theta[i]);
-			fprintf(stderr, "range = %f, sigma = %f\n", range, sigma);
-		}
+//		if (verbose | debug) {
+//			fprintf(stderr, "theta = ");
+//			for (int i = 0; i < nth; i++)
+//				fprintf(stderr, "%f ", theta[i]);
+//			fprintf(stderr, "range = %f, sigma = %f\n", range, sigma);
+//		}
 	} else {
 		for (int i = 0; i < 4; i++) {
 			params[i] = NAN;

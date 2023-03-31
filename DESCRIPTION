@@ -13,7 +13,17 @@ Authors@R: c(
          role = c("aut"),
          comment = c(ORCID = "0000-0002-0222-1881"))
   )
+Author: Elias Teixeira Krainski [cre, aut],
+  Finn Lindgren [aut],
+  Haavard Rue [aut]
 Description: Functions to fit spatio-temporal models using INLA.
+VignetteBuilder: knitr
+BuildVignettes: true
+License: GPL (>=2) 
+Encoding: UTF-8
+RoxygenNote: 7.2.3
+NeedsCompilation: no
+Roxygen: list(markdown = TRUE)
 Depends:
     Matrix,
     sp,
@@ -36,11 +46,4 @@ Suggests:
     maptools,
     rgdal
 Additional_repositories: https://inla.r-inla-download.org/R/testing
-VignetteBuilder: knitr
-BuildVignettes: true
-License: GPL (>=2) 
-Encoding: UTF-8
-LazyData: false
-RoxygenNote: 7.2.3
-Roxygen: list(markdown = TRUE)
 URL: https://github.com/eliaskrainski/INLAspacetime

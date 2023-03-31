@@ -224,12 +224,12 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 			params[i] = exp(2 * (lg[2] + a1 + a2)) * bb->doubles[i];
 		}
 
-		if (verbose | debug) {
-			fprintf(stderr, "theta = ");
-			for (int i = 0; i < nth; i++)
-				fprintf(stderr, "%f ", theta[i]);
-			fprintf(stderr, "gamma = %f %f %f\n", lg[0], lg[1], lg[2]);
-		}
+//		if (verbose | debug) {
+//			fprintf(stderr, "theta = ");
+//			for (int i = 0; i < nth; i++)
+//				fprintf(stderr, "%f ", theta[i]);
+//			fprintf(stderr, "gamma = %f %f %f\n", lg[0], lg[1], lg[2]);
+//		}
 	} else {
 		for (int i = 0; i < nm; i++) {
 			params[i] = NAN;

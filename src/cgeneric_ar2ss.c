@@ -1,18 +1,18 @@
 
 /* cgeneric_ar2ss.c
- * 
+ *
  * Copyright (C) 2022-2023 Elias Krainski
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -25,6 +25,7 @@
  *        Thuwal 23955-6900, Saudi Arabia
  */
 
+#include <stdio.h>
 #include "cgeneric_defs.h"
 
 double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgeneric_data_tp * data)
@@ -109,8 +110,8 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 		}
 		// printf("G k = %d\n", k);
 		if (N > 2) {
-			if (toprint)
-				fprintf(stderr, "graph\n");
+			//if (toprint)
+			//	fprintf(stderr, "graph\n");
 			for (int i = 0; i < (N - 2); i++) {
 				ret[k++] = i;		       /* i */
 				ret[k++] = i;		       /* i */
@@ -124,8 +125,8 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 				ret[k++] = i;		       /* j */
 				ret[k++] = i + 1;	       /* j */
 				ret[k++] = i + 2;	       /* j */
-				if (toprint)
-					fprintf(stderr, "%d %d %d %d\n", i, i, i + 1, i + 2);
+//				if (toprint)
+//					fprintf(stderr, "%d %d %d %d\n", i, i, i + 1, i + 2);
 			}
 			ret[k++] = N - 2;
 			ret[k++] = N - 1;
@@ -150,8 +151,8 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 		ret[k++] = M;
 		// printf("Q : ret = %g, M = %g, k = %d\n", ret[0], ret[1], k);
 
-		if (toprint)
-			fprintf(stderr, "Q\n");
+//		if (toprint)
+//			fprintf(stderr, "Q\n");
 
 		if (N == 1) {
 			ret[k++] = param;
@@ -177,8 +178,8 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 						ret[k++] = q0;
 						ret[k++] = q1;
 						ret[k++] = q2;
-						if (toprint)
-							fprintf(stderr, "%d %f %f %f\n", i, q0, q1, q2);
+//						if (toprint)
+//							fprintf(stderr, "%d %f %f %f\n", i, q0, q1, q2);
 					}
 				}
 			}
@@ -208,7 +209,7 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 			ret[++npar] = 1.0;		       // log(pleng->doubles[0] + 1);
 		}
 		if (!iszero(pcor->doubles[1])) {
-			ret[++npar] = 2.94445;		       // log((0.5+0.5*pcor->doubles[0])/(1-(0.5+0.5*pcor->doubles[0]))); 
+			ret[++npar] = 2.94445;		       // log((0.5+0.5*pcor->doubles[0])/(1-(0.5+0.5*pcor->doubles[0])));
 		}
 		ret[0] = npar;
 	}

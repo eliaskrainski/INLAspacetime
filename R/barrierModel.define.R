@@ -73,7 +73,8 @@ barrierModel.define <-
           )
         )
         if(constr)
-          the_model$f$extraconstr <- mm$extraconstr
+          the_model$f$extraconstr <- list(
+            A = matrix(1/n, 1, n), e = 0.0)
         # Prepend specialised model class identifier, for bru_mapper use:
         class(the_model) <- c("barrierModel_cgeneric", class(the_model))
         # Add objects needed by bru_get_mapper.barrierModel_cgeneric:
