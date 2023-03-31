@@ -17,12 +17,12 @@ Author: Elias Teixeira Krainski [cre, aut, cph],
   Finn Lindgren [aut],
   Haavard Rue [aut]
 Description: In this package we provide code to build models 
-to be used along the INLA package. The model definition starts 
-with building matrices to be provided for INLA using the cgeneric 
-interface as documented in an INLA vignette. 
-The implemented functions include the spatial barrier model and 
-spatio-temporal models. Details are provided in the tutorials
-available from the provided links.
+  to be used along the INLA package. The model definition starts 
+  with building matrices to be provided for INLA using the cgeneric 
+  interface as documented in an INLA vignette. 
+  The implemented functions include the spatial barrier model and 
+  spatio-temporal models. Details are provided in the tutorials
+  available from the provided links.
 URL: https://github.com/eliaskrainski/INLAspacetime
 VignetteBuilder: knitr
 BuildVignettes: true
