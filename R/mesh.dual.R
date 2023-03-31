@@ -1,13 +1,11 @@
-#' @aliases mesh.dual
 #' Extracts the dual of a mesh object.
-#'
-#' Creates a polygons list with the dual of a mesh object.
-#'
+#' @aliases mesh.dual
 #' @param mesh a 2d mesh object.
-#' @param SP logical indicating if the output should be a SpatialPolygons object.
+#' @param SP logical indicating if the output is to be returned
+#' as a SpatialPolygons object. Default is TRUE.
 #' @return a list of polygons or a SpatialPolygons object.
 #' @export
-mesh.dual <- function(mesh, SP=TRUE) {
+mesh.dual <- function(mesh, SP = TRUE) {
   requireNamespace("parallel")
   if (mesh$manifold!='R2')
       stop("This only works for R2!")

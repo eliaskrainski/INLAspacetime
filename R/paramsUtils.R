@@ -1,30 +1,8 @@
-#' Internal util functions
-#' @aliases Heron, Area, Stiffness
-#' @param x,y coordinate vectors,
-#' @section Warning: Internal functions, not exported.
-#' @return the area of a triangle
-Heron <- function(x, y) {
-  ### function to compute the area of a triangle
-  aa <- sqrt((x[2]-x[1])^2 + (y[2]-y[1])^2)
-  bb <- sqrt((x[3]-x[2])^2 + (y[3]-y[2])^2)
-  cc <- sqrt((x[1]-x[3])^2 + (y[1]-y[3])^2)
-  s <- 0.5*(aa+bb+cc)
-  sqrt(s*(s-aa)*(s-bb)*(s-cc))
-}
-#' @return the area of a general polygon
-Area <- function(x, y) {
-  n <- length(x)
-  stopifnot(length(y)==n)
-  abs(0.5*sum(x[1:n]*y[c(2:n,1)]-
-              y[1:n]*x[c(2:n,1)]))
-}
-#' @return the stiffness matrix for a triangle
-Stiffness <- function(x, y) {
-  d <- rbind(c(x[3]-x[2], x[1]-x[3], x[2]-x[1]),
-             c(y[3]-y[2], y[1]-y[3], y[2]-y[1]))
-  crossprod(d)/4
-}
-#' @aliases gsConstant
+#' Funtions to help converting from/to user/internal parametrization.
+#' @rdname paramsUtils
+#' @name paramsUtils
+#' @aliases gammas2params
+#' @aliases params2gammas
 #' @param lgammas the SPDE parameters log(gamma.s, gamma.t, gamma.e)
 #' @param smanifold spatial domain manifold.
 #' @param alpha the resulting spatial order.
@@ -54,7 +32,7 @@ gsConstant <- function(lgammas, alpha, smanifold) {
   }
   return(gsCs)
 }
-#' @aliases gammas2params, params2gammas
+#' @rdname paramsUtils
 #' @param alpha.t temporal order of the SPDE
 #' @param alpha.s spatial order of the spatial differential operator
 #' in the non-separable part.
@@ -63,7 +41,7 @@ gsConstant <- function(lgammas, alpha, smanifold) {
 #' @return log(spatial range, temporal range, sigma)
 #' @export
 #' @examples
-#'  gamma2params(log(c(0, 0, 0)), 1, 2, 1, "R2")
+#'  gammas2params(log(c(0, 0, 0)), 1, 2, 1, "R2")
 gammas2params <- function(lgammas, alpha.t, alpha.s, alpha.e, smanifold = "R2") {
   alpha <- alpha.e + alpha.s * (alpha.t - 0.5)
   stopifnot(substr(smanifold,1,1) %in% c("R", "S"))
@@ -74,6 +52,7 @@ gammas2params <- function(lgammas, alpha.t, alpha.s, alpha.e, smanifold = "R2") 
            lrt = 0.5 * log(8 * (alpha.t-0.5)) - alpha.s * lgammas[1] + lgammas[2],
            lsigma = lct + lgsCs - lgammas[2] - 2*lgammas[3]))
 }
+#' @rdname paramsUtils
 #' @param lparams log(spatial range, temporal range, sigma)
 #' @return log(gamma.s, gamma.t, gamma.e)
 #' @export

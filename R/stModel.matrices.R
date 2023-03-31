@@ -9,6 +9,8 @@
 #' @param model a string identifying the model.
 #' So far we have the following models:
 #' '102', '121', '202' and '220' models.
+#' @param constr logical to indicate if the integral of the field
+#' over the domain is to be constrained to zero. Default value is FALSE.
 #' @details
 #' See the paper and the vignette('stspdemodels') for details.
 #' @return a list containing needed objects for model definition.

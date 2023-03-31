@@ -2,9 +2,12 @@
 % Please edit documentation in R/mesh2fem.R
 \name{mesh2fem}
 \alias{mesh2fem}
+\alias{mesh2fem.barrier}
 \title{Illustrative code for Finite Element matrices of a mesh in 2d domain.}
 \usage{
 mesh2fem(mesh, order = 2, barrierTriangles = NULL)
+
+mesh2fem.barrier(mesh, barrierTriangles = NULL)
 }
 \arguments{
 \item{mesh}{a 2d mesh object.}
@@ -16,7 +19,13 @@ triangles in the barrier domain}
 }
 \value{
 a list object containing the FE matrices.
+
+a list object containing the FE matrices
+for the barrier problem.
 }
 \description{
 Illustrative code for Finite Element matrices of a mesh in 2d domain.
+
+Illustrative code for Finite Element matrices when some triangles are
+in a barrier domain.
 }

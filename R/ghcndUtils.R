@@ -56,6 +56,8 @@ downloadUtilFiles <- function(data.dir, year=2022, force=FALSE)
 #' @param variable string with the variable name(s) to be selected
 #' @param qflag a string with quality control flag(s)
 #' @param verbose logical indicating if progress is to be printed
+#' @param astype function to convert data to a class,
+#' default is set to convert the data to integer.
 #' @section Details:
 #' The default selects TMIN, TAVG and TMAX and
 #' return it as integer because the original data is also integer
@@ -67,14 +69,16 @@ downloadUtilFiles <- function(data.dir, year=2022, force=FALSE)
 #' @section Warning:
 #' It can take time to execute if, for example,
 #' the data.table package is not available.
-#' @return array [days, stations, variables] if more than one variable
-#' or a matrix [days, stations] if one variable.
+#' @return if more than one variable, it returns an array
+#' whose dimentions are days, stations, variables.
+#' If one variable, then it returns a matrix whose dimentions
+#' are days, stations.
 #' @export
 ghcndSelect <- function(gzfile,
                         variable = c("TMIN", "TAVG", "TMAX"),
                         qflag = "",
                         verbose = TRUE,
-                        astype=as.integer)
+                        astype = as.integer)
 {
 
   ### this function selects `variable` from the daily dataset

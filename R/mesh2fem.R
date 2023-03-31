@@ -1,4 +1,6 @@
 #' Illustrative code for Finite Element matrices of a mesh in 2d domain.
+#' @rdname mesh2fem
+#' @name mesh2fem
 #' @aliases mesh2fem
 #' @param mesh a 2d mesh object.
 #' @param order the desired order.
@@ -8,7 +10,8 @@
 #' @export
 mesh2fem <- function(mesh, order=2, barrierTriangles = NULL) {
   if(!is.null(barrierTriangles))
-    return(mesh2fem.barrier(mesh, order, barrierTriangles))
+    return(mesh2fem.barrier(mesh = mesh,
+                            barrierTriangles = barrierTriangles))
   n <- nrow(mesh$loc)
   ntv <- nrow(mesh$graph$tv)
   ta <- rep(0, ntv)
@@ -52,13 +55,19 @@ mesh2fem <- function(mesh, order=2, barrierTriangles = NULL) {
   }
   return(res)
 }
+#' Illustrative code for Finite Element matrices when some triangles are
+#' in a barrier domain.
+#' @rdname mesh2fem
+#' @name mesh2fem
 #' @aliases mesh2fem.barrier
 #' @return a list object containing the FE matrices
 #' for the barrier problem.
 #' @export
 mesh2fem.barrier <- function(mesh, barrierTriangles = NULL) {
-  if(is.null(barrierTriangles))
-    return(mesh2fem(mesh, order = 2L))
+  if(is.null(barrierTriangles)) {
+    warning("No 'barrierTriangles', using 'mesh2fem(mesh, order = 2)'!")
+    return(mesh2fem(mesh = mesh, order = 2L))
+  }
   barrierTriangles <- unique(sort(barrierTriangles))
   itv <- list(setdiff(
     1:nrow(mesh$graph$tv),

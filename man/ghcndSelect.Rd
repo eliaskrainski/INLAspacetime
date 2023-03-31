@@ -23,10 +23,15 @@ see references bellow.}
 \item{qflag}{a string with quality control flag(s)}
 
 \item{verbose}{logical indicating if progress is to be printed}
+
+\item{astype}{function to convert data to a class,
+default is set to convert the data to integer.}
 }
 \value{
-array \link{days, stations, variables} if more than one variable
-or a matrix \link{days, stations} if one variable.
+if more than one variable, it returns an array
+whose dimentions are days, stations, variables.
+If one variable, then it returns a matrix whose dimentions
+are days, stations.
 }
 \description{
 Select data from the daily dataset
