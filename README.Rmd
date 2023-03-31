@@ -116,23 +116,30 @@ M <- ~ -1 + Intercept(1) +
           model=stmodel)
 ```
 
-Setting the likelihood precision prior
+Setting the likelihood 
 ```{r precprior}
-lkprec <- list(prec=list(initial=10, fixed=FALSE))
+likeprec <- list(prec = list(
+  initial = 10, fixed = FALSE))
+datalike <- like(
+  formula = y ~ ., 
+  family = "gaussian",
+  control.family = list(
+    hyper = likeprec), ## TO DO: not going through bru
+  data=dataf)
 ```
 
 Fitting
 ```{r fitting}
 result <- 
-    bru(M, 
-        like(formula = y ~ ., 
-             family="gaussian",
-             control.family = list(
-                 hyper = lkprec), 
-             data=dataf),
-        options = list(
-            verbose=TRUE)
-        )
+  bru(
+    components = M,
+    datalike,
+    options = list(
+      control.inla = list(
+        int.strategy = "eb"
+        ),
+      verbose = !TRUE)
+    )
 ```
 
 Summary of the model parameters
