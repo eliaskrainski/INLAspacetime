@@ -397,8 +397,8 @@ with the original implementation.
 We define the model object with
 ```{r bmodel}
 bmodel <- barrierModel.define(
-    mesh, triBarrier,
-    useINLAprecomp = FALSE, 
+    mesh = mesh, 
+    barrierTriangles = triBarrier,
     control.priors = list(
         prs = c(1, 0.01),
         psigma = c(1, 0.01)),

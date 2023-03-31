@@ -77,10 +77,10 @@ dataf <- data.frame(
     y    = rnorm(n, 0, 1))
 str(dataf)
 #> 'data.frame':    5 obs. of  4 variables:
-#>  $ s1  : num  0.407 0.139 -0.414 0.783 0.615
-#>  $ s2  : num  0.2447 -0.2356 -0.4195 -0.251 -0.0736
-#>  $ time: num  1.27 3.36 3.71 2.74 3.77
-#>  $ y   : num  0.4555 0.0205 0.5885 -0.435 0.3406
+#>  $ s1  : num  0.734 -0.486 -0.888 0.436 -0.267
+#>  $ s2  : num  0.62 0.677 -0.137 0.525 0.676
+#>  $ time: num  3.17 3.16 1.31 2.07 2.92
+#>  $ y   : num  0.268 -2.007 -0.691 -1.299 -0.227
 ```
 
 Loading the packages:
@@ -127,7 +127,7 @@ stmodel <- stModel.define(
 Define the data model: the linear predictor terms
 
 ``` r
-linpred <- ~ Intercept +
+linpred <- ~ 1 +
     field(list(space = cbind(s1, s2), 
                time = time),
           model = stmodel)
@@ -159,9 +159,6 @@ result <-
         ),
       verbose = !TRUE)
     )
-#> Warning in add_mapper(component$main, label = component$label, lhoods = lh, : All covariate evaluations for 'Intercept' are NULL; an intercept component was likely intended.
-#>   Implicit latent intercept component specification is deprecated since version 2.1.14.
-#>   Use explicit notation '+ Intercept(1)' instead (or '+1' for '+ Intercept(1)').
 #> Warning in inla.model.properties.generic(inla.trim.family(model), mm[names(mm) == : Model 'cgeneric' in section 'latent' is marked as 'experimental'; changes may appear at any time.
 #>   Use this model with extra care!!! Further warnings are disabled.
 ```
@@ -170,15 +167,15 @@ Summary of the model parameters
 
 ``` r
 result$summary.fixed
-#>                mean        sd 0.025quant  0.5quant 0.975quant      mode kld
-#> Intercept 0.4255185 0.7908248   -1.12447 0.4255185   1.975507 0.4255185   0
+#>               mean       sd 0.025quant 0.5quant 0.975quant     mode kld
+#> Intercept -2.22475 2.784909  -7.683071 -2.22475   3.233571 -2.22475   0
 result$summary.hyperpar
-#>                                                  mean           sd   0.025quant
-#> Precision for the Gaussian observations 18696.2506579 1.829504e+04 1260.8341270
-#> Theta1 for field                            1.1712970 4.644044e-01    0.1081085
-#> Theta2 for field                           -0.3979248 3.232725e-01   -0.9445650
-#>                                              0.5quant   0.975quant         mode
-#> Precision for the Gaussian observations 13185.8321128 6.739467e+04 3463.8715237
-#> Theta1 for field                            1.2316224 1.886025e+00    1.5039060
-#> Theta2 for field                           -0.4276381 3.129119e-01   -0.5510897
+#>                                                 mean           sd   0.025quant
+#> Precision for the Gaussian observations 18357.635910 1.821321e+04 1235.1530589
+#> Theta1 for field                            1.074957 2.974335e-01    0.4171646
+#> Theta2 for field                            1.041119 1.605054e-01    0.7479686
+#>                                             0.5quant   0.975quant         mode
+#> Precision for the Gaussian observations 12849.815853 66931.602229 3390.1755102
+#> Theta1 for field                            1.085790     1.600244    1.1738131
+#> Theta2 for field                            1.033319     1.380794    0.9998743
 ```

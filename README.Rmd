@@ -119,7 +119,7 @@ stmodel <- stModel.define(
 
 Define the data model: the linear predictor terms
 ```{r dmodel}
-linpred <- ~ Intercept +
+linpred <- ~ 1 +
     field(list(space = cbind(s1, s2), 
                time = time),
           model = stmodel)
