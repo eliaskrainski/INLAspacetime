@@ -19,11 +19,10 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![CRAN Status](http://www.r-pkg.org/badges/version-last-release/INLAspacetime)](https://cran.r-project.org/package=INLAspacetime)
-[![INLAspacetime status badge](https://eliaskrainski.r-universe.dev/badges/INLAspacetime)](https://eliaskrainski.r-universe.dev)
 [![R build status](https://github.com/eliaskrainski/INLAspacetime/workflows/R-CMD-check/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
 [![R code coverage status](https://github.com/eliaskrainski/INLAspacetime/workflows/test-coverage/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
 [![lintr status](https://github.com/eliaskrainski/INLAspacetime/workflows/lint/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
-[![Codecov test coverage](https://codecov.io/gh/eliaskrainski/INLAspacetime/branch/devel/graph/badge.svg)](https://app.codecov.io/gh/eliaskrainski/INLAspacetime?branch=devel)
+<!-- [![Codecov test coverage](https://codecov.io/gh/eliaskrainski/INLAspacetime/branch/master/graph/badge.svg)](https://app.codecov.io/gh/eliaskrainski/INLAspacetime?branch=master) -->
 <!-- badges: end -->
 
 This is a R package to implement certain spatial and spatio-temporal models

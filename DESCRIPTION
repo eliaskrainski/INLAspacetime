@@ -1,7 +1,7 @@
 Package: INLAspacetime
 Type: Package
-Title: Functions to Fit Spatial and Spatio-Temporal Models using INLA
-Version: 0.1.3
+Title: Functions to Fit Spatial and Spatio-Temporal Models using INLA.
+Version: 0.1.4
 Authors@R: c(
   person("Elias Teixeira", "Krainski", email = "eliaskrainski@gmail.com",
          role = c("cre", "aut", "cph"), 
@@ -13,16 +13,23 @@ Authors@R: c(
          role = c("aut"),
          comment = c(ORCID = "0000-0002-0222-1881"))
   )
-Author: Elias Teixeira Krainski [cre, aut],
+Author: Elias Teixeira Krainski [cre, aut, cph],
   Finn Lindgren [aut],
   Haavard Rue [aut]
-Description: Functions to fit spatio-temporal models using INLA.
+Description: In this package we provide code to build models 
+to be used along the INLA package. The model definition starts 
+with building matrices to be provided for INLA using the cgeneric 
+interface as documented in an INLA vignette. 
+The implemented functions include the spatial barrier model and 
+spatio-temporal models. Details are provided in the tutorials
+available from the provided links.
+URL: https://github.com/eliaskrainski/INLAspacetime
 VignetteBuilder: knitr
 BuildVignettes: true
 License: GPL (>=2) 
 Encoding: UTF-8
 RoxygenNote: 7.2.3
-NeedsCompilation: no
+NeedsCompilation: yes
 Roxygen: list(markdown = TRUE)
 Depends:
     Matrix,
@@ -46,4 +53,3 @@ Suggests:
     maptools,
     rgdal
 Additional_repositories: https://inla.r-inla-download.org/R/testing
-URL: https://github.com/eliaskrainski/INLAspacetime

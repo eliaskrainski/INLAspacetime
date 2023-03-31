@@ -7,16 +7,13 @@
 
 [![CRAN
 Status](http://www.r-pkg.org/badges/version-last-release/INLAspacetime)](https://cran.r-project.org/package=INLAspacetime)
-[![INLAspacetime status
-badge](https://eliaskrainski.r-universe.dev/badges/INLAspacetime)](https://eliaskrainski.r-universe.dev)
 [![R build
 status](https://github.com/eliaskrainski/INLAspacetime/workflows/R-CMD-check/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
 [![R code coverage
 status](https://github.com/eliaskrainski/INLAspacetime/workflows/test-coverage/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
 [![lintr
 status](https://github.com/eliaskrainski/INLAspacetime/workflows/lint/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
-[![Codecov test
-coverage](https://codecov.io/gh/eliaskrainski/INLAspacetime/branch/devel/graph/badge.svg)](https://app.codecov.io/gh/eliaskrainski/INLAspacetime?branch=devel)
+<!-- [![Codecov test coverage](https://codecov.io/gh/eliaskrainski/INLAspacetime/branch/master/graph/badge.svg)](https://app.codecov.io/gh/eliaskrainski/INLAspacetime?branch=master) -->
 <!-- badges: end -->
 
 This is a R package to implement certain spatial and spatio-temporal
@@ -77,10 +74,10 @@ dataf <- data.frame(
     y    = rnorm(n, 0, 1))
 str(dataf)
 #> 'data.frame':    5 obs. of  4 variables:
-#>  $ s1  : num  0.588 -0.453 -0.973 0.398 0.833
-#>  $ s2  : num  -0.7447 -0.5511 -0.0729 0.4581 0.9561
-#>  $ time: num  3.62 1.42 2.55 3.99 1.25
-#>  $ y   : num  0.157 1.385 2.036 -0.295 0.963
+#>  $ s1  : num  -0.267 -0.669 -0.748 -0.417 0.38
+#>  $ s2  : num  -0.358 -0.441 0.948 -0.114 -0.635
+#>  $ time: num  2.79 1.41 2.28 2.58 1.07
+#>  $ y   : num  2.2548 -0.4098 1.1079 -1.4211 0.0346
 ```
 
 Loading the packages:
@@ -167,15 +164,15 @@ Summary of the model parameters
 
 ``` r
 result$summary.fixed
-#>                mean       sd 0.025quant  0.5quant 0.975quant      mode kld
-#> Intercept 0.5619682 2.149405  -3.650789 0.5619682   4.774725 0.5619682   0
+#>               mean       sd 0.025quant 0.5quant 0.975quant     mode kld
+#> Intercept 1.714554 2.941142  -4.049978 1.714554   7.479086 1.714554   0
 result$summary.hyperpar
-#>                                                  mean           sd   0.025quant
-#> Precision for the Gaussian observations 18329.3225260 1.807974e+04 1233.6322877
-#> Theta1 for field                            2.3183849 3.508814e-01    1.5331198
-#> Theta2 for field                           -0.3303781 3.479795e-01   -0.8930268
-#>                                              0.5quant   0.975quant        mode
-#> Precision for the Gaussian observations 12865.9846347 6.651524e+04 3388.114014
-#> Theta1 for field                            2.3553357 2.890631e+00    2.515316
-#> Theta2 for field                           -0.3689591 4.502314e-01   -0.534043
+#>                                                 mean           sd   0.025quant
+#> Precision for the Gaussian observations 19159.466046 1.859446e+04 1240.6373188
+#> Theta1 for field                            0.697476 2.905753e-01    0.1267038
+#> Theta2 for field                            1.484570 1.666461e-01    1.1649117
+#>                                             0.5quant   0.975quant         mode
+#> Precision for the Gaussian observations 1.356233e+04 68522.418211 3367.9114786
+#> Theta1 for field                        6.965066e-01     1.273187    0.6928644
+#> Theta2 for field                        1.481206e+00     1.821422    1.4685110
 ```
