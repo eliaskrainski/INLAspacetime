@@ -1,6 +1,6 @@
 Package: INLAspacetime
 Type: Package
-Title: Spatial and Spatio-Temporal Models using 'INLA'.
+Title: Spatial and Spatio-Temporal Models using 'INLA'
 Version: 0.1.5
 Authors@R: c(
   person("Elias Teixeira", "Krainski", email = "eliaskrainski@gmail.com",
@@ -13,17 +13,14 @@ Authors@R: c(
          role = c("aut"),
          comment = c(ORCID = "0000-0002-0222-1881"))
   )
-Description: In this package we provide code as helper functions 
-  to build precision matrix for spatial and spatial models.
-  The objects are to be used along the 'INLA' package. 
-  The model setup are designed to build the needed data 
-  in order to use the 'cgeneric' interface provided by 'INLA'.
-  The implemented functions include the spatial barrier model, 
-  see Bakka et. al. (2019) <doi:10.1016/j.spasta.2019.01.002>,
-  and spatio-temporal models, see Lindgren et. al. (2023) 
-  <arXiv:2006.04917>. 
-  Details are provided in the available vignettes 
-  from the provided link
+Description: Prepare objects to implement models over spatial and 
+  spacetime domains with the INLA package (<https://www.r-inla.org>).
+  These objects contain data to be used in the 'cgeneric'
+  interface provided by INLA, enabling fast parallel computations.
+  It includes the spatial barrier model, see Bakka et. al. (2019) 
+  <doi:10.1016/j.spasta.2019.01.002>, and some of the spatio-temporal 
+  models in Lindgren et. al. (2023) <arXiv:2006.04917>. 
+  Details are provided in the vignettes available in the provided link.
 URL: https://github.com/eliaskrainski/INLAspacetime
 License: GPL (>=2) 
 Encoding: UTF-8

@@ -19,8 +19,8 @@ Mollweide projection in km distance (default, can be changed).
 }
 \examples{
 \donttest{
-wmap <- worldMap()
-sp::plot(wmap)
+# wmap <- worldMap()
+# sp::plot(wmap)
 }
 }
 \references{

@@ -49,6 +49,7 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 	assert(!strcasecmp(data->ints[2]->name, "verbose"));
 	int verbose = data->ints[2]->ints[0];
 	assert(verbose >= 0);
+	if(verbose>0) verbose = 1;
 
 	assert(!strcasecmp(data->ints[3]->name, "ii"));
 	inla_cgeneric_vec_tp *ii = data->ints[3];

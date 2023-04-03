@@ -10,8 +10,8 @@
 #'  the world map data is from the maps R package.
 #' @examples
 #' \donttest{
-#' wmap <- worldMap()
-#' sp::plot(wmap)
+#' # wmap <- worldMap()
+#' # sp::plot(wmap)
 #' }
 #' @export
 worldMap <- function(crs=sp::CRS("+proj=moll +units=km")) {
