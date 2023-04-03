@@ -13,9 +13,6 @@ Authors@R: c(
          role = c("aut"),
          comment = c(ORCID = "0000-0002-0222-1881"))
   )
-Author: Elias Teixeira Krainski [cre, aut, cph],
-  Finn Lindgren [aut],
-  Haavard Rue [aut]
 Description: In this package we provide code as helper functions 
   to build precision matrix for spatial and spatial models.
   The objects are to be used along the 'INLA' package. 
@@ -26,7 +23,7 @@ Description: In this package we provide code as helper functions
   and spatio-temporal models, see Lindgren et. al. (2023) 
   <arXiv:2006.04917>. 
   Details are provided in the available vignettes 
-  from the provided link.
+  from the provided link
 URL: https://github.com/eliaskrainski/INLAspacetime
 License: GPL (>=2) 
 Encoding: UTF-8

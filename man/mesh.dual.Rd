@@ -11,6 +11,8 @@ mesh.dual(mesh, SP = TRUE, mc.cores = getOption("mc.cores", 2L))
 
 \item{SP}{logical indicating if the output is to be returned
 as a SpatialPolygons object. Default is TRUE.}
+
+\item{mc.cores}{number of threads to be used.}
 }
 \value{
 a list of polygons or a SpatialPolygons object.

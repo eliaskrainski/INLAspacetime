@@ -3,6 +3,7 @@
 #' @param mesh a 2d mesh object.
 #' @param SP logical indicating if the output is to be returned
 #' as a SpatialPolygons object. Default is TRUE.
+#' @param mc.cores number of threads to be used.
 #' @return a list of polygons or a SpatialPolygons object.
 #' @export
 mesh.dual <- function(mesh, SP = TRUE,
