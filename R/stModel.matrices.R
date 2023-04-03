@@ -207,6 +207,8 @@ stModel.matrices <-
 
 #' The 2nd order temporal matrices with boundary correction
 #' @param tmesh Temporal mesh
+#' @return return a list of temporal finite element method matrices
+#' for the supplied mesh.
 #' @export
 Jmatrices <- function(tmesh) {
 

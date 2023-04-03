@@ -5,14 +5,15 @@
 #' as a SpatialPolygons object. Default is TRUE.
 #' @return a list of polygons or a SpatialPolygons object.
 #' @export
-mesh.dual <- function(mesh, SP = TRUE) {
+mesh.dual <- function(mesh, SP = TRUE,
+                      mc.cores = getOption("mc.cores", 2L)) {
   requireNamespace("parallel")
   if (mesh$manifold!='R2')
       stop("This only works for R2!")
   ce <- t(sapply(1:nrow(mesh$graph$tv), function(i)
       colMeans(mesh$loc[mesh$graph$tv[i, ], 1:2])))
   pls <- parallel::mclapply(1:mesh$n, function(i) {
-    p <- unique(Reduce('rbind', lapply(1:3, function(k) {
+    p <- unique(do.call('rbind', lapply(1:3, function(k) {
       j <- which(mesh$graph$tv[,k]==i)
       if (length(j)>0)
         return(rbind(
@@ -40,7 +41,8 @@ mesh.dual <- function(mesh, SP = TRUE) {
       xx <- p[,1]-mesh$loc[i, 1]
     }
     return(p[order(atan2(yy,xx)), ])
-  })
+  }, mc.cores = mc.cores)
+  print("OK")
   if (SP) {
     return(sp::SpatialPolygons(lapply(1:mesh$n, function(i)
       sp::Polygons(list(sp::Polygon(pls[[i]])), i))))

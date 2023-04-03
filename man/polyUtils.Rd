@@ -13,7 +13,7 @@ Area(x, y)
 Stiffness(x, y)
 }
 \arguments{
-\item{x, y}{coordinate vectors,}
+\item{x, y}{coordinate vectors.}
 }
 \value{
 the area of a triangle
@@ -23,6 +23,9 @@ the area of a general polygon
 the stiffness matrix for a triangle
 }
 \description{
+This computes the area of a triangle given its three coordinates.
+}
+\details{
 Function used internally to compute the area of a triangle.
 }
 \section{Warning}{

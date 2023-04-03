@@ -84,14 +84,23 @@ dataf <- data.frame(pdata[c('UTMX', 'UTMY', 'time')],
                     y=log(pdata$PM10))
 str(dataf)
 
+### likelihood precision prior
+lkprec <- list(
+    prec=list(prior='pcprec', param=c(1, 0.1)))
+
+### likelihood data object
+lhood <- like(
+    formula = y ~ .,
+    family="gaussian",
+    control.family = list(
+        hyper = lkprec),
+    data=dataf)
+
+
 ### define the data Model
 M <- ~ -1 + Intercept(1) + A + WS + TEMP + HMIX + PREC + EMI + 
     field(list(space = cbind(UTMX, UTMY), time=time),
           model=stmodel)
-
-### likelihood precision prior
-lkprec <- list(
-    prec=list(prior='pcprec', param=c(1, 0.1)))
 
 ### initial theta (higher prec and ranges and lower sigma)
 theta.ini <- list('102'=c(4, 5.5, 5, 0),
@@ -117,11 +126,7 @@ for(m in 1:2) {
 ### fit 
     results[[m]] <- 
         bru(M, 
-            like(formula = y ~ ., 
-                 family="gaussian",
-                 control.family = list(
-                     hyper = lkprec), 
-                 data=dataf),
+            lhood,
             options = list(
                 verbose=TRUE, 
                 control.mode=list(

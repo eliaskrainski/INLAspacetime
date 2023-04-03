@@ -3,9 +3,9 @@
 #' Function used internally to compute the area of a triangle.
 #' @rdname polyUtils
 #' @aliases Heron
-#' @aliases Area
-#' @aliases Stiffness
-#' @param x,y coordinate vectors,
+#' @description
+#' This computes the area of a triangle given its three coordinates.
+#' @param x,y coordinate vectors.
 #' @section Warning: Internal functions, not exported.
 #' @return the area of a triangle
 Heron <- function(x, y) {
@@ -18,6 +18,7 @@ Heron <- function(x, y) {
 }
 #' Function to compute the area of a polygon.
 #' @rdname polyUtils
+#' @aliases Area
 #' @return the area of a general polygon
 Area <- function(x, y) {
   n <- length(x)
@@ -27,6 +28,7 @@ Area <- function(x, y) {
 }
 #' Function to compute the stiffness contribution from a triangle.
 #' @rdname polyUtils
+#' @aliases Stiffness
 #' @return the stiffness matrix for a triangle
 Stiffness <- function(x, y) {
   d <- rbind(c(x[3]-x[2], x[1]-x[3], x[2]-x[1]),

@@ -4,7 +4,7 @@
 \alias{mesh.dual}
 \title{Extracts the dual of a mesh object.}
 \usage{
-mesh.dual(mesh, SP = TRUE)
+mesh.dual(mesh, SP = TRUE, mc.cores = getOption("mc.cores", 2L))
 }
 \arguments{
 \item{mesh}{a 2d mesh object.}

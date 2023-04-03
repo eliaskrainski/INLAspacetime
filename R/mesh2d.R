@@ -30,7 +30,7 @@ mesh2d <-
     }
     if(!is.logical(SP))
         stop("'SP' must be logical")
-### define retangle around
+### define rectangle around
     xyl <- unique(apply(xy, 2, range, na.rm=TRUE))
     if(!missing(offset)) {
       ro <- which(offset<0)

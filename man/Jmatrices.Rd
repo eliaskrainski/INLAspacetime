@@ -9,6 +9,10 @@ Jmatrices(tmesh)
 \arguments{
 \item{tmesh}{Temporal mesh}
 }
+\value{
+return a list of temporal finite element method matrices
+for the supplied mesh.
+}
 \description{
 The 2nd order temporal matrices with boundary correction
 }
