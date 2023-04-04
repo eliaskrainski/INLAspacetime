@@ -5,16 +5,16 @@
 \alias{mesh2fem.barrier}
 \title{Illustrative code for Finite Element matrices of a mesh in 2d domain.}
 \usage{
-mesh2fem(mesh, order = 2, barrierTriangles = NULL)
+mesh2fem(mesh, order = 2, barrier.triangles = NULL)
 
-mesh2fem.barrier(mesh, barrierTriangles = NULL)
+mesh2fem.barrier(mesh, barrier.triangles = NULL)
 }
 \arguments{
 \item{mesh}{a 2d mesh object.}
 
 \item{order}{the desired order.}
 
-\item{barrierTriangles}{integer index to specify the
+\item{barrier.triangles}{integer index to specify the
 triangles in the barrier domain}
 }
 \value{

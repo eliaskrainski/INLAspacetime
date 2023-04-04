@@ -13,6 +13,7 @@ bibliography: INLAspacetime.bib
 ---
 
 ```{r setup, include = FALSE}
+library(knitr)
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -34,7 +35,9 @@ It consider the problem of modeling over a spatial domain accounting for physica
 The original implementation is illustrated in
 [this tutorial](https://haakonbakkagit.github.io/btopic128.html).
 The re-implementation consider a new (faster) computational method 
-available in the **INLA** package.
+available in the **INLA** package. 
+See details at the end of this vignette to update old
+working code to use this new implementation.
 
 # Introduction
 
@@ -400,11 +403,10 @@ We define the model object with
 ```{r bmodel}
 bmodel <- barrierModel.define(
     mesh = mesh, 
-    barrierTriangles = triBarrier,
-    control.priors = list(
-        prs = c(1, 0.01),
-        psigma = c(1, 0.01)),
-        fraction = 0.1)
+    barrier.triangles = triBarrier,
+    prior.range = c(1, 0.01), ## P(range < 1) = 0.01
+    prior.sigma = c(1, 0.01), ## P(sigma > 1) = 0.01
+    fraction = 0.1)
 ``` 
 
 We use the model formula in the **inlabru** way,
@@ -414,7 +416,7 @@ model <- outcome ~ Intercept(1) +
     field(cbind(x, y), model = bmodel)
 ```
 
-```{r mfitcode, echo = FALSE, warning = FALSE}
+```{r mfitcode, echo = FALSE, warning = FALSE, eval = FALSE}
 result <- bru(
     model, dataset, family = "gaussian")
 ```
@@ -542,7 +544,25 @@ ggplot() +
   gg.add ## look to the appendix for the code for this
 ```
 
-# Appendix A: re-used code
+# Appendix A: adapting old code
+
+To adapt code based in
+[this tutorial](https://haakonbakkagit.github.io/btopic128.html),
+one should consider that there are two new functions implemented,
+as detailed bellow:
+
+```{r old2new, echo = FALSE, results = "asis"}
+old2new <- data.frame(
+  Old = c("inla.barrier.fem()", "inla.barrier.pcmatern()"),
+  New = c("mesh2fem.barrier()", "barrierModel.define()"))
+knitr::kable(old2new)
+```
+
+The arguments in the new functions have the same names as in the old ones. 
+The new function used to define the model has additional arguments. 
+See the help of this function for details.
+
+# Appendix B: ggplot reused code
 
 The additional **ggplot2** code used
 ```{r ggbarriers}

@@ -19,13 +19,6 @@ models taking use to the `cgeneric` interface in the INLA package. This
 interface is a way to implement models by writing `C` code to build the
 precision matrix compiling it so that INLA can use it internally.
 
-## We have implemented
-
-1.  some of the models presented in <https://arxiv.org/abs/2006.04917>
-
-2.  the barrier model proposed in
-    <https://doi.org/10.1016/j.spasta.2019.01.002>
-
 ## Installation
 
 <!-- You can install the current [CRAN](https://CRAN.R-project.org) version of INLAspacetime: -->
@@ -58,6 +51,13 @@ remotes::install_github("eliaskrainski/INLAspacetime")
 We will have tutorials and examples at
 <https://eliaskrainski.github.io/INLAspacetime/>
 
+## We have implemented
+
+1.  some of the models presented in <https://arxiv.org/abs/2006.04917>
+
+2.  the barrier model proposed in
+    <https://doi.org/10.1016/j.spasta.2019.01.002>
+
 # Example
 
 This is a basic example which fit a spacetime model for some fake data.
@@ -72,10 +72,10 @@ dataf <- data.frame(
     y    = rnorm(n, 0, 1))
 str(dataf)
 #> 'data.frame':    5 obs. of  4 variables:
-#>  $ s1  : num  0.6989 0.0894 -0.87 -0.04 0.6806
-#>  $ s2  : num  0.862 -0.966 -0.545 0.177 -0.314
-#>  $ time: num  2.75 1.17 2.12 2.33 1.47
-#>  $ y   : num  0.331 -0.272 -1.527 0.41 -0.201
+#>  $ s1  : num  -0.907 -0.1863 0.8193 -0.1897 -0.0172
+#>  $ s2  : num  0.7927 -0.0407 -0.9931 0.3473 -0.1244
+#>  $ time: num  1.41 2.1 2.3 3.41 2.74
+#>  $ y   : num  1.456 0.4915 -0.2969 0.3645 -0.0807
 ```
 
 Loading the packages:
@@ -163,14 +163,18 @@ Summary of the model parameters
 ``` r
 result$summary.fixed
 #>                mean       sd 0.025quant  0.5quant 0.975quant      mode kld
-#> Intercept -0.344202 0.860469   -2.03069 -0.344202   1.342286 -0.344202   0
+#> Intercept 0.6655691 0.724003 -0.7534507 0.6655691   2.084589 0.6655691   0
 result$summary.hyperpar
-#>                                                 mean           sd   0.025quant
-#> Precision for the Gaussian observations 1.866595e+04 1.834440e+04 1248.0184137
-#> Theta1 for field                        6.731328e-01 3.740663e-01   -0.1080038
-#> Theta2 for field                        2.406610e-01 2.582889e-01   -0.2380983
-#>                                             0.5quant   0.975quant         mode
-#> Precision for the Gaussian observations 1.313229e+04 6.751503e+04 3420.4929806
-#> Theta1 for field                        6.877632e-01 1.369484e+00    0.7487895
-#> Theta2 for field                        2.297805e-01 7.775845e-01    0.1873727
+#>                                                  mean           sd
+#> Precision for the Gaussian observations  1.864006e+04 1.835726e+04
+#> Theta1 for field                         8.646872e-01 4.162408e-01
+#> Theta2 for field                        -9.558345e-02 2.663314e-01
+#>                                            0.025quant      0.5quant
+#> Precision for the Gaussian observations 1251.50217913 13101.7887559
+#> Theta1 for field                          -0.02526976     0.8851235
+#> Theta2 for field                          -0.57908136    -0.1096677
+#>                                           0.975quant         mode
+#> Precision for the Gaussian observations 6.754193e+04 3433.1668404
+#> Theta1 for field                        1.618203e+00    0.9820722
+#> Theta2 for field                        4.693098e-01   -0.1690568
 ```

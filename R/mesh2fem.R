@@ -4,14 +4,14 @@
 #' @aliases mesh2fem
 #' @param mesh a 2d mesh object.
 #' @param order the desired order.
-#' @param barrierTriangles integer index to specify the
+#' @param barrier.triangles integer index to specify the
 #' triangles in the barrier domain
 #' @return a list object containing the FE matrices.
 #' @export
-mesh2fem <- function(mesh, order=2, barrierTriangles = NULL) {
-  if(!is.null(barrierTriangles))
+mesh2fem <- function(mesh, order=2, barrier.triangles = NULL) {
+  if(!is.null(barrier.triangles))
     return(mesh2fem.barrier(mesh = mesh,
-                            barrierTriangles = barrierTriangles))
+                            barrier.triangles = barrier.triangles))
   n <- nrow(mesh$loc)
   ntv <- nrow(mesh$graph$tv)
   ta <- rep(0, ntv)
@@ -63,16 +63,16 @@ mesh2fem <- function(mesh, order=2, barrierTriangles = NULL) {
 #' @return a list object containing the FE matrices
 #' for the barrier problem.
 #' @export
-mesh2fem.barrier <- function(mesh, barrierTriangles = NULL) {
-  if(is.null(barrierTriangles)) {
-    warning("No 'barrierTriangles', using 'mesh2fem(mesh, order = 2)'!")
+mesh2fem.barrier <- function(mesh, barrier.triangles = NULL) {
+  if(is.null(barrier.triangles)) {
+    warning("No 'barrier.triangles', using 'mesh2fem(mesh, order = 2)'!")
     return(mesh2fem(mesh = mesh, order = 2L))
   }
-  barrierTriangles <- unique(sort(barrierTriangles))
+  barrier.triangles <- unique(sort(barrier.triangles))
   itv <- list(setdiff(
     1:nrow(mesh$graph$tv),
-    barrierTriangles),
-    barrierTriangles)
+    barrier.triangles),
+    barrier.triangles)
   ntv <- sapply(itv, length)
   n <- nrow(mesh$loc)
 

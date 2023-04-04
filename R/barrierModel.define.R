@@ -1,14 +1,16 @@
 #' Define a spacetime model object for the `f()` call.
 #'
 #' @param mesh a spatial mesh
-#' @param barrierTriangles a integer vector to specify which
+#' @param barrier.triangles a integer vector to specify which
 #' triangles centers are in the barrier domain
-#' @param control.priors a named list with parameter priors.
-#' E.g. prior.rs and prior.sigma
-#' as vectors with length two (U, a) to define the
-#' corresponding PC-prior such that
-#' P(r_s<U)=a and P(sigma>U)=a.
-#' If a=0 then U is taken to be the fixed value of the parameter.
+#' @param prior.range numeric vector containing U and a
+#' to define the probability statements P(range < U) = a
+#' used to setup the PC-prior for range.
+#' If a = 0 then U is taken to be the fixed value for the range.
+#' @param prior.sigma numeric vector containing U and a
+#' to define the probability statements P(range > U) = a
+#' used to setup the PC-prior for sigma.
+#' If a = 0 then U is taken to be the fixed value for sigma.
 #' @param fraction numeric to specify the fraction of the range
 #' for the barrier domain. Default value is 0.2.
 #' @param constr logical to indicate if the integral of the field
@@ -24,12 +26,21 @@
 #' @return objects to be used in the f() formula term in INLA.
 #' @export
 barrierModel.define <-
-    function(mesh, barrierTriangles, control.priors, fraction = 0.2,
+    function(mesh, barrier.triangles,
+             prior.range, prior.sigma, fraction = 0.2,
              constr = FALSE, debug = FALSE, verbose = FALSE,
              useINLAprecomp = TRUE, libpath = NULL)
 {
+      stopifnot(all(c(length(prior.range),
+                      length(prior.sigma) > 1)))
+      stopifnot(prior.range[1]>0)
+      stopifnot(prior.range[2] >= 0)
+      stopifnot(prior.range[2] < 1)
+      stopifnot(prior.sigma[2] >= 0)
+      stopifnot(prior.sigma[2] < 1)
+      stopifnot(prior.sigma[1]>0)
 
-      bfem <- INLAspacetime::mesh2fem.barrier(mesh, barrierTriangles)
+      bfem <- INLAspacetime::mesh2fem.barrier(mesh, barrier.triangles)
       n <- nrow(bfem$I)
 
       Imat <- bfem$I
@@ -65,8 +76,8 @@ barrierModel.define <-
             n = n,
             debug = as.integer(debug),
             verbose = as.integer(verbose),
-            prs = control.priors$prs,
-            psigma = control.priors$psigma,
+            prange = prior.range,
+            psigma = prior.sigma,
             ii = lmats$graph@i,
             jj = lmats$graph@j,
             xx = t(lmats$xx)

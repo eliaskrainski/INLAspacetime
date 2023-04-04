@@ -1,18 +1,18 @@
 
 /* cgeneric_barrier.c
- * 
+ *
  * Copyright (C) 2022-2023 Elias Krainski
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -61,16 +61,16 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 	assert(M == jj->len);
 
 	// prior parameters
-	assert(!strcasecmp(data->doubles[0]->name, "prs"));
-	inla_cgeneric_vec_tp *prs = data->doubles[0];
-	assert(prs->len == 2);
+	assert(!strcasecmp(data->doubles[0]->name, "prange"));
+	inla_cgeneric_vec_tp *prange = data->doubles[0];
+	assert(prange->len == 2);
 
 	assert(!strcasecmp(data->doubles[1]->name, "psigma"));
 	inla_cgeneric_vec_tp *psigma = data->doubles[1];
 	assert(psigma->len == 2);
 
 	nth = 0;
-	if (iszero(prs->doubles[1])) {
+	if (iszero(prange->doubles[1])) {
 		ifix[0] = 1;
 	} else {
 		ifix[0] = 0;
@@ -86,22 +86,22 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 	assert(nth < 3);
 
 	if (theta) {
-		// interpretable parameters 
-		// theta = log(range_s, sigma)
+		// interpretable parameters
+		// theta = log(range, sigma)
 		ith = 0;
 		if (ifix[0] == 1) {
-			range = prs->doubles[0];
+			range = prange->doubles[0];
 		} else {
 			range = exp(theta[ith++]);
 		}
 
 		if (ifix[1] == 1) {
-			sigma = prs->doubles[0];
+			sigma = prange->doubles[0];
 		} else {
 			sigma = exp(theta[ith++]);
 		}
 
-		double pi6s2 = 1.9098593171 / SQR(sigma);      // 6 / ( pi * sigma^2) 
+		double pi6s2 = 1.9098593171 / SQR(sigma);      // 6 / ( pi * sigma^2)
 		double r2 = SQR(range);
 
 		params[0] = pi6s2 / (r2);
@@ -163,7 +163,7 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 
 	case INLA_CGENERIC_MU:
 	{
-		// return (N, mu). if N==0 then mu is not needed as its taken to be mu[]==0 
+		// return (N, mu). if N==0 then mu is not needed as its taken to be mu[]==0
 		ret = Calloc(1, double);
 		ret[0] = 0;
 	}
@@ -172,7 +172,7 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 	case INLA_CGENERIC_INITIAL:
 	{
 		// return c(P, initials)
-		// where P is the number of hyperparameters 
+		// where P is the number of hyperparameters
 		ret = Calloc(nth + 1, double);
 		ith = 0;
 		ret[ith++] = (double) nth;
@@ -194,7 +194,7 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 		ith = 0;
 		double daux = 2 * 0.5;
 		if (ifix[0] == 0) {
-			double lam1 = -log(prs->doubles[1]) / prs->doubles[0];
+			double lam1 = -log(prange->doubles[1]) / prange->doubles[0];
 			ret[0] += log(lam1 * daux) - daux * theta[ith] - lam1 * exp(-daux * theta[ith]) + log(daux);
 			ith++;
 		}
