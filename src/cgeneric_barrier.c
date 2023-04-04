@@ -44,7 +44,8 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 
 	assert(!strcasecmp(data->ints[1]->name, "debug"));     // this will always be the case
 	int debug = data->ints[1]->ints[0];		       // this will always be the case
-	assert(debug >= 0);				       // just to 'find an use for "debug" ...'
+	assert(debug >= 0);				       // just to 'find an use for "debug"
+	if(debug>1) debug = 1;
 
 	assert(!strcasecmp(data->ints[2]->name, "verbose"));
 	int verbose = data->ints[2]->ints[0];

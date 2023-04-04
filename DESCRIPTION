@@ -14,9 +14,9 @@ Authors@R: c(
          comment = c(ORCID = "0000-0002-0222-1881"))
   )
 Description: Prepare objects to implement models over spatial and 
-  spacetime domains with the INLA package (<https://www.r-inla.org>).
+  spacetime domains with the 'INLA' package (<https://www.r-inla.org>).
   These objects contain data to be used in the 'cgeneric'
-  interface provided by INLA, enabling fast parallel computations.
+  interface provided by 'INLA', enabling fast parallel computations.
   It includes the spatial barrier model, see Bakka et. al. (2019) 
   <doi:10.1016/j.spasta.2019.01.002>, and some of the spatio-temporal 
   models in Lindgren et. al. (2023) <arXiv:2006.04917>. 

@@ -9,10 +9,8 @@
 Status](http://www.r-pkg.org/badges/version-last-release/INLAspacetime)](https://cran.r-project.org/package=INLAspacetime)
 [![R build
 status](https://github.com/eliaskrainski/INLAspacetime/workflows/R-CMD-check/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
-[![R code coverage
-status](https://github.com/eliaskrainski/INLAspacetime/workflows/test-coverage/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
-[![lintr
-status](https://github.com/eliaskrainski/INLAspacetime/workflows/lint/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
+<!--[![R code coverage status](https://github.com/eliaskrainski/INLAspacetime/workflows/test-coverage/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions) -->
+<!--[![lintr status](https://github.com/eliaskrainski/INLAspacetime/workflows/lint/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions) -->
 <!-- [![Codecov test coverage](https://codecov.io/gh/eliaskrainski/INLAspacetime/branch/master/graph/badge.svg)](https://app.codecov.io/gh/eliaskrainski/INLAspacetime?branch=master) -->
 <!-- badges: end -->
 
@@ -74,10 +72,10 @@ dataf <- data.frame(
     y    = rnorm(n, 0, 1))
 str(dataf)
 #> 'data.frame':    5 obs. of  4 variables:
-#>  $ s1  : num  -0.267 -0.669 -0.748 -0.417 0.38
-#>  $ s2  : num  -0.358 -0.441 0.948 -0.114 -0.635
-#>  $ time: num  2.79 1.41 2.28 2.58 1.07
-#>  $ y   : num  2.2548 -0.4098 1.1079 -1.4211 0.0346
+#>  $ s1  : num  0.6989 0.0894 -0.87 -0.04 0.6806
+#>  $ s2  : num  0.862 -0.966 -0.545 0.177 -0.314
+#>  $ time: num  2.75 1.17 2.12 2.33 1.47
+#>  $ y   : num  0.331 -0.272 -1.527 0.41 -0.201
 ```
 
 Loading the packages:
@@ -88,7 +86,7 @@ library(INLA)
 #> Loading required package: foreach
 #> Loading required package: parallel
 #> Loading required package: sp
-#> This is INLA_23.03.26 built 2023-03-26 19:17:37 UTC.
+#> This is INLA_23.04.02 built 2023-04-02 09:28:58 UTC.
 #>  - See www.r-inla.org/contact-us for how to get help.
 #>  - To enable PARDISO sparse library; see inla.pardiso()
 library(INLAspacetime)
@@ -164,15 +162,15 @@ Summary of the model parameters
 
 ``` r
 result$summary.fixed
-#>               mean       sd 0.025quant 0.5quant 0.975quant     mode kld
-#> Intercept 1.714554 2.941142  -4.049978 1.714554   7.479086 1.714554   0
+#>                mean       sd 0.025quant  0.5quant 0.975quant      mode kld
+#> Intercept -0.344202 0.860469   -2.03069 -0.344202   1.342286 -0.344202   0
 result$summary.hyperpar
 #>                                                 mean           sd   0.025quant
-#> Precision for the Gaussian observations 19159.466046 1.859446e+04 1240.6373188
-#> Theta1 for field                            0.697476 2.905753e-01    0.1267038
-#> Theta2 for field                            1.484570 1.666461e-01    1.1649117
+#> Precision for the Gaussian observations 1.866595e+04 1.834440e+04 1248.0184137
+#> Theta1 for field                        6.731328e-01 3.740663e-01   -0.1080038
+#> Theta2 for field                        2.406610e-01 2.582889e-01   -0.2380983
 #>                                             0.5quant   0.975quant         mode
-#> Precision for the Gaussian observations 1.356233e+04 68522.418211 3367.9114786
-#> Theta1 for field                        6.965066e-01     1.273187    0.6928644
-#> Theta2 for field                        1.481206e+00     1.821422    1.4685110
+#> Precision for the Gaussian observations 1.313229e+04 6.751503e+04 3420.4929806
+#> Theta1 for field                        6.877632e-01 1.369484e+00    0.7487895
+#> Theta2 for field                        2.297805e-01 7.775845e-01    0.1873727
 ```

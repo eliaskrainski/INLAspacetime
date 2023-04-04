@@ -51,6 +51,7 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 
 	assert(!strcasecmp(data->ints[1]->name, "toprint"));
 	int toprint = data->ints[1]->ints[0];
+	assert(toprint>=0);
 	if(toprint>0) toprint = 1;
 
 	int npar = 0;
