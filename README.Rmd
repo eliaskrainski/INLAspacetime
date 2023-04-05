@@ -126,13 +126,17 @@ linpred <- ~ 1 +
 
 Setting the likelihood 
 ```{r precprior}
-likeprec <- list(prec = list(
-  initial = 10, fixed = FALSE))
+ctrlf <- list(
+  hyper = list(
+    prec = list(
+      initial = 10, 
+      fixed = TRUE)    
+  )
+)
 datalike <- like(
   formula = y ~ ., 
   family = "gaussian",
-  control.family = list(
-    hyper = likeprec), ## TO DO: not going through bru
+  control.family = ctrlf, 
   data=dataf)
 ```
 
