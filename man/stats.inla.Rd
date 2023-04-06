@@ -20,8 +20,9 @@ the default is \code{\link[base:mean]{base::mean()}}.}
 A named numeric vector with the extracted statistics.
 }
 \description{
-Extracts dic, waic and log-cpo from an \code{\link[INLA:inla]{INLA::inla()}} output and
-computes log-po, mse, mae, crps and scrps for a given input.
+Extracts dic, waic and log-cpo from an output returned by the inla function
+from the INLA package or by the bru function from the inlabru package,
+and computes log-po, mse, mae, crps and scrps for a given input.
 A summary is applied considering the user imputed function,
 which by default is the mean.
 }

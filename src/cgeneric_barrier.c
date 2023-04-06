@@ -61,7 +61,7 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 	assert(M == jj->len);
 
 	// prior parameters
-	assert(!strcasecmp(data->doubles[0]->name, "prange"));
+	assert(!strcasecmp(data->doubles[0]->name, "prs"));
 	inla_cgeneric_vec_tp *prange = data->doubles[0];
 	assert(prange->len == 2);
 

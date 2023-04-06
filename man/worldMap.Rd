@@ -4,11 +4,21 @@
 \alias{worldMap}
 \title{Get the world map}
 \usage{
-worldMap(crs = sp::CRS("+proj=moll +units=km"))
+worldMap(
+  crs = sp::CRS("+proj=moll +units=km"),
+  scale = "medium",
+  returnclass = c("sp", "sf"),
+  oceans = TRUE
+)
 }
 \arguments{
 \item{crs}{a CRS object for the target coordinates.
 Defalt is the Mollweide projection with units in kilometers.}
+
+\item{scale}{see the help from \code{\link[rnaturalearth:ne_countries]{rnaturalearth::ne_countries()}}}
+
+\item{returnclass}{defined by the \link{sp} if returnclass = "sp" or
+by the \link{sf} package if returnclass = "sf".}
 }
 \value{
 the world map
