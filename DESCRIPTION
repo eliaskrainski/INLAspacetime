@@ -30,8 +30,8 @@ RoxygenNote: 7.2.3
 NeedsCompilation: yes
 Roxygen: list(markdown = TRUE)
 Depends:
-    R (>= 3.6)
-    Matrix
+    R (>= 3.6),
+    Matrix,
     sp
 Imports:
     graphics,
