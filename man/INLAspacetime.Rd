@@ -2,7 +2,7 @@
 % Please edit documentation in R/INLAspacetime.R
 \name{INLAspacetime}
 \alias{INLAspacetime}
-\title{Functions for easier code to fit of some models with INLA.}
+\title{Spatial and Spatio-Temporal Models using INLA}
 \usage{
 INLAspacetime()
 }
