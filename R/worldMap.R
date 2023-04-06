@@ -14,8 +14,7 @@
 #' @export
 worldMap <- function(crs = sp::CRS("+proj=moll +units=km"),
                      scale = "medium",
-                     returnclass = c("sp", "sf"),
-                     oceans = TRUE) {
+                     returnclass = c("sp", "sf")) {
   requireNamespace("sf")
   requireNamespace("rnaturalearth")
   returnclass <- match.arg(returnclass)

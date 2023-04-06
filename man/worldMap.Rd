@@ -7,8 +7,7 @@
 worldMap(
   crs = sp::CRS("+proj=moll +units=km"),
   scale = "medium",
-  returnclass = c("sp", "sf"),
-  oceans = TRUE
+  returnclass = c("sp", "sf")
 )
 }
 \arguments{
