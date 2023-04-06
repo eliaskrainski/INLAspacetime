@@ -26,7 +26,7 @@ worldMap <- function(crs = sp::CRS("+proj=moll +units=km"),
       x = world.ll,
       crs = crs)
   } else {
-    if(class(crs) == "character")
+    if(!is(crs, "CRS"))
       crs <- sp::CRS(crs)
     result <- sp::spTransform(
       x = world.ll,

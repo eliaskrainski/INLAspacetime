@@ -38,7 +38,9 @@ Imports:
     grDevices,
     methods,
     stats,
-    utils
+    utils,
+    sf,
+    rnaturalearth
 Suggests:
     INLA (>= 23.03.26),
     inlabru (>= 2.7.0),
@@ -46,8 +48,7 @@ Suggests:
     ggplot2,
     rmarkdown,
     parallel,
-    data.table,
-    rnaturalearth
+    data.table
 VignetteBuilder: knitr
 BuildVignettes: true
 LazyData: false
