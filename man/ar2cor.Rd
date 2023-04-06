@@ -28,7 +28,7 @@ where \code{w_t ~ N(0, 1)}.
 }
 
 \examples{
-plot(ar2cor(-1.7, 0.963), type='o')
+plot(ar2cor(-1.7, 0.963), type = "o")
 }
 \seealso{
 \link{ar2precision}

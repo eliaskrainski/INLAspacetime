@@ -30,27 +30,43 @@
 #' @seealso [ar2cor]
 #' @export
 #' @examples
-#'  ar2precision(7, c(1, -1.5, 0.9))
+#' ar2precision(7, c(1, -1.5, 0.9))
 ar2precision <- function(n, a) {
-  if (n<1) return(NULL)
-  if (n==1) return(a[1]^2)
-  if (n==2) return(matrix(
-    c(a[1]^2, sum(a[1:2]))[c(1,2,2,1)], 2))
-  if (n==3) return(matrix(
-    c(a[1]^2, a[1]*a[2], a[1]*a[3],
-      a[1]*a[2], sum(a[1:2]^2), a[1]*a[2],
-      a[1]*a[3], a[1]*a[2], a[1]^2), 3))
-  if (n>3)
+  if (n < 1) {
+    return(NULL)
+  }
+  if (n == 1) {
+    return(a[1]^2)
+  }
+  if (n == 2) {
+    return(matrix(
+      c(a[1]^2, sum(a[1:2]))[c(1, 2, 2, 1)], 2
+    ))
+  }
+  if (n == 3) {
+    return(matrix(
+      c(
+        a[1]^2, a[1] * a[2], a[1] * a[3],
+        a[1] * a[2], sum(a[1:2]^2), a[1] * a[2],
+        a[1] * a[3], a[1] * a[2], a[1]^2
+      ), 3
+    ))
+  }
+  if (n > 3) {
     return(Matrix::sparseMatrix(
-      i=c(1:n, 1:(n-1), 1:(n-2)),
-      j=c(1:n, 2:n, 3:n),
-      x=c(a[1]^2, a[1]^2+a[2]^2,
-          rep(sum(a^2), max(0,n-4)),
-          a[1]^2+a[2]^2, a[1]^2,
-          a[1]*a[2],
-          rep(a[2]*(a[1]+a[3]), n-3),
-          a[1]*a[2],
-          rep(a[1]*a[3], n-2)),
+      i = c(1:n, 1:(n - 1), 1:(n - 2)),
+      j = c(1:n, 2:n, 3:n),
+      x = c(
+        a[1]^2, a[1]^2 + a[2]^2,
+        rep(sum(a^2), max(0, n - 4)),
+        a[1]^2 + a[2]^2, a[1]^2,
+        a[1] * a[2],
+        rep(a[2] * (a[1] + a[3]), n - 3),
+        a[1] * a[2],
+        rep(a[1] * a[3], n - 2)
+      ),
       symmetric = TRUE,
-      repr = 'T'))
+      repr = "T"
+    ))
+  }
 }

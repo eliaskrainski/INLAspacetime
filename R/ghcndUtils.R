@@ -8,8 +8,7 @@
 #' @return a named character vector with the local file names:
 #' daily.data, stations.all, elevation.
 #' @export
-downloadUtilFiles <- function(data.dir, year=2022, force=FALSE)
-{
+downloadUtilFiles <- function(data.dir, year = 2022, force = FALSE) {
   ### 1. daily weather data for one year
   ### 2. stations information
   ### 3. ETOPO2 elevation data
@@ -20,32 +19,41 @@ downloadUtilFiles <- function(data.dir, year=2022, force=FALSE)
   ### daily weather data for a given year
   dfl <- paste0(year, ".csv.gz")
   loc.dfl <- file.path(data.dir, dfl)
-  if(force | (!file.exists(loc.dfl)))
+  if (force | (!file.exists(loc.dfl))) {
     utils::download.file(
       url = paste0(ghcnd, "by_year/", dfl),
-      destfile = loc.dfl)
+      destfile = loc.dfl
+    )
+  }
 
   ### all the available stations information
   sfl <- "ghcnd-stations.txt"
   loc.sfl <- file.path(data.dir, sfl)
-  if(force | (!file.exists(loc.sfl)))
+  if (force | (!file.exists(loc.sfl))) {
     utils::download.file(
       url = paste0(ghcnd, sfl),
-      destfile = loc.sfl)
+      destfile = loc.sfl
+    )
+  }
 
   ### elevation data
   efl <- "ETOPO2.RData"
   loc.efl <- file.path(data.dir, efl)
-  if(force | (!file.exists(loc.efl)))
+  if (force | (!file.exists(loc.efl))) {
     utils::download.file(
-      url = paste0("http://leesj.sites.oasis.unc.edu/",
-                   "FETCH/GRAB/RPACKAGES/", efl),
-      destfile = loc.efl)
+      url = paste0(
+        "http://leesj.sites.oasis.unc.edu/",
+        "FETCH/GRAB/RPACKAGES/", efl
+      ),
+      destfile = loc.efl
+    )
+  }
 
-  return(c(daily.data = loc.dfl,
-           stations.all = loc.sfl,
-           elevation = loc.efl))
-
+  return(c(
+    daily.data = loc.dfl,
+    stations.all = loc.sfl,
+    elevation = loc.efl
+  ))
 }
 #' Select data from the daily dataset
 #' @aliases ghcndSelect
@@ -78,29 +86,29 @@ ghcndSelect <- function(gzfile,
                         variable = c("TMIN", "TAVG", "TMAX"),
                         qflag = "",
                         verbose = TRUE,
-                        astype = as.integer)
-{
-
+                        astype = as.integer) {
   ### this function selects `variable` from the daily dataset
   ### it select data with the given quality control `qfrag`
   ### it can return the selected data in long or wide format
 
-  if (verbose)
+  if (verbose) {
     t0 <- Sys.time()
+  }
 
   ### read the full dataset
   if (requireNamespace("data.table", quietly = TRUE)) {
     d <- data.table::fread(gzfile, data.table = FALSE)
   } else {
-    if (verbose)
+    if (verbose) {
       warning("\"data.table\" is not available... it may take a while.")
+    }
     d <- utils::read.csv(gzfile)
   }
 
   if (verbose) {
     cat("readed ", nrow(d), "")
     t1 <- Sys.time()
-    print(t1-t0)
+    print(t1 - t0)
   }
 
   ### select the variables and qflag
@@ -108,7 +116,7 @@ ghcndSelect <- function(gzfile,
   if (verbose) {
     cat("Found ", length(ii), "observations on", variable, "")
     t2 <- Sys.time()
-    print(t2-t1)
+    print(t2 - t1)
   }
 
 
@@ -118,23 +126,23 @@ ghcndSelect <- function(gzfile,
   if (verbose) {
     cat("Selected ", length(ii), "observations. ")
     t3 <- Sys.time()
-    print(t3-t2)
+    print(t3 - t2)
   }
 
   cnames <- c("day", "station")
   names(d)[2:1] <- cnames
-  if(length(variable)==1) {
+  if (length(variable) == 1) {
     d <- tapply(d[, 4], d[, cnames[2:1]], astype)
   } else {
     cnames <- c(cnames, "variable")
     names(d)[3] <- "variable"
-    d <- tapply(d[,4], d[, cnames[c(2,1,3)]], astype)
+    d <- tapply(d[, 4], d[, cnames[c(2, 1, 3)]], astype)
     d <- d[, , pmatch(variable, dimnames(d)[[3]]), drop = FALSE]
   }
   if (verbose) {
     cat("Wide data dim =", dim(d), "")
     t4 <- Sys.time()
-    print(t4-t3)
+    print(t4 - t3)
   }
 
   return(d)

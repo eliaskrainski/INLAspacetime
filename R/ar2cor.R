@@ -14,16 +14,18 @@
 #' @seealso [ar2precision]
 #' @export
 #' @examples
-#' plot(ar2cor(-1.7, 0.963), type='o')
-ar2cor <- function(a1, a2, k=30) {
+#' plot(ar2cor(-1.7, 0.963), type = "o")
+ar2cor <- function(a1, a2, k = 30) {
   a <- -cbind(a1, a2)
   r <- matrix(NA, nrow(a), k)
-  r[,1] <- a[,1]/(1-a[,2])
-  if (k>1)
-    r[,2] <- (a[,1]^2+a[,2]-a[,2]^2)/(1-a[,2])
-  if (k>2) {
-    for (j in 3:k)
-      r[,j] <- a[,1]*r[,j-1]+a[,2]*r[,j-2]
+  r[, 1] <- a[, 1] / (1 - a[, 2])
+  if (k > 1) {
+    r[, 2] <- (a[, 1]^2 + a[, 2] - a[, 2]^2) / (1 - a[, 2])
+  }
+  if (k > 2) {
+    for (j in 3:k) {
+      r[, j] <- a[, 1] * r[, j - 1] + a[, 2] * r[, j - 2]
+    }
   }
   return(drop(r))
 }

@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![CRAN Status](http://www.r-pkg.org/badges/version-last-release/INLAspacetime)](https://cran.r-project.org/package=INLAspacetime)
-[![R build status](https://github.com/eliaskrainski/INLAspacetime/workflows/R-CMD-check/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
+[![R build status](https://github.com/eliaskrainski/INLAspacetime/workflows/check-standard/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
 <!--[![R code coverage status](https://github.com/eliaskrainski/INLAspacetime/workflows/test-coverage/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions) -->
 <!--[![lintr status](https://github.com/eliaskrainski/INLAspacetime/workflows/lint/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions) -->
 <!-- [![Codecov test coverage](https://codecov.io/gh/eliaskrainski/INLAspacetime/branch/master/graph/badge.svg)](https://app.codecov.io/gh/eliaskrainski/INLAspacetime?branch=master) -->
@@ -33,10 +33,10 @@ INLA can use it internally.
 
 ## Installation
 
-<!-- You can install the current [CRAN](https://CRAN.R-project.org) version of INLAspacetime: -->
-<!-- ```{r cran-installation, eval = FALSE} -->
-<!-- install.packages("INLAspacetime") -->
-<!-- ``` -->
+You can install the current [CRAN](https://CRAN.R-project.org) version of INLAspacetime:
+```{r cran-installation, eval = FALSE}
+install.packages("INLAspacetime")
+```
 
 You can install the latest version of INLAspacetime from [GitHub](https://github.com/eliaskrainski/INLAspacetime) with
 ```{r ghinst, eval = FALSE}
@@ -109,7 +109,7 @@ stmodel <- stModel.define(
     model = '121', ## model, see the paper
     control.priors = list(
         prs = c(1, 0.1), ## P(spatial range < 1) = 0.1
-        prt = c(5, 0), ## fixed to 5
+        prt = c(5, 0), ## temporal range fixed to 5
         psigma = c(1, 0.1) ## P(sigma > 1) = 0.1
         )
     )

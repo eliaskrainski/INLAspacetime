@@ -42,6 +42,6 @@ log(gamma.s, gamma.t, gamma.e)
 Funtions to help converting from/to user/internal parametrization.
 }
 \examples{
- gammas2params(log(c(0, 0, 0)), 1, 2, 1, "R2")
- params2gammas(log(c(1, 1, 1)), 1, 2, 1, "R2")
+gammas2params(log(c(0, 0, 0)), 1, 2, 1, "R2")
+params2gammas(log(c(1, 1, 1)), 1, 2, 1, "R2")
 }

@@ -42,7 +42,7 @@ has the following non-zero elements:
 }
 
 \examples{
- ar2precision(7, c(1, -1.5, 0.9))
+ar2precision(7, c(1, -1.5, 0.9))
 }
 \seealso{
 \link{ar2cor}

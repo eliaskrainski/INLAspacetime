@@ -1,7 +1,7 @@
 Package: INLAspacetime
 Type: Package
 Title: Spatial and Spatio-Temporal Models using 'INLA'
-Version: 0.1.5
+Version: 23.04.06
 Authors@R: c(
   person("Elias Teixeira", "Krainski", email = "eliaskrainski@gmail.com",
          role = c("cre", "aut", "cph"), 
@@ -15,22 +15,24 @@ Authors@R: c(
   )
 Description: Prepare objects to implement models over spatial and 
   spacetime domains with the 'INLA' package (<https://www.r-inla.org>).
-  These objects contain data to be used in the 'cgeneric'
-  interface provided by 'INLA', enabling fast parallel computations.
-  It includes the spatial barrier model, see Bakka et. al. (2019) 
+  These objects contain data to for the 'cgeneric' interface in
+  'INLA', enabling fast parallel computations.
+  We implemented the spatial barrier model, see Bakka et. al. (2019) 
   <doi:10.1016/j.spasta.2019.01.002>, and some of the spatio-temporal 
   models in Lindgren et. al. (2023) <arXiv:2006.04917>. 
-  Details are provided in the vignettes available in the provided link.
+  Details are provided in the available vignettes and from the URL bellow.
 URL: https://github.com/eliaskrainski/INLAspacetime
+Additional_repositories: https://inla.r-inla-download.org/R/testing
+BugReports: https://github.com/inlabru-org/inlabru/issues
 License: GPL (>=2) 
 Encoding: UTF-8
 RoxygenNote: 7.2.3
 NeedsCompilation: yes
 Roxygen: list(markdown = TRUE)
 Depends:
-    Matrix,
-    sp,
     R (>= 3.6)
+    Matrix
+    sp
 Imports:
     graphics,
     grDevices,
@@ -39,7 +41,7 @@ Imports:
     utils
 Suggests:
     INLA (>= 23.03.26),
-    inlabru (>= 2.6.0),
+    inlabru (>= 2.7.0),
     knitr,
     ggplot2,
     rmarkdown,
@@ -48,4 +50,6 @@ Suggests:
     maps,
     maptools,
     rgdal
-Additional_repositories: https://inla.r-inla-download.org/R/testing
+VignetteBuilder: knitr
+BuildVignettes: true
+LazyData: false

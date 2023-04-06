@@ -26,73 +26,78 @@
 #' @return objects to be used in the f() formula term in INLA.
 #' @export
 barrierModel.define <-
-    function(mesh, barrier.triangles,
-             prior.range, prior.sigma, fraction = 0.2,
-             constr = FALSE, debug = FALSE, verbose = FALSE,
-             useINLAprecomp = TRUE, libpath = NULL)
-{
-      stopifnot(all(c(length(prior.range),
-                      length(prior.sigma) > 1)))
-      stopifnot(prior.range[1]>0)
-      stopifnot(prior.range[2] >= 0)
-      stopifnot(prior.range[2] < 1)
-      stopifnot(prior.sigma[2] >= 0)
-      stopifnot(prior.sigma[2] < 1)
-      stopifnot(prior.sigma[1]>0)
+  function(mesh, barrier.triangles,
+           prior.range, prior.sigma, fraction = 0.2,
+           constr = FALSE, debug = FALSE, verbose = FALSE,
+           useINLAprecomp = TRUE, libpath = NULL) {
+    stopifnot(all(c(
+      length(prior.range),
+      length(prior.sigma) > 1
+    )))
+    stopifnot(prior.range[1] > 0)
+    stopifnot(prior.range[2] >= 0)
+    stopifnot(prior.range[2] < 1)
+    stopifnot(prior.sigma[2] >= 0)
+    stopifnot(prior.sigma[2] < 1)
+    stopifnot(prior.sigma[1] > 0)
 
-      bfem <- INLAspacetime::mesh2fem.barrier(mesh, barrier.triangles)
-      n <- nrow(bfem$I)
+    bfem <- INLAspacetime::mesh2fem.barrier(mesh, barrier.triangles)
+    n <- nrow(bfem$I)
 
-      Imat <- bfem$I
-      Dmat <- bfem$D[[1]] + bfem$D[[2]] * fraction^2
-      iC <-  Diagonal(n, 1/(bfem$C[[1]] + bfem$C[[2]] * fraction^2))
+    Imat <- bfem$I
+    Dmat <- bfem$D[[1]] + bfem$D[[2]] * fraction^2
+    iC <- Diagonal(n, 1 / (bfem$C[[1]] + bfem$C[[2]] * fraction^2))
 
-      lmats <- upperPadding(list(
+    lmats <- upperPadding(
+      list(
         ici = t(Imat) %*% iC %*% Imat,
         icd = t(Imat) %*% iC %*% Dmat,
         dci = t(Dmat) %*% iC %*% Imat,
-        dcd = t(Dmat) %*% iC %*% Dmat),
-        relative = FALSE)
-      stopifnot(n == nrow(lmats$graph))
+        dcd = t(Dmat) %*% iC %*% Dmat
+      ),
+      relative = FALSE
+    )
+    stopifnot(n == nrow(lmats$graph))
 
-        if(is.null(libpath)) {
-            if(useINLAprecomp) {
-                libpath <- INLA::inla.external.lib("INLAspacetime")
-            } else {
-                libpath <- system.file("libs", package = "INLAspacetime")
-                if(Sys.info()['sysname']=='Windows') {
-                    libpath <- file.path(libpath, 'INLAspacetime.dll')
-                } else {
-                    libpath <- file.path(libpath, 'INLAspacetime.so')
-                }
-            }
+    if (is.null(libpath)) {
+      if (useINLAprecomp) {
+        libpath <- INLA::inla.external.lib("INLAspacetime")
+      } else {
+        libpath <- system.file("libs", package = "INLAspacetime")
+        if (Sys.info()["sysname"] == "Windows") {
+          libpath <- file.path(libpath, "INLAspacetime.dll")
+        } else {
+          libpath <- file.path(libpath, "INLAspacetime.so")
         }
-
-        the_model <- do.call(
-          "inla.cgeneric.define",
-          list(
-            model = "inla_cgeneric_barrier",
-            shlib = libpath,
-            n = n,
-            debug = as.integer(debug),
-            verbose = as.integer(verbose),
-            prange = prior.range,
-            psigma = prior.sigma,
-            ii = lmats$graph@i,
-            jj = lmats$graph@j,
-            xx = t(lmats$xx)
-          )
-        )
-        if(constr)
-          the_model$f$extraconstr <- list(
-            A = matrix(1/n, 1, n), e = 0.0)
-        # Prepend specialised model class identifier, for bru_mapper use:
-        class(the_model) <- c("barrierModel_cgeneric", class(the_model))
-        # Add objects needed by bru_get_mapper.barrierModel_cgeneric:
-        # (alternatively, construct the mapper already here, but that would
-        # require loading inlabru even when it's not going to be used)
-        the_model[["mesh"]] <- mesh
-
-        the_model
+      }
     }
 
+    the_model <- do.call(
+      "inla.cgeneric.define",
+      list(
+        model = "inla_cgeneric_barrier",
+        shlib = libpath,
+        n = n,
+        debug = as.integer(debug),
+        verbose = as.integer(verbose),
+        prange = prior.range,
+        psigma = prior.sigma,
+        ii = lmats$graph@i,
+        jj = lmats$graph@j,
+        xx = t(lmats$xx)
+      )
+    )
+    if (constr) {
+      the_model$f$extraconstr <- list(
+        A = matrix(1 / n, 1, n), e = 0.0
+      )
+    }
+    # Prepend specialised model class identifier, for bru_mapper use:
+    class(the_model) <- c("barrierModel_cgeneric", class(the_model))
+    # Add objects needed by bru_get_mapper.barrierModel_cgeneric:
+    # (alternatively, construct the mapper already here, but that would
+    # require loading inlabru even when it's not going to be used)
+    the_model[["mesh"]] <- mesh
+
+    the_model
+  }

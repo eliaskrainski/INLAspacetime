@@ -8,7 +8,7 @@
 [![CRAN
 Status](http://www.r-pkg.org/badges/version-last-release/INLAspacetime)](https://cran.r-project.org/package=INLAspacetime)
 [![R build
-status](https://github.com/eliaskrainski/INLAspacetime/workflows/R-CMD-check/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
+status](https://github.com/eliaskrainski/INLAspacetime/workflows/check-standard/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
 <!--[![R code coverage status](https://github.com/eliaskrainski/INLAspacetime/workflows/test-coverage/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions) -->
 <!--[![lintr status](https://github.com/eliaskrainski/INLAspacetime/workflows/lint/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions) -->
 <!-- [![Codecov test coverage](https://codecov.io/gh/eliaskrainski/INLAspacetime/branch/master/graph/badge.svg)](https://app.codecov.io/gh/eliaskrainski/INLAspacetime?branch=master) -->
@@ -72,10 +72,10 @@ dataf <- data.frame(
     y    = rnorm(n, 0, 1))
 str(dataf)
 #> 'data.frame':    5 obs. of  4 variables:
-#>  $ s1  : num  -0.0101 -0.9657 0.7883 -0.3489 0.3359
-#>  $ s2  : num  0.301 0.915 0.864 -0.144 -0.894
-#>  $ time: num  2.83 3.96 3.48 3.02 2.56
-#>  $ y   : num  0.416 -0.179 1.399 -0.703 1.379
+#>  $ s1  : num  -0.43 0.742 0.359 0.776 0.951
+#>  $ s2  : num  0.641 -0.175 -0.736 -0.155 0.59
+#>  $ time: num  3.15 2.87 3.73 3.37 2.45
+#>  $ y   : num  0.0479 -0.7688 -0.385 -0.7855 -1.5119
 ```
 
 Loading the packages:
@@ -113,7 +113,7 @@ stmodel <- stModel.define(
     model = '121', ## model, see the paper
     control.priors = list(
         prs = c(1, 0.1), ## P(spatial range < 1) = 0.1
-        prt = c(5, 0), ## fixed to 5
+        prt = c(5, 0), ## temporal range fixed to 5
         psigma = c(1, 0.1) ## P(sigma > 1) = 0.1
         )
     )
@@ -166,10 +166,13 @@ Summary of the model parameters
 
 ``` r
 result$summary.fixed
-#>               mean       sd 0.025quant 0.5quant 0.975quant     mode kld
-#> Intercept 1.016573 1.418256  -1.763157 1.016573   3.796304 1.016573   0
+#>                 mean        sd 0.025quant   0.5quant 0.975quant       mode kld
+#> Intercept -0.6714858 0.6295939  -1.905467 -0.6714858  0.5624956 -0.6714858   0
 result$summary.hyperpar
-#>                       mean        sd  0.025quant  0.5quant 0.975quant      mode
-#> Theta1 for field 0.9588094 0.3370749  0.22760020 0.9750938  1.5685442 1.0635562
-#> Theta2 for field 0.4209358 0.2369599 -0.01984689 0.4114966  0.9123219 0.3747205
+#>                         mean        sd 0.025quant    0.5quant 0.975quant
+#> Theta1 for field  0.63747852 0.4011602 -0.2077486  0.65428658  1.3764864
+#> Theta2 for field -0.07950866 0.2715470 -0.5789593 -0.09218946  0.4896889
+#>                        mode
+#> Theta1 for field  0.7292018
+#> Theta2 for field -0.1433721
 ```

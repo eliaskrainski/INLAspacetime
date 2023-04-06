@@ -31,67 +31,78 @@
 #' @export
 #' @examples
 #' A <- sparseMatrix(
-#'    i=c(1,1,2,3,3,5),
-#'    j=c(2,5,3,4,5,5),
-#'    x=-(0:5), symmetric=TRUE)
+#'   i = c(1, 1, 2, 3, 3, 5),
+#'   j = c(2, 5, 3, 4, 5, 5),
+#'   x = -(0:5), symmetric = TRUE
+#' )
 #' A
 #' upperPadding(A)
 #' B <- Diagonal(nrow(A), -colSums(A))
-#' list(a=A, a=B)
-#' upperPadding(list(a=A, b=B))
-#' upperPadding(list(a=A, b=B), relative=TRUE)
+#' list(a = A, a = B)
+#' upperPadding(list(a = A, b = B))
+#' upperPadding(list(a = A, b = B), relative = TRUE)
 upperPadding <-
-    function(M, relative=FALSE)
-{
+  function(M, relative = FALSE) {
     .check <- function(m) {
-        if(is(m, 'matrix'))
-            m <- Matrix::Matrix(m)
-        if(is(m, 'Matrix')) {
-### as INLA::inla.as.dgTMatrix(., unique=TRUE, na.rm=TRUE, zeros.rm=TRUE)
-            m <- as(as(as(as(m, "dMatrix"),
-                          "generalMatrix"),
-                       "CsparseMatrix"),
-                    "TsparseMatrix")
-            i <- which(is.na(m@x))
-            m@x[i] <- 0
-            i <- which(m@x != 0)
-            m@i <- m@i[i]
-            m@j <- m@j[i]
-            m@x <- m@x[i]
-            return(m)
-        }
-        stop('The argument is not valid!')
+      if (is(m, "matrix")) {
+        m <- Matrix::Matrix(m)
+      }
+      if (is(m, "Matrix")) {
+        ### as INLA::inla.as.dgTMatrix(., unique=TRUE, na.rm=TRUE, zeros.rm=TRUE)
+        m <- as(
+          as(
+            as(
+              as(m, "dMatrix"),
+              "generalMatrix"
+            ),
+            "CsparseMatrix"
+          ),
+          "TsparseMatrix"
+        )
+        i <- which(is.na(m@x))
+        m@x[i] <- 0
+        i <- which(m@x != 0)
+        m@i <- m@i[i]
+        m@j <- m@j[i]
+        m@x <- m@x[i]
+        return(m)
+      }
+      stop("The argument is not valid!")
     }
-    .uof <- function(m)
-        return(intersect(order(m@i),  which(m@j>=m@i)))
-    if(is(M, 'list')) {
-        M <- lapply(M, .check)
-        graph <- .check(Reduce(
-            '+',
-            lapply(M, function(m) {
-                m@x <- m@x*0.0 + 1.0
-                return(m)
-            })))
-        uo <- .uof(graph)
-        xx <- sapply(M, function(m) {
-            m <- graph*0 + m
-            return(m@x[uo])
+    .uof <- function(m) {
+      return(intersect(order(m@i), which(m@j >= m@i)))
+    }
+    if (is(M, "list")) {
+      M <- lapply(M, .check)
+      graph <- .check(Reduce(
+        "+",
+        lapply(M, function(m) {
+          m@x <- m@x * 0.0 + 1.0
+          return(m)
         })
-        graph@i <- graph@i[uo]
-        graph@j <- graph@j[uo]
-        graph@x <- rep(1, length(uo))
-        if(relative)
-            xx <- apply(xx, 2, function(x) {
-                r <- which(x!=0)
-                ##o <- table(factor(graph@i[r]+1L, 1:nrow(graph)))
-                return(list(
-                    r=r, x=x[r]))
-##                    o=as.integer(o)))
-            })
-        return(list(graph=graph, xx=xx))
+      ))
+      uo <- .uof(graph)
+      xx <- sapply(M, function(m) {
+        m <- graph * 0 + m
+        return(m@x[uo])
+      })
+      graph@i <- graph@i[uo]
+      graph@j <- graph@j[uo]
+      graph@x <- rep(1, length(uo))
+      if (relative) {
+        xx <- apply(xx, 2, function(x) {
+          r <- which(x != 0)
+          ## o <- table(factor(graph@i[r]+1L, 1:nrow(graph)))
+          return(list(
+            r = r, x = x[r]
+          ))
+          ##                    o=as.integer(o)))
+        })
+      }
+      return(list(graph = graph, xx = xx))
     } else {
-        M <- upperPadding(list(M))
-        M$graph@x <- drop(M$xx)
-        return(M$graph)
+      M <- upperPadding(list(M))
+      M$graph@x <- drop(M$xx)
+      return(M$graph)
     }
-}
+  }

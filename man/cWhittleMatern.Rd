@@ -41,9 +41,11 @@ JRSS-B, Vol. 43 No. 3, pp. 302-309. https://www.jstor.org/stable/2984940
 }
 
 \examples{
-plot(function(x) cWhittleMatern(x, 1, 5), bty='n', las=1,
-      xlab='Distance', ylab='Correlation')
-plot(function(x) cWhittleMatern(x, 1, 1), add=TRUE, lty=2)
-plot(function(x) cWhittleMatern(x, 1, 0.5), add=TRUE, lty=3)
-abline(h=0.139, lty=3, col=gray(0.5,0.5))
+plot(function(x) cWhittleMatern(x, 1, 5),
+  bty = "n", las = 1,
+  xlab = "Distance", ylab = "Correlation"
+)
+plot(function(x) cWhittleMatern(x, 1, 1), add = TRUE, lty = 2)
+plot(function(x) cWhittleMatern(x, 1, 0.5), add = TRUE, lty = 3)
+abline(h = 0.139, lty = 3, col = gray(0.5, 0.5))
 }

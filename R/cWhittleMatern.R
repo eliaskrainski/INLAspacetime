@@ -26,18 +26,20 @@
 #' @return the correlation.
 #' @export
 #' @examples
-#' plot(function(x) cWhittleMatern(x, 1, 5), bty='n', las=1,
-#'       xlab='Distance', ylab='Correlation')
-#' plot(function(x) cWhittleMatern(x, 1, 1), add=TRUE, lty=2)
-#' plot(function(x) cWhittleMatern(x, 1, 0.5), add=TRUE, lty=3)
-#' abline(h=0.139, lty=3, col=gray(0.5,0.5))
-cWhittleMatern <- function(x, range, nu, kappa = sqrt(8*nu)/range) {
+#' plot(function(x) cWhittleMatern(x, 1, 5),
+#'   bty = "n", las = 1,
+#'   xlab = "Distance", ylab = "Correlation"
+#' )
+#' plot(function(x) cWhittleMatern(x, 1, 1), add = TRUE, lty = 2)
+#' plot(function(x) cWhittleMatern(x, 1, 0.5), add = TRUE, lty = 3)
+#' abline(h = 0.139, lty = 3, col = gray(0.5, 0.5))
+cWhittleMatern <- function(x, range, nu, kappa = sqrt(8 * nu) / range) {
   x0 <- .Machine$double.eps
-  if(nu<x0) nu <- x0
-  r0 <- exp((1-nu)*log(2) + nu*log(kappa*x0)-
-              lgamma(nu))*besselK(kappa*x0, nu)
-  res <- exp((1-nu)*log(2) + nu*log(kappa*x)-
-             lgamma(nu))*besselK(kappa*x, nu)/r0
-  res[x<x0] <- 1.0
+  if (nu < x0) nu <- x0
+  r0 <- exp((1 - nu) * log(2) + nu * log(kappa * x0) -
+    lgamma(nu)) * besselK(kappa * x0, nu)
+  res <- exp((1 - nu) * log(2) + nu * log(kappa * x) -
+    lgamma(nu)) * besselK(kappa * x, nu) / r0
+  res[x < x0] <- 1.0
   return(res)
 }

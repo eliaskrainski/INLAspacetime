@@ -44,13 +44,14 @@ for each line of each resulting matrix.
 }
 \examples{
 A <- sparseMatrix(
-   i=c(1,1,2,3,3,5),
-   j=c(2,5,3,4,5,5),
-   x=-(0:5), symmetric=TRUE)
+  i = c(1, 1, 2, 3, 3, 5),
+  j = c(2, 5, 3, 4, 5, 5),
+  x = -(0:5), symmetric = TRUE
+)
 A
 upperPadding(A)
 B <- Diagonal(nrow(A), -colSums(A))
-list(a=A, a=B)
-upperPadding(list(a=A, b=B))
-upperPadding(list(a=A, b=B), relative=TRUE)
+list(a = A, a = B)
+upperPadding(list(a = A, b = B))
+upperPadding(list(a = A, b = B), relative = TRUE)
 }

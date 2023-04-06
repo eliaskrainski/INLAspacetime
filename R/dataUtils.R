@@ -26,34 +26,33 @@
 #'   \eqn{|x_t-m|/s>ff_1} or \eqn{|x_t-y_t|/ss>ff_2}
 #'
 #' - attr(, 'xs') the smoothed time series \eqn{y_t}
-outDetect <- function(x, weights=NULL, ff = c(7,7))
-{
+outDetect <- function(x, weights = NULL, ff = c(7, 7)) {
   ### detect outliers in a time serifes and compute standard deviation for segments
   ## x: n length time series data
   ## weights: half way weights for the smoothing
   ## ff: factors for detecting outliers (#stdev)
   ## jumps: jump size in the moving window to compute local sd
   n <- length(x)
-  if(is.null(weights)) {
+  if (is.null(weights)) {
     h <- 7
     ## define triangular weights for the time smoothing
     weights <- h:1
   } else {
-    stopifnot(all(diff(weights)<=0))
+    stopifnot(all(diff(weights) <= 0))
     h <- length(weights)
   }
   weights <- c(rev(weights), 0, weights)
-  m <- mean(x, na.rm=TRUE)
-  s <- stats::sd(x, na.rm=TRUE)
+  m <- mean(x, na.rm = TRUE)
+  s <- stats::sd(x, na.rm = TRUE)
   x <- x - m
   xx <- c(rep(NA, h), x, rep(NA, h))
-  xs <- x*0
+  xs <- x * 0
   ii <- which(complete.cases(xs))
-  if(length(ii)>0) {
-    for(i in ii) {### time smoothing
+  if (length(ii) > 0) {
+    for (i in ii) { ### time smoothing
       xw <- weights * xx[-h:h + i + h]
       sw <- sum(weights[complete.cases(xw)])
-      xs[i] <- sum(xw, na.rm = TRUE)/sw
+      xs[i] <- sum(xw, na.rm = TRUE) / sw
     }
   }
   ss <- stats::sd(x - xs, na.rm = TRUE)
@@ -77,17 +76,18 @@ outDetect <- function(x, weights=NULL, ff = c(7,7))
 #'
 #' - attr(, 'st') numeric vector with the
 #' standard deviation at each segment of the data.
-stdSubs <- function(x, nsub=12, fs=15)
-{
+stdSubs <- function(x, nsub = 12, fs = 15) {
   n <- length(x)
   ## compute stdev for each segment of the time series
-  st <- sapply(split(x, 0:(n-1)%/%nsub), function(xw) {
-    if(mean(is.na(xw))>0.5) return(NA)
-    return(stats::sd(xw, na.rm=TRUE))
+  st <- sapply(split(x, 0:(n - 1) %/% nsub), function(xw) {
+    if (mean(is.na(xw)) > 0.5) {
+      return(NA)
+    }
+    return(stats::sd(xw, na.rm = TRUE))
   })
-  st.m <- mean(st, na.rm=TRUE)
-  r <- any((st/st.m)>fs, na.rm = TRUE) |
-    any((st.m/st)>fs, na.rm = TRUE)
-  attr(r, 'st') <- st
+  st.m <- mean(st, na.rm = TRUE)
+  r <- any((st / st.m) > fs, na.rm = TRUE) |
+    any((st.m / st) > fs, na.rm = TRUE)
+  attr(r, "st") <- st
   return(r)
 }
