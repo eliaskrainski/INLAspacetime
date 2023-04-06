@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![CRAN Status](http://www.r-pkg.org/badges/version-last-release/INLAspacetime)](https://cran.r-project.org/package=INLAspacetime)
-[![R build status](https://github.com/eliaskrainski/INLAspacetime/workflows/check-standard/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
+[![R build status](https://github.com/eliaskrainski/INLAspacetime/workflows/check-release/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
 <!--[![R code coverage status](https://github.com/eliaskrainski/INLAspacetime/workflows/test-coverage/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions) -->
 <!--[![lintr status](https://github.com/eliaskrainski/INLAspacetime/workflows/lint/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions) -->
 <!-- [![Codecov test coverage](https://codecov.io/gh/eliaskrainski/INLAspacetime/branch/master/graph/badge.svg)](https://app.codecov.io/gh/eliaskrainski/INLAspacetime?branch=master) -->
