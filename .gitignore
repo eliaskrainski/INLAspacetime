@@ -11,3 +11,15 @@ inst/doc
 src/*.so
 src/*.o
 
+
+vignettes/barrierExample.pdf
+
+vignettes/coordinates.csv
+
+vignettes/Piemonte_borders.csv
+
+vignettes/Piemonte_data_byday.csv
+
+vignettes/piemonte_files/figure-latex/smeshvis-1.png
+
+vignettes/Rplots.pdf
