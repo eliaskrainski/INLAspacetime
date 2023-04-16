@@ -12,7 +12,7 @@ worldMap(
 }
 \arguments{
 \item{crs}{a CRS object for the target coordinates.
-Defalt is the Mollweide projection with units in kilometers.}
+Default is the Mollweide projection with units in kilometers.}
 
 \item{scale}{see the help from \code{\link[rnaturalearth:ne_countries]{rnaturalearth::ne_countries()}}}
 

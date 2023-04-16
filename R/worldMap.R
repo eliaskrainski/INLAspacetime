@@ -4,7 +4,7 @@
 #' Mollweide projection in km distance (default, can be changed).
 #'
 #' @param crs a CRS object for the target coordinates.
-#' Defalt is the Mollweide projection with units in kilometers.
+#' Default is the Mollweide projection with units in kilometers.
 #' @param scale see the help from [rnaturalearth::ne_countries()]
 #' @param returnclass defined by the [sp] if returnclass = "sp" or
 #' by the [sf] package if returnclass = "sf".
