@@ -244,8 +244,8 @@ localCorrel <- function(locs, mesh, Q) {
 
 Consider a set of locations and compute the correlations with
 ```{r lcorrels}
-locs <- cbind(c(0.3, 0.7, 0.7, 0.3) * rxy[1], 
-              c(0.7, 0.7, 0.3, 0.3) * rxy[2])
+locs <- cbind(c(0.4, 0.6, 0.7, 0.5) * rxy[1], 
+              c(0.7, 0.6, 0.3, 0.5) * rxy[2])
 mcorrels <- localCorrel(locs, mesh, Q)
 dim(mcorrels) 
 ```
