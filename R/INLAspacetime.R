@@ -13,5 +13,6 @@
 
 INLAspacetime <- function() {
   print("Welcome to the INLAspacetime package!")
-  utils::browseVignettes("INLAspacetime")
+##  utils::browseVignettes("INLAspacetime")
+  utils::browseURL("https://eliaskrainski.github.io/INLAspacetime")
 }
