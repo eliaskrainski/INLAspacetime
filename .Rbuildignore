@@ -3,3 +3,5 @@
 tests/*
 ^\.github$
 ^docs$
+^README.Rmd$
+^_pkgdown.yml$

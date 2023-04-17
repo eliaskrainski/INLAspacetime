@@ -48,7 +48,8 @@ Suggests:
     ggplot2,
     rmarkdown,
     parallel,
-    data.table
+    data.table,
+    splancs
 VignetteBuilder: knitr
 BuildVignettes: true
 LazyData: false
