@@ -1,0 +1,14 @@
+url: https://eliaskrainski.github.io/INLAspacetime/
+
+template:
+  bootstrap: 5
+
+navbar:
+  components:
+    articles:
+      text: Tutorials
+      menu:
+      - text: Spatial models for domains with barrier
+        href: articles/web/barrierExample.html
+      - text: Spatio-temporal examples
+        href: articles/web/piemonte.html

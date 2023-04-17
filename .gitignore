@@ -2,6 +2,9 @@
 .Rhistory
 .RData
 .Ruserdata
+docs
+check
+revdep
 
 src/cgeneric_ar2ss.o
 
@@ -12,14 +15,9 @@ src/*.so
 src/*.o
 
 
-vignettes/barrierExample.pdf
-
-vignettes/coordinates.csv
-
-vignettes/Piemonte_borders.csv
-
-vignettes/Piemonte_data_byday.csv
-
-vignettes/piemonte_files/figure-latex/smeshvis-1.png
-
-vignettes/Rplots.pdf
+vignettes/web/barrierExample.pdf
+vignettes/web/coordinates.csv
+vignettes/web/Piemonte_borders.csv
+vignettes/web/Piemonte_data_byday.csv
+vignettes/web/piemonte_files/figure-latex/smeshvis-1.png
+vignettes/web/*.rds
