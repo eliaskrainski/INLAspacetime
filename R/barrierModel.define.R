@@ -11,7 +11,7 @@
 #' to define the probability statements P(range > U) = a
 #' used to setup the PC-prior for sigma.
 #' If a = 0 then U is taken to be the fixed value for sigma.
-#' @param fraction numeric to specify the fraction of the range
+#' @param range.fraction numeric to specify the fraction of the range
 #' for the barrier domain. Default value is 0.2.
 #' @param constr logical to indicate if the integral of the field
 #' over the domain is to be constrained to zero. Default value is FALSE.
@@ -27,7 +27,7 @@
 #' @export
 barrierModel.define <-
   function(mesh, barrier.triangles,
-           prior.range, prior.sigma, fraction = 0.2,
+           prior.range, prior.sigma, range.fraction = 0.2,
            constr = FALSE, debug = FALSE, verbose = FALSE,
            useINLAprecomp = TRUE, libpath = NULL) {
     stopifnot(all(c(
@@ -45,8 +45,8 @@ barrierModel.define <-
     n <- nrow(bfem$I)
 
     Imat <- bfem$I
-    Dmat <- bfem$D[[1]] + bfem$D[[2]] * fraction^2
-    iC <- Diagonal(n, 1 / (bfem$C[[1]] + bfem$C[[2]] * fraction^2))
+    Dmat <- bfem$D[[1]] + bfem$D[[2]] * range.fraction^2
+    iC <- Diagonal(n, 1 / (bfem$C[[1]] + bfem$C[[2]] * range.fraction^2))
 
     lmats <- upperPadding(
       list(

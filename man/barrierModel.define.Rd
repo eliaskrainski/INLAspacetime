@@ -9,7 +9,7 @@ barrierModel.define(
   barrier.triangles,
   prior.range,
   prior.sigma,
-  fraction = 0.2,
+  range.fraction = 0.2,
   constr = FALSE,
   debug = FALSE,
   verbose = FALSE,
@@ -33,7 +33,7 @@ to define the probability statements P(range > U) = a
 used to setup the PC-prior for sigma.
 If a = 0 then U is taken to be the fixed value for sigma.}
 
-\item{fraction}{numeric to specify the fraction of the range
+\item{range.fraction}{numeric to specify the fraction of the range
 for the barrier domain. Default value is 0.2.}
 
 \item{constr}{logical to indicate if the integral of the field
