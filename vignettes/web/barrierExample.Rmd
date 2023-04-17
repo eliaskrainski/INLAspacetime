@@ -288,8 +288,7 @@ ggcorrels <- do.call(
 In order to help the visualization of correlations, 
 we will dropped the pixels with small correlations, less than $0.1$.
 We can now visualize the images with
-```{r beval, echo = FALSE}
-<<ggbarriers>>
+```{r beval, echo = FALSE, ref.label = 'ggbarriers', eval = TRUE}
 ```
 ```{r ggcorrels}
 ggplot() +  
@@ -565,7 +564,7 @@ See the help of this function for details.
 # Appendix B: ggplot reused code
 
 The additional **ggplot2** code used
-```{r ggbarriers}
+```{r ggbarriers, echo = TRUE, eval = FALSE}
 gg.add <- list(
   scale_fill_distiller(
     type = "div", 
