@@ -9,6 +9,7 @@
 #' @param returnclass defined by the [sp] if returnclass = "sp" or
 #' by the [sf] package if returnclass = "sf".
 #' @return the world map
+#' @details Requires the `rnaturalearth` package
 #' @references
 #'  the world map data is from the maps R package.
 #' @export

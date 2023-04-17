@@ -26,6 +26,9 @@ the world map
 Consider the world map, fix the wrap around and convert to the
 Mollweide projection in km distance (default, can be changed).
 }
+\details{
+Requires the \code{rnaturalearth} package
+}
 \references{
 the world map data is from the maps R package.
 }
