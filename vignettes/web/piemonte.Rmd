@@ -1,12 +1,12 @@
 ---
-title: "INLAspacetime: exploring with an example"
+title: "The Piemonte dataset example"
 author: "Elias T Krainski"
 date: "2023, Feb"
 output:
   rmarkdown::html_vignette:
   rmarkdown::pdf_document:
 vignette: >
-  %\VignetteIndexEntry{The Piemonte dataset}
+  %\VignetteIndexEntry{The Piemonte dataset example}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: INLAspacetime.bib
