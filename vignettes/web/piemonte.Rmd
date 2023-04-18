@@ -1,7 +1,7 @@
 ---
 title: "The Piemonte dataset example"
 author: "Elias T Krainski"
-date: "2023, Feb"
+date: "Started in 2022. Last update: `r format(Sys.Date(), '%a %d %b, %Y')`"
 output:
   rmarkdown::html_vignette:
   rmarkdown::pdf_document:
@@ -14,6 +14,10 @@ bibliography: INLAspacetime.bib
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  cache = !TRUE, 
+  cache.path = "cache/",
   collapse = TRUE,
   comment = "#>",
   dev = "png",
@@ -21,21 +25,23 @@ knitr::opts_chunk$set(
   fig.width = 7,
   fig.height = 5
 )
-knitr::opts_chunk$set(echo = TRUE)
 ```
+
+# Abstract
+
+In this vignette we illustrate how to fit some of the spacetime models in @lindgren2023, 
+for the dataset analysed in @cameletti2013.
+To perform this we will use the Bayesian paradigm with the**INLA** package, 
+using the features provided by the **inlabru** package to facilitate the coding. 
 
 # Introduction 
 
-In this vignette we illustrate how to fit some of the spacetime models
-using the method proposed in @lindgren2023 
-for the Piemonte dataset analysed in @cameletti2013.
+## The packages and setup
 
-To perform this we will use the Bayesian paradigm with computations using the
-**INLA** package using the features provided by the 
-**inlabru** package. 
-The visualizations uses the **ggplot2** and **patchwork** packages.
+We start loading the required packages and those for doing 
+the visualizations, the **ggplot2** and **patchwork** packages.
 
-```{r packages, results = "hide"}
+```{r packages, results = "hide", cache = FALSE}
 library(ggplot2)
 library(patchwork)
 library(INLA)
@@ -43,40 +49,36 @@ library(INLAspacetime)
 library(inlabru)
 ```
 
-We consider the following setting for **INLA**
+We consider the following settings for **INLA**
 
 ```{r inlasetup}
 inla.setOption(
-  inla.mode='compact',
-  smtp='pardiso',
-  pardiso.license='~/.pardiso.lic')
-```
-```{r irem, echo = FALSE}
-inla.setOption(
-#  inla.call = "remote", 
-  num.threads = "8:-1"
-)
+  inla.mode = "compact",
+  num.threads = "8:1",
+  smtp = "pardiso",
+  pardiso.license = "~/.pardiso.lic")
 ```
 
 We will ask it to return the WAIC, DIC and CPO 
 ```{r ctrc}
 ctrc <- list(
-  waic=TRUE,
-  dic=TRUE,
-  cpo=TRUE)
+  waic = TRUE,
+  dic = TRUE,
+  cpo = TRUE)
 ```
 
-# The dataset
+## Getting the dataset
 
-Set the filenames
-
+We will use the dataset analysed in @cameletti2013, 
+that can be downloaded as follows. 
+First, we set the filenames
 ```{r filenames}
 u0 <- paste0(
-    'http://inla.r-inla-download.org/',
-    'r-inla.org/case-studies/Cameletti2012/')
-coofl <- 'coordinates.csv'
-datafl <- 'Piemonte_data_byday.csv'
-bordersfl <- 'Piemonte_borders.csv'
+    "http://inla.r-inla-download.org/",
+    "r-inla.org/case-studies/Cameletti2012/")
+coofl <- "coordinates.csv"
+datafl <- "Piemonte_data_byday.csv"
+bordersfl <- "Piemonte_borders.csv"
 ```
 
 Download and read the borders file
@@ -110,9 +112,9 @@ head(pdata)
 
 Prepare the time to be used
 ```{r time}
-range(pdata$Date <- as.Date(pdata$Date, '%d/%m/%y'))
+range(pdata$Date <- as.Date(pdata$Date, "%d/%m/%y"))
 pdata$time <- as.integer(difftime(
-    pdata$Date, min(pdata$Date), units='days')) + 1
+    pdata$Date, min(pdata$Date), units = "days")) + 1
 ```
 
 Standardize the covariates that will be used in the data analysis 
@@ -121,14 +123,14 @@ where the outcome is the log of `PM10`,
 as used in @cameletti2013.
 ```{r covars}
 ### prepare the covariates
-xnames <- c('A', 'WS', 'TEMP', 'HMIX', 'PREC', 'EMI')
+xnames <- c("A", "WS", "TEMP", "HMIX", "PREC", "EMI")
 xmean <- colMeans(pdata[, xnames])
 xsd <- sapply(pdata[xnames], sd)
 
 ### prepare the data (st loc, scale covariates and log PM10)
-dataf <- data.frame(pdata[c('UTMX', 'UTMY', 'time')],
+dataf <- data.frame(pdata[c("UTMX", "UTMY", "time")],
                     scale(pdata[xnames], xmean, xsd),
-                    y=log(pdata$PM10))
+                    y = log(pdata$PM10))
 str(dataf)
 ```
 
@@ -147,10 +149,14 @@ spacetime domain being discretized considering meshes over time and space.
 The difference from @cameletti2013 is that we now use the models in 
 @lindgren2023 for $\mathbf{u}$. 
 
-Define a temporal mesh, with 1 knot per day.
+Define a temporal mesh, with each knot spaced by `h`, 
+where `h = 1` means one per day.
 ```{r tmesh}
 nt <- max(pdata$time)
-tmesh <- inla.mesh.1d(1:nt, degree=1)
+h <- 2 ## lower to get better fit
+tmesh <- inla.mesh.1d(
+  loc = seq(1, nt + h/2, h), 
+  degree = 1)
 tmesh$n
 ```
 
@@ -158,38 +164,20 @@ Define a spatial mesh, the same used in @cameletti2013.
 ```{r smesh}
 smesh <- inla.mesh.2d(
     cbind(locs[,2], locs[,3]),
-    loc.domain=pborders,
-    max.edge=c(50, 300),
-    offset=c(10, 140),
-    cutoff=5,
-    min.angle=c(26, 21))
+    loc.domain = pborders,
+    max.edge = c(50, 300),
+    offset = c(10, 140),
+    cutoff = 5,
+    min.angle = c(26, 21))
 smesh$n
 ```
 
 Visualize the spatial mesh, the border and the locations.
 ```{r smeshvis}
-par(mfrow=c(1,1), mar=c(0,0,1,0))
-plot(smesh, asp=1)
-lines(pborders, lwd = 2, col = 'green4')
+par(mfrow = c(1,1), mar = c(0,0,1,0))
+plot(smesh, asp = 1)
+lines(pborders, lwd = 2, col = "green4")
 points(locs[, 2:3], pch = 19, col = "blue")
-```
-
-Add an overall integrate-to-zero constraint, 
-which is not need but helps, in order to illustrate how it is done.
-It has to consider the weights based on the mesh node volumes, 
-that is, we consider the temporal and spatial ones as follows:
-```{r stConstr}
-tva <- inla.mesh.fem(tmesh)$c0@x
-sva <- inla.mesh.fem(smesh)$va[,1]
-stConstr <- list(
-    A=matrix(kronecker(tva, sva), 1), e = 0)
-```
-
-Considering the **inlabru** package we start by defining the model components
-```{r mcomp}
-M <- ~ -1 + Intercept(1) + A + WS + TEMP + HMIX + PREC + EMI +
-    field(list(space = cbind(UTMX, UTMY), time=time),
-          model=stmodel, extraconstr=stConstr)
 ```
 
 We set the prior for the likelihood precision 
@@ -200,7 +188,29 @@ using $U_{\sigma_e}$ = 1 and $\alpha_{\sigma_e} = 0.05$.
 
 ```{r lprec}
 lkprec <- list(
-    prec=list(prior='pcprec', param=c(1, 0.05)))
+    prec = list(prior = "pcprec", param = c(1, 0.05)))
+```
+
+With **inlabru** we can define the likelihood model with 
+the `like()` function and use it for fitting models with
+different linear predictors later.
+```{r lhood}
+lhood <- like(
+  formula = y ~ .,
+  family = "gaussian",
+  control.family = list(
+    hyper = lkprec),
+  data = dataf)
+```
+
+The linear predictor, the right-rand side of the formula,
+can be defined using the same expression for of the both models 
+that we are going to fit and is
+```{r mcomp}
+M <- ~ -1 + Intercept(1) + A + WS + TEMP + HMIX + PREC + EMI +
+    field(list(space = cbind(UTMX, UTMY), 
+               time = time),
+          model = stmodel)
 ```
 
 # The spacetime models 
@@ -235,17 +245,25 @@ and then we fit some of the other models later.
 stmodel <- stModel.define(
     smesh, tmesh, model,
     control.priors = list(
-        prs = c(30, 0.05),
+        prs = c(100, 0.05),
         prt = c(1, 0.05),
-        psigma = c(2, 0.05)))
+        psigma = c(2, 0.05)),
+    constr = TRUE)
 ```
 
 ## Defining a particular model
 
 We define an object with the needed 
-use the function `stModel.define` 
+use the function `stModel.define()` 
 where the model is selected considering the values for 
 $\alpha_t$, $\alpha_s$ and $\alpha_e$ collapsed. 
+In order to illustrate how it is done, 
+we can set an overall integrate-to-zero constraint, 
+which is not need but helps model components identification.
+It uses the weights based on the mesh node volumes,
+from both the temporal and spatial meshes.
+This can be set automatically when defining the model 
+by adding `constr = TRUE`.
 ```{r m102}
 model <- "102"
 <<stmodeldef>>
@@ -260,35 +278,21 @@ mesh and setting the prior for or $r_s$.
 We can set initial values for the log of the parameters so that it would 
 take less iterations to converge:
 ```{r ini}
-theta.ini <- c(4, 5, 5, 1)
+theta.ini <- c(3, 10, 15, 0)
 ```
 
-```{r fit, echo = FALSE, eval = FALSE}
+```{r fitcode, echo = FALSE, eval = FALSE}
   bru(M,
-      like(formula = y ~ .,
-           family = "gaussian",
-           control.family = list(
-               hyper = lkprec),
-           data = dataf),
+      lhood,
       options = list(
           control.mode = list(theta = theta.ini, restart = TRUE),
           control.compute = ctrc))
 ```
 
-```{r fit102, echo = FALSE, eval = TRUE}
-if(file.exists("fit102.rds")) {
-  fit102 <- readRDS("fit102.rds")
-} else {
-  fit102 <- 
-    <<fit>>
-  saveRDS(fit102, file = "fit102.rds")
-}
-```
-
 The code to fit the model through **inlabru** is
-```{r fit102c, eval = FALSE}
+```{r fit102}
 fit102 <- 
-  <<fit>>
+  <<fitcode>>
 ```
 
 The computing time is
@@ -301,17 +305,21 @@ Summary of the posterior marginal distributions for the fixed effects
 fit102$summary.fixed[, c(1, 2, 3, 5)]
 ```
 
-For the hyperparameters, we transform the posterior marginal distributions for the model hyperparameters
-in the internal scale, 
+For the hyperparameters, we transform the posterior marginal distributions 
+for the model hyperparameters from the ones computed in internal scale, 
 $\log(1/\sigma^2_e)$, $\log(r_s)$, $\log(r_t)$ and $\log(\sigma)$,
-to the user scale parametrization:
-$\sigma_e$, $r_s$, $r_t$ and $\sigma$.
+to the user scale parametrization, $\sigma_e$, $r_s$, $r_t$ and $\sigma$, 
+respectivelly.
 ```{r thyper}
 post.h <- list(
-  sigma_e = inla.tmarginal(function(x) exp(-x/2), fit102$internal.marginals.hyperpar[[1]]),
-  r_s = inla.tmarginal(function(x) exp(x), fit102$internal.marginals.hyperpar[[2]]),
-  r_t = inla.tmarginal(function(x) exp(x), fit102$internal.marginals.hyperpar[[3]]),
-  sigma = inla.tmarginal(function(x) exp(x), fit102$internal.marginals.hyperpar[[4]])
+  sigma_e = inla.tmarginal(function(x) exp(-x/2), 
+                           fit102$internal.marginals.hyperpar[[1]]),
+  r_s = inla.tmarginal(function(x) exp(x), 
+                       fit102$internal.marginals.hyperpar[[2]]),
+  r_t = inla.tmarginal(function(x) exp(x), 
+                       fit102$internal.marginals.hyperpar[[3]]),
+  sigma = inla.tmarginal(function(x) exp(x), 
+                         fit102$internal.marginals.hyperpar[[4]])
 )
 ```
 
@@ -331,61 +339,50 @@ is modeled as a first order autoregression with parameter $\rho$.
 In the fitted model here is defined considering continuous temporal domain 
 with the range parameter $r_s$. 
 However, the first order autocorrelation could be taken as 
-$\rho = \exp(-2h/r_s)$, where $h$ is the temporal resolution used in 
-the temporal mesh. As we used $h=1$ we can 
-compare ou results with Table 3 in @cameletti2013 with
+$\rho = \exp(-h\sqrt{8\nu}/r_s)$, where $h$ is the temporal resolution used in 
+the temporal mesh and $\nu$ is equal $0.5$ for the fitted model. 
+We can compare ou results with Table 3 in @cameletti2013 with
 
 ```{r compare1}
 c(shyper[c(1, 4, 2), 1], 
-  a=exp(-sqrt(8*0.5)/shyper[3, 1]))
+  a = exp(-h * sqrt(8 * 0.5) / shyper[3, 1]))
 ```
 
 # Comparing different models 
 
-We now fit the model $121$ as well, 
-using the same code, just building a new model object for $u$ 
-as follows
-```{r model121def}
+We now fit the model $121$ for $u$ as well, 
+we use the same code for building the model matrices 
+```{r m121}
 model <- "121"
 <<stmodeldef>>
 ```
+and use the same code for fitting as follows
+```{r fit121}
+fit121 <- 
+  <<fitcode>>
+```
 
-We create a list object and put each model fit 
-as element on it, starting with the previously fitted model 
+We will join these fits into a list object to make it easier working with it 
 ```{r results}
-results <- list("u102" = fit102)
-```
-
-```{r 121fitc, eval = FALSE}
-results$u121 <- 
-  <<fit>>
-```
-```{r fit121, echo = FALSE, eval = TRUE}
-<<stmodeldef>>
-flname <- paste0("fit", model, ".rds")
-if(file.exists(flname)) {
-   results$u121 <- readRDS(flname)
-} else {
-  results$u121 <-
-     <<fit>>
-  saveRDS(results$u121, 
-          file = flname)
-}
+results <- list("u102" = fit102, "u121" = fit121)
 ```
 
 The computing time for each model fit
 ```{r cpu}
 sapply(results, function(r) r$cpu)
 ```
-
-However, one needs to consider the number of 
-fn-calls during the optimization 
+and the number of fn-calls during the optimization are
 ```{r nfn}
 sapply(results, function(r) r$misc$nfunc)
 ```
 
-We will transform the posterior marginal distribution for the hyper-parameters 
-as we did for the previous model 
+The posterior mode for each parameter in each model (in internal scale) are
+```{r pmode}
+sapply(results, function(r) r$mode$theta)
+```
+
+We compute the posterior marginal distribution for the hyper-parameters 
+in the user-interpretable scale, like we did before for the first model, with
 ```{r h2pmd}
 posts.h2 <- lapply(1:2, function(m) vector("list", 4L))
 for(m in 1:2) {
@@ -415,7 +412,7 @@ posts.df <- rbind(
 )
 
 ggplot(posts.df) +
-  geom_line(aes(x=x, y=y, group = model, color = model)) +
+  geom_line(aes(x = x, y = y, group = model, color = model)) +
   ylab("Density") + xlab("") + 
   facet_wrap(~parameter, scales = "free")
 ```
@@ -424,7 +421,7 @@ The comparison of the model parameters of $\mathbf{u}$
 for different models have to be done in light with the 
 covariance functions as illustrated in @lindgren2023. 
 The fitted $\sigma_e$ by the different models are comparable
-and we can see that when considing model $121$ for $\mathbf{u}$, 
+and we can see that when considering model $121$ for $\mathbf{u}$, 
 its posterior marginal are concentrated in values lower than 
 when considering model $102$. 
 
@@ -450,40 +447,23 @@ since several years ago, see @Heldetal2010cpo for details.
 Recently, an automatic group cross validation strategy was implemented, 
 see @zhedongH2023gcpo for details. 
 
-```{r rem, echo = FALSE}
-for(m in 1:2) {
-  results[[m]]$.args$inla.call <- "remote"
-  results[[m]]$.args$num.threads <- "56:1"
-}
-```
-
-```{r g5cv, eval = FALSE}
+```{r g5cv}
 g5cv <- lapply(
   results, inla.group.cv, num.level.sets = 5, 
   strategy = "posterior", size.max = 50)
 ``` 
 
-```{r gcvcomp, echo = FALSE, eval = TRUE}
-if(file.exists("g5cv.rds")) {
-  g5cv <- readRDS("g5cv.rds")
-} else {
-  <<g5cv>>
-  saveRDS(g5cv, "g5cv.rds")
-}
-```
-
 We can inspect the detected observations that have the posterior linear predictor 
 correlated with each one, including itself.
-
-For example, the 100th one under model "102" are
+For 100th observation under model "102" we have
 ```{r group1m102}
 g5cv$u102$group[[100]]
 ```
-and for model "121" are
+and for the result under model "121" we have
 ```{r group1m121}
 g5cv$u121$group[[100]]
 ```
-which includes more observations. 
+which has intersection but are not the same, for the model setup used.
 
 We can check which are these observations in the dataset
 ```{r obs1}

@@ -7,11 +7,10 @@
 
 [![CRAN
 Status](http://www.r-pkg.org/badges/version-last-release/INLAspacetime)](https://cran.r-project.org/package=INLAspacetime)
-[![R build
-status](https://github.com/eliaskrainski/INLAspacetime/workflows/check-release/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
-<!--[![R code coverage status](https://github.com/eliaskrainski/INLAspacetime/workflows/test-coverage/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions) -->
-<!--[![lintr status](https://github.com/eliaskrainski/INLAspacetime/workflows/lint/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions) -->
-<!-- [![Codecov test coverage](https://codecov.io/gh/eliaskrainski/INLAspacetime/branch/master/graph/badge.svg)](https://app.codecov.io/gh/eliaskrainski/INLAspacetime?branch=master) -->
+[![check
+no-suggestions](https://github.com/eliaskrainski/INLAspacetime/workflows/R-CMD-check-no-suggests/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
+[![check](https://github.com/eliaskrainski/INLAspacetime/workflows/R-CMD-check/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
+[![pkgdown](https://github.com/eliaskrainski/INLAspacetime/workflows/pkgdown/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
 <!-- badges: end -->
 
 This is a R package to implement certain spatial and spatio-temporal
@@ -74,10 +73,10 @@ dataf <- data.frame(
     y    = rnorm(n, 0, 1))
 str(dataf)
 #> 'data.frame':    5 obs. of  4 variables:
-#>  $ s1  : num  0.6562 -0.1909 -0.4006 -0.6246 -0.0514
-#>  $ s2  : num  -0.833 0.148 -0.986 -0.472 0.413
-#>  $ time: num  3.41 1.77 2.54 2.73 3.39
-#>  $ y   : num  0.9196 0.5733 0.055 0.0989 0.5989
+#>  $ s1  : num  -0.6356 0.9393 0.0412 0.5453 -0.5449
+#>  $ s2  : num  -0.3682 -0.0183 0.1753 0.1072 -0.5612
+#>  $ time: num  2.46 2.37 2.53 3.52 2.58
+#>  $ y   : num  -1.8367 0.4838 -0.7167 -2.0985 -0.0881
 ```
 
 Loading the packages:
@@ -88,7 +87,7 @@ library(INLA)
 #> Loading required package: foreach
 #> Loading required package: parallel
 #> Loading required package: sp
-#> This is INLA_23.04.02 built 2023-04-02 09:28:58 UTC.
+#> This is INLA_23.04.11-1 built 2023-04-10 23:36:48 UTC.
 #>  - See www.r-inla.org/contact-us for how to get help.
 #>  - To enable PARDISO sparse library; see inla.pardiso()
 library(INLAspacetime)
@@ -168,13 +167,10 @@ Summary of the model parameters
 
 ``` r
 result$summary.fixed
-#>                mean        sd 0.025quant  0.5quant 0.975quant      mode kld
-#> Intercept 0.5940215 0.4375434 -0.2635479 0.5940215   1.451591 0.5940215   0
+#>                 mean       sd 0.025quant   0.5quant 0.975quant       mode kld
+#> Intercept -0.8506661 2.332798  -5.422866 -0.8506661   3.721533 -0.8506661   0
 result$summary.hyperpar
-#>                        mean        sd 0.025quant   0.5quant 0.975quant
-#> Theta1 for field  0.7951502 0.4571953 -0.1036409  0.7917388 1.71662987
-#> Theta2 for field -0.4897850 0.2770748 -1.0215716 -0.4953943 0.07326233
-#>                        mode
-#> Theta1 for field  0.7771259
-#> Theta2 for field -0.5176650
+#>                       mean        sd 0.025quant  0.5quant 0.975quant      mode
+#> Theta1 for field 0.8154733 0.3535697  0.1409908 0.8069905   1.533857 0.7746979
+#> Theta2 for field 1.1647245 0.1899606  0.8015195 1.1604630   1.549799 1.1443398
 ```
