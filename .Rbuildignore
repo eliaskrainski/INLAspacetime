@@ -5,3 +5,5 @@ tests/*
 ^docs$
 ^README.Rmd$
 ^_pkgdown.yml$
+^doc$
+^Meta$

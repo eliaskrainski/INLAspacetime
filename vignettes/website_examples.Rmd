@@ -1,8 +1,8 @@
 ---
-title: "Examples on the INLAspacetime website"
+title: "Vignettes on the INLAspacetime website"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Examples on the INLAspacetime website}
+  %\VignetteIndexEntry{Vignettes on the INLAspacetime website}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -17,40 +17,15 @@ knitr::opts_chunk$set(
 ```{r setup, echo=FALSE,include=FALSE}
 ```
 
-## Package examples
+## Vignettes
 
 These examples/tutorials are available on
 (https://eliaskrainski.github.io/INLAspacetime/)
 
 ```{r, echo=FALSE,results="asis"}
 files <- list.files("web", "\\.Rmd$")
-for (file in file.path("web", files)) {
-  lines <- readLines(file, n = 10)
-  title_idx <- grep("^title: ", lines)
-  if (length(title_idx) > 0) {
-    title <- sub("^title: ", "", lines[title_idx[1]])
-    title <- sub('^"', "", title)
-    title <- sub('"$', "", title)
-    cat("* [",
-      title,
-      "]( https://eliaskrainski.github.io/INLAspacetime/articles/",
-      sub("\\.Rmd", ".html", file),
-      ")\n",
-      sep = ""
-    )
-  }
-}
-```
-
-## Package vignettes
-
-These package vignettes are also available on
-(https://eliaskrainski.github.io/INLAspacetime/)
-
-```{r, echo=FALSE,results="asis"}
-files <- list.files(".", "\\.Rmd$")
 for (file in files) {
-  lines <- readLines(file, n = 10)
+  lines <- readLines(file.path("web", file), n = 10)
   title_idx <- grep("^title: ", lines)
   if (length(title_idx) > 0) {
     title <- sub("^title: ", "", lines[title_idx[1]])
@@ -58,11 +33,37 @@ for (file in files) {
     title <- sub('"$', "", title)
     cat("* [",
       title,
-      "](https://eliaskrainski.github.io/INLAspacetime/articles/",
-      sub("\\.Rmd", ".html", file),
+      "]( https://eliaskrainski.github.io/INLAspacetime/vignettes/",
+      sub("\\.Rmd", ".html", 
+          sub("/web", "", file)),
       ")\n",
       sep = ""
     )
   }
 }
 ```
+
+<!-- ## Package vignettes -->
+
+<!-- These package vignettes are also available on -->
+<!-- (https://eliaskrainski.github.io/INLAspacetime/) -->
+
+<!-- ```{r, echo=FALSE,results="asis"} -->
+<!-- files <- list.files(".", "\\.Rmd$") -->
+<!-- for (file in files) { -->
+<!--   lines <- readLines(file, n = 10) -->
+<!--   title_idx <- grep("^title: ", lines) -->
+<!--   if (length(title_idx) > 0) { -->
+<!--     title <- sub("^title: ", "", lines[title_idx[1]]) -->
+<!--     title <- sub('^"', "", title) -->
+<!--     title <- sub('"$', "", title) -->
+<!--     cat("* [", -->
+<!--       title, -->
+<!--       "](https://eliaskrainski.github.io/INLAspacetime/vignettes/", -->
+<!--       sub("\\.Rmd", ".html", file), -->
+<!--       ")\n", -->
+<!--       sep = "" -->
+<!--     ) -->
+<!--   } -->
+<!-- } -->
+<!-- ``` -->

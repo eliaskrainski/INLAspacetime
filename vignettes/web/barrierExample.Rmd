@@ -1,7 +1,7 @@
 ---
 title: "A barrier model illustration"
 author: "Elias T Krainski"
-date: "2023, March"
+date: "Created in March, 2023. Last update: `r format(Sys.Date(), '%a %d %b, %Y')`"
 output:
   rmarkdown::html_vignette:
   rmarkdown::pdf_document:

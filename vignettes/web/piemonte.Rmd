@@ -54,7 +54,7 @@ We consider the following settings for **INLA**
 ```{r inlasetup}
 inla.setOption(
   inla.mode = "compact",
-  num.threads = "8:1",
+  num.threads = "5:-1",
   smtp = "pardiso",
   pardiso.license = "~/.pardiso.lic")
 ```
@@ -153,7 +153,7 @@ Define a temporal mesh, with each knot spaced by `h`,
 where `h = 1` means one per day.
 ```{r tmesh}
 nt <- max(pdata$time)
-h <- 2 ## lower to get better fit
+h <- 1
 tmesh <- inla.mesh.1d(
   loc = seq(1, nt + h/2, h), 
   degree = 1)
@@ -245,9 +245,9 @@ and then we fit some of the other models later.
 stmodel <- stModel.define(
     smesh, tmesh, model,
     control.priors = list(
-        prs = c(100, 0.05),
-        prt = c(1, 0.05),
-        psigma = c(2, 0.05)),
+        prs = c(150, 0.05),
+        prt = c(10, 0.05),
+        psigma = c(5, 0.05)),
     constr = TRUE)
 ```
 
@@ -278,7 +278,7 @@ mesh and setting the prior for or $r_s$.
 We can set initial values for the log of the parameters so that it would 
 take less iterations to converge:
 ```{r ini}
-theta.ini <- c(3, 10, 15, 0)
+theta.ini <- c(4, 7, 7, 1)
 ```
 
 ```{r fitcode, echo = FALSE, eval = FALSE}
@@ -314,12 +314,12 @@ respectivelly.
 post.h <- list(
   sigma_e = inla.tmarginal(function(x) exp(-x/2), 
                            fit102$internal.marginals.hyperpar[[1]]),
-  r_s = inla.tmarginal(function(x) exp(x), 
-                       fit102$internal.marginals.hyperpar[[2]]),
-  r_t = inla.tmarginal(function(x) exp(x), 
-                       fit102$internal.marginals.hyperpar[[3]]),
-  sigma = inla.tmarginal(function(x) exp(x), 
-                         fit102$internal.marginals.hyperpar[[4]])
+  range_s = inla.tmarginal(function(x) exp(x), 
+                           fit102$internal.marginals.hyperpar[[2]]),
+  range_t = inla.tmarginal(function(x) exp(x), 
+                           fit102$internal.marginals.hyperpar[[3]]),
+  sigma_u = inla.tmarginal(function(x) exp(x), 
+                           fit102$internal.marginals.hyperpar[[4]])
 )
 ```
 
@@ -395,7 +395,7 @@ for(m in 1:2) {
     for(p in 2:4) {
       posts.h2[[m]][[p]] <-   
       data.frame(
-        parameter = c(NA, "r_s", "r_t", "sigma")[p], 
+        parameter = c(NA, "range_s", "range_t", "sigma_u")[p], 
         inla.tmarginal(
           function(x) exp(x), 
           results[[m]]$internal.marginals.hyperpar[[p]])
@@ -425,6 +425,23 @@ and we can see that when considering model $121$ for $\mathbf{u}$,
 its posterior marginal are concentrated in values lower than 
 when considering model $102$. 
 
+We can look at the posterior mean of $u$ from both models and 
+see that under model '121' there is a wider spread. 
+```{r uhist}
+par(mfrow = c(1, 1), mar = c(3, 3, 0, 0.0), mgp = c(2, 1, 0))
+uu.hist <- lapply(results, function(r)
+    hist(r$summary.random$field$mean,
+         -60:60/20, plot = FALSE))
+ylm <- range(uu.hist[[1]]$count, uu.hist[[2]]$count)
+plot(uu.hist[[1]], ylim = ylm,
+     col = rgb(1, 0.1, 0.1, 1.0), border = FALSE, 
+     xlab = "u", main = "")
+plot(uu.hist[[2]], add = TRUE, col = rgb(0.1, 0.1, 1, 0.5), border = FALSE)
+legend("topleft", c("separable", "non-separable"), 
+       fill = rgb(c(1,0.1), 0.1, c(0.1, 1), c(1, 0.5)), 
+       border = 'transparent', bty = "n")
+```
+
 We can also check fitting statistics such as DIC, WAIC, 
 the negative of the log of the probability ordinates (LPO) 
 and its cross-validated version (LCPO), 
@@ -434,8 +451,8 @@ summarized as the mean.
 t(sapply(results, function(r) {
   c(DIC = mean(r$dic$local.dic, na.rm = TRUE),
     WAIC = mean(r$waic$local.waic, na.rm = TRUE),
-    LPO = -mean(r$po$po, na.rm = TRUE), 
-    LCPO = -mean(r$cpo$cpo, na.rm = TRUE))
+    LPO = -mean(log(r$po$po), na.rm = TRUE), 
+    LCPO = -mean(log(r$cpo$cpo), na.rm = TRUE))
 }))
 ```
 

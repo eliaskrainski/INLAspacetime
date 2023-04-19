@@ -6,9 +6,6 @@ docs
 check
 revdep
 
-src/cgeneric_ar2ss.o
-
-src/cgeneric_sstspde.o
 inst/doc
 
 src/*.so
@@ -21,3 +18,5 @@ vignettes/web/Piemonte_borders.csv
 vignettes/web/Piemonte_data_byday.csv
 vignettes/web/piemonte_files/figure-latex/smeshvis-1.png
 vignettes/web/*.rds
+/doc/
+/Meta/
