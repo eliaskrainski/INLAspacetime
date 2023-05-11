@@ -19,6 +19,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![CRAN Status](http://www.r-pkg.org/badges/version-last-release/INLAspacetime)](https://cran.r-project.org/package=INLAspacetime)
+[![](https://cranlogs.r-pkg.org/badges/INLAspacetime)](https://cran.r-project.org/package=INLAspacetime)
 [![check no-suggestions](https://github.com/eliaskrainski/INLAspacetime/workflows/R-CMD-check-no-suggests/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
 [![check](https://github.com/eliaskrainski/INLAspacetime/workflows/R-CMD-check/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
 [![pkgdown](https://github.com/eliaskrainski/INLAspacetime/workflows/pkgdown/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
@@ -40,7 +41,7 @@ install.packages("INLAspacetime")
 You can install the latest version of INLAspacetime from [GitHub](https://github.com/eliaskrainski/INLAspacetime) with
 ```{r ghinst, eval = FALSE}
 ## install.packages("remotes")
-remotes::install_github("eliaskrainski/INLAspacetime")
+remotes::install_github("eliaskrainski/INLAspacetime",  build_vignettes=TRUE)
 ```
 <!-- or track the development version builds via [inlabru-org.r-universe.dev](https://inlabru-org.r-universe.dev/ui#builds): -->
 <!-- ```{r universe-installation, eval = FALSE} -->

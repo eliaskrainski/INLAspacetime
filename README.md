@@ -7,6 +7,7 @@
 
 [![CRAN
 Status](http://www.r-pkg.org/badges/version-last-release/INLAspacetime)](https://cran.r-project.org/package=INLAspacetime)
+[![](https://cranlogs.r-pkg.org/badges/INLAspacetime)](https://cran.r-project.org/package=INLAspacetime)
 [![check
 no-suggestions](https://github.com/eliaskrainski/INLAspacetime/workflows/R-CMD-check-no-suggests/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
 [![check](https://github.com/eliaskrainski/INLAspacetime/workflows/R-CMD-check/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
@@ -73,10 +74,10 @@ dataf <- data.frame(
     y    = rnorm(n, 0, 1))
 str(dataf)
 #> 'data.frame':    5 obs. of  4 variables:
-#>  $ s1  : num  -0.6356 0.9393 0.0412 0.5453 -0.5449
-#>  $ s2  : num  -0.3682 -0.0183 0.1753 0.1072 -0.5612
-#>  $ time: num  2.46 2.37 2.53 3.52 2.58
-#>  $ y   : num  -1.8367 0.4838 -0.7167 -2.0985 -0.0881
+#>  $ s1  : num  -0.349 0.642 0.704 -0.889 -0.806
+#>  $ s2  : num  0.101 -0.416 0.475 -0.94 0.75
+#>  $ time: num  1.23 1.76 2.68 3.42 1.54
+#>  $ y   : num  -0.9637 0.5692 -0.5865 1.33 -0.0061
 ```
 
 Loading the packages:
@@ -87,7 +88,7 @@ library(INLA)
 #> Loading required package: foreach
 #> Loading required package: parallel
 #> Loading required package: sp
-#> This is INLA_23.04.11-1 built 2023-04-10 23:36:48 UTC.
+#> This is INLA_23.04.24 built 2023-04-24 19:15:35 UTC.
 #>  - See www.r-inla.org/contact-us for how to get help.
 #>  - To enable PARDISO sparse library; see inla.pardiso()
 library(INLAspacetime)
@@ -167,10 +168,10 @@ Summary of the model parameters
 
 ``` r
 result$summary.fixed
-#>                 mean       sd 0.025quant   0.5quant 0.975quant       mode kld
-#> Intercept -0.8506661 2.332798  -5.422866 -0.8506661   3.721533 -0.8506661   0
+#>                mean       sd 0.025quant  0.5quant 0.975quant      mode kld
+#> Intercept 0.2510795 1.096182  -1.897397 0.2510795   2.399556 0.2510795   0
 result$summary.hyperpar
 #>                       mean        sd 0.025quant  0.5quant 0.975quant      mode
-#> Theta1 for field 0.8154733 0.3535697  0.1409908 0.8069905   1.533857 0.7746979
-#> Theta2 for field 1.1647245 0.1899606  0.8015195 1.1604630   1.549799 1.1443398
+#> Theta1 for field 1.4529848 0.8148209  0.1670736 1.3487721  3.2926450 0.9196507
+#> Theta2 for field 0.3596086 0.2586628 -0.1476105 0.3585092  0.8723391 0.3543983
 ```
