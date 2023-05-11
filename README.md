@@ -33,7 +33,7 @@ You can install the latest version of INLAspacetime from
 
 ``` r
 ## install.packages("remotes")
-remotes::install_github("eliaskrainski/INLAspacetime")
+remotes::install_github("eliaskrainski/INLAspacetime",  build_vignettes=TRUE)
 ```
 
 <!-- or track the development version builds via [inlabru-org.r-universe.dev](https://inlabru-org.r-universe.dev/ui#builds): -->
@@ -74,10 +74,10 @@ dataf <- data.frame(
     y    = rnorm(n, 0, 1))
 str(dataf)
 #> 'data.frame':    5 obs. of  4 variables:
-#>  $ s1  : num  -0.349 0.642 0.704 -0.889 -0.806
-#>  $ s2  : num  0.101 -0.416 0.475 -0.94 0.75
-#>  $ time: num  1.23 1.76 2.68 3.42 1.54
-#>  $ y   : num  -0.9637 0.5692 -0.5865 1.33 -0.0061
+#>  $ s1  : num  0.562 -0.628 0.289 -0.762 0.138
+#>  $ s2  : num  0.7239 -0.4697 0.741 -0.0625 0.4605
+#>  $ time: num  2.16 3.24 2.24 1.96 3.07
+#>  $ y   : num  1.335 -0.157 -0.244 1.887 1.967
 ```
 
 Loading the packages:
@@ -168,10 +168,10 @@ Summary of the model parameters
 
 ``` r
 result$summary.fixed
-#>                mean       sd 0.025quant  0.5quant 0.975quant      mode kld
-#> Intercept 0.2510795 1.096182  -1.897397 0.2510795   2.399556 0.2510795   0
+#>               mean       sd 0.025quant 0.5quant 0.975quant     mode kld
+#> Intercept 1.563217 2.443731  -3.226407 1.563217   6.352841 1.563217   0
 result$summary.hyperpar
 #>                       mean        sd 0.025quant  0.5quant 0.975quant      mode
-#> Theta1 for field 1.4529848 0.8148209  0.1670736 1.3487721  3.2926450 0.9196507
-#> Theta2 for field 0.3596086 0.2586628 -0.1476105 0.3585092  0.8723391 0.3543983
+#> Theta1 for field 0.7197222 0.2919869  0.1260452 0.7264757   1.277273 0.7525981
+#> Theta2 for field 1.2222390 0.1857073  0.8676396 1.2179021   1.599153 1.2014638
 ```
