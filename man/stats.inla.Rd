@@ -28,6 +28,7 @@ which by default is the mean.
 }
 \section{Details}{
 
+It assumes Gaussian posterior predictive distributions!
 Considering the defaults, for n observations,
 \eqn{y_i, i = 1, 2, ..., n}, we have
 

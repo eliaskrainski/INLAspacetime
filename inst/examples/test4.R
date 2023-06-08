@@ -27,7 +27,9 @@ stmodel <- stModel.define(
     control.priors=list(
         prs=c(1, 0.5),
         prt=c(5, 0.5),
-        psigma=c(1, 0.5)))
+        psigma=c(1, 0.5))
+)
+
 
 ### print number of non-zeros in Q_u
 cat("Number of non-zeros in Q_u:",

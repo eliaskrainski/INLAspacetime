@@ -12,6 +12,7 @@
 #' @param fsummarize the summary function,
 #' the default is [base::mean()].
 #' @section Details:
+#'  It assumes Gaussian posterior predictive distributions!
 #'  Considering the defaults, for n observations,
 #'  \eqn{y_i, i = 1, 2, ..., n}, we have
 #'
@@ -84,28 +85,31 @@ stats.inla <- function(m, i = NULL, y, fsummarize = mean) {
   if (is.null(i)) {
     i <- 1:length(m$dic$local.dic)
   }
+  sigma2.mean <- inla.emarginal(
+    exp,
+    m$internal.marginals.hyperpar[[1]])
   r <- c(
     dic = fsummarize(m$dic$local.dic[i]),
     waic = fsummarize(m$waic$local.waic[i]),
     lpo = -fsummarize(dnorm(
       y[i], m$summary.fitted.value$mean[i],
       sqrt(m$summary.fitted.value$sd[i]^2 +
-        1 / m$summary.hyperpar$mean[1]),
+        sigma2.mean),
       log = TRUE
     )),
     lcpo = -fsummarize(log(m$cpo$cpo[i])),
-    mse = fsummarize((m$summary.fitted.value$mean[i] - y[i])^2),
-    mae = fsummarize(abs(m$summary.fitted.value$mean[i] - y[i])),
+    mse = fsummarize((y[i] - m$summary.fitted.value$mean[i])^2),
+    mae = fsummarize(abs(y[i] - m$summary.fitted.value$mean[i])),
     crps = -fsummarize(crps.g(
       y[i], m$summary.fitted.value$mean[i],
       sqrt(m$summary.fitted.value$sd[i]^2 +
-        1 / m$summary.hyperpar$mean[1])
+        sigma2.mean)
     )),
     scrps = -fsummarize(scrps.g(
       y[i],
       m$summary.fitted.val$mean[i],
       sqrt(m$summary.fitted.val$sd[i]^2 +
-        1 / m$summary.hyperpar$mean[1])
+        sigma2.mean)
     ))
   )
   return(r)

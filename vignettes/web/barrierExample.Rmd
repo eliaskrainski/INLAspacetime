@@ -62,7 +62,7 @@ r <- mean(rxy)
 bb <- rbind(
     c(0, 1)*rxy[1],
     c(0, 1)*rxy[2])
-domain <- cbind(
+domain.xy <- cbind(
     c(0, 1, 1, 0, 0) * rxy[1],
     c(0, 0, 1, 1, 0) * rxy[2])
 ``` 
@@ -77,13 +77,24 @@ barrier2 <- cbind(
   c(0.33, 0.33, 0.40, 0.40, 0.33) * rxy[2])
 ```
 
+Define the objects using the \textbf{\textsf{sf}} package:
+```{r sfpackage}
+library(sf)
+domain <- st_sfc(st_polygon(list(domain.xy)))
+barriers <- st_sfc(st_multipolygon(
+  list(st_polygon(list(barrier1)), 
+       st_polygon(list(barrier2)))))
+```
+
 We can visualize these polygons in order to make the problem clear:
 ```{r domainvis}
-par(mar = c(2, 2, 0, 0), mgp = c(2, 0.5, 0), las=1)
-plot(t(bb), bty="n", type = "n", asp = 1)
-polygon(domain, col = rgb(0.5,0.7,1))
-polygon(barrier1, col = rgb(0.3,0.2,0.1, 0.5))
-polygon(barrier2, col = rgb(0.3,0.2,0.1, 0.5))
+library(ggplot2)
+gg0 <- ggplot() + 
+  xlab("") + ylab("") +
+  theme_minimal() + coord_fixed()
+gg0 + xlim(bb[1, ]) +
+  geom_sf(data = domain, fill = "blue") +
+  geom_sf(data = barriers, fill = "gray")
 ```
 
 The problem is to model data in both sides of the barrier considering that the 
@@ -106,18 +117,13 @@ The fraction fixed for the analysis interplay with the width of the barrier.
 One should choose a small enough fraction, 
 see details in @bakka2019barrier.
 
-We first load the packages that will be used in this tutorial.
+We first load the other packages that will be used in this tutorial.
 
 ```{r packages}
 library(INLA)
 library(INLAspacetime)
 library(inlabru)
-library(ggplot2)
 library(patchwork)
-```
-
-```{r inlaversioncheck, echo = FALSE}
-iV <- grep("^Version", readLines(system.file("DESCRIPTION", package = "INLA")), value = TRUE)
 ```
 
 ```{r lic, echo = FALSE}
@@ -145,7 +151,7 @@ Therefore we start with the following mesh made up of small triangles
 in the domain and bigger around it.
 ```{r mesh}
 mesh <- inla.mesh.2d(
-    loc.domain = domain, 
+    loc.domain = domain.xy, 
     max.edge = c(0.03, 0.1) * r,
     offset = c(0.1, 0.3) * r,
     cutoff = 0.01 * r)
@@ -153,35 +159,27 @@ mesh$n
 ```
 
 The solution needs the triangles inside the barrier domain to be identified. 
-We start computing the center of each mesh triangle with
-```{r triCenters}
-triCenters <- 
-    cbind(
-        mesh$loc[mesh$graph$tv[,1], 1] +
-        mesh$loc[mesh$graph$tv[,2], 1] +
-        mesh$loc[mesh$graph$tv[,3], 1],
-        mesh$loc[mesh$graph$tv[,1], 2] +
-        mesh$loc[mesh$graph$tv[,2], 2] +
-        mesh$loc[mesh$graph$tv[,3], 2])/3
-``` 
-
 For each triangle center we check if it is inside or not of the barrier domain
 and and create a vector to identify to which domain is each triangle center inside
 ```{r ibarrier}
-isInBarrier <- (splancs::inout(triCenters, barrier1)) |
-  (splancs::inout(triCenters, barrier2))
+triBarrier <- unlist(fm_contains(
+  x = barriers, 
+  y = mesh, 
+  type = "centroid"))
 ``` 
 
 We can visualize the mesh and color the triangle centers 
 using the **ggplot** methods from the **inlabru** package
 ```{r vmesh}
-ggplot() +
+triCenters.xy <- cbind(
+  mesh$loc[mesh$graph$tv[,1], 1:2] +
+  mesh$loc[mesh$graph$tv[,2], 1:2] +
+  mesh$loc[mesh$graph$tv[,3], 1:2])/3
+gg0 + 
     gg(mesh) +
     geom_point(aes(
-        x = triCenters[,1],
-        y = triCenters[,2],
-        color = isInBarrier)) + 
-  theme_minimal() + xlab("") + ylab("") 
+        x = triCenters.xy[triBarrier, 1],
+        y = triCenters.xy[triBarrier, 2])) 
 ```
 
 Notice that the mesh goes beyond the domain area including a boundary extension.
@@ -201,14 +199,7 @@ sigma <- 1
 (ranges <- r * c(0.5, 0.05)) 
 ```
 
-We will implement the model with the mesh previously defined.
-This start with defining which triangles have centers in the barrier.
-```{r triBarrier}
-triBarrier <- which(isInBarrier) 
-length(triBarrier)
-```
-
-Then we compute the Finite Element matrices needed for the
+We now have to compute the Finite Element matrices needed for the
 model discretization, as detailed in @bakka2019barrier.
 ```{r bfem}
 bfem <- mesh2fem.barrier(mesh, triBarrier)
@@ -291,7 +282,7 @@ We can now visualize the images with
 ```{r beval, echo = FALSE, ref.label = 'ggbarriers', eval = TRUE}
 ```
 ```{r ggcorrels}
-ggplot() +  
+gg0 + 
   geom_raster(
     data = ggcorrels[ggcorrels$correlation>0.1, ], 
     mapping = aes(x = x, y = y, fill = correlation)) + 
@@ -333,7 +324,7 @@ We can now visualize the projected simulated values at the small pixels,
 inclusive those values in the barriers.
 ```{r uviz}
 grid.df$u <- as.vector(ugrid.sim)
-ggplot() + 
+gg0 + 
   geom_raster(
     data = grid.df, 
     aes(x = x, y = y, fill = u)) + 
@@ -512,7 +503,7 @@ gInBarrier <-
 
 We can now visualize the posterior mean with
 ```{r umeanviz}
-ggplot() + 
+gg0 + 
   geom_raster(
     data = grid.df[!gInBarrier, ], 
     aes(x = x, y = y, fill = u.mean)) + 
@@ -535,7 +526,7 @@ including the boundary at the barriers,
 and far from observed locations.
 
 ```{r usdviz}
-ggplot() + 
+gg0 + 
   geom_raster(
     data = grid.df[!gInBarrier, ], 
     aes(x = x, y = y, fill = u.sd)) + 
@@ -569,11 +560,7 @@ gg.add <- list(
   scale_fill_distiller(
     type = "div", 
     palette = "RdBu", 
-    na.value = "transparent"),
-  xlab(""),
-  ylab(""),
-  theme_minimal(),
-  coord_fixed()
+    na.value = "transparent")
 )
 add.b0 <- list(
   geom_polygon(

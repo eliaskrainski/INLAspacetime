@@ -23,7 +23,7 @@ Description: Prepare objects to implement models over spatial and
   Details are provided in the available vignettes and from the URL bellow.
 URL: https://github.com/eliaskrainski/INLAspacetime
 Additional_repositories: https://inla.r-inla-download.org/R/testing
-BugReports: https://github.com/inlabru-org/inlabru/issues
+BugReports: https://github.com/eliaskrainski/INLAspacetime/issues
 License: GPL (>=2) 
 Encoding: UTF-8
 RoxygenNote: 7.2.3
