@@ -1,0 +1,12 @@
+pandoc: 2.19.2
+pkgdown: 2.0.7
+pkgdown_sha: ~
+articles:
+  barrierExample: web/barrierExample.html
+  piemonte: web/piemonte.html
+  website_examples: website_examples.html
+last_built: 2023-06-18T11:55Z
+urls:
+  reference: https://eliaskrainski.github.io/INLAspacetime/reference
+  article: https://eliaskrainski.github.io/INLAspacetime/articles
+
