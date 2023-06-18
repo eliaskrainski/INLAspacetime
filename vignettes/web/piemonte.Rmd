@@ -52,11 +52,12 @@ library(inlabru)
 We consider the following settings for **INLA**
 
 ```{r inlasetup}
-inla.setOption(
-  inla.mode = "compact",
-  num.threads = "5:-1",
-  smtp = "pardiso",
-  pardiso.license = "~/.pardiso.lic")
+#inla.setOption(
+#  inla.mode = "compact",
+#  num.threads = "5:-1",
+#  smtp = "pardiso",
+#  pardiso.license = "~/.pardiso.lic"
+#)
 ```
 
 We will ask it to return the WAIC, DIC and CPO 
