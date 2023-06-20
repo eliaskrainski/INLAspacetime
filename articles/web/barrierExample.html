@@ -74,7 +74,7 @@
 Krainski</h4>
             
             <h4 data-toc-skip class="date">Created in March, 2023. Last
-update: Sun 18 Jun, 2023</h4>
+update: Tue 20 Jun, 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/eliaskrainski/INLAspacetime/blob/HEAD/vignettes/web/barrierExample.Rmd" class="external-link"><code>vignettes/web/barrierExample.Rmd</code></a></small>
       <div class="d-none name"><code>barrierExample.Rmd</code></div>
@@ -442,10 +442,10 @@ the model formula, the data and the family, as follows</p>
 the intercept with</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">summary.fix</span></span>
-<span><span class="co">#&gt;               mean        sd 0.025quant 0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; Intercept 10.11216 0.4080585   9.309956 10.10341   10.96484 10.10445</span></span>
+<span><span class="co">#&gt;              mean        sd 0.025quant 0.5quant 0.975quant     mode</span></span>
+<span><span class="co">#&gt; Intercept 10.1121 0.4076093   9.310832 10.10337   10.96387 10.10442</span></span>
 <span><span class="co">#&gt;                    kld</span></span>
-<span><span class="co">#&gt; Intercept 1.087238e-06</span></span></code></pre></div>
+<span><span class="co">#&gt; Intercept 1.076399e-06</span></span></code></pre></div>
 <p>For the hyper-parameters the computations were performed in an
 internal scale. That is log of range and log(<span class="math inline">\(\sigma\)</span>), and <span class="math inline">\(\log(1/\sigma_e^2)\)</span>. However, we can
 transform each of the hyper-parameters from the internal marginal scale
@@ -478,8 +478,8 @@ data:</p>
 <span>             <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/INLA/man/marginal.html" class="external-link">inla.zmarginal</a></span><span class="op">(</span><span class="va">m</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;         sigma.e    range     sigma</span></span>
 <span><span class="co">#&gt; true 1.00000000 4.000000 1.0000000</span></span>
-<span><span class="co">#&gt; mean 1.04402847 4.045729 0.9000419</span></span>
-<span><span class="co">#&gt; sd   0.03810173 1.089720 0.1383821</span></span></code></pre></div>
+<span><span class="co">#&gt; mean 1.04409057 4.046962 0.8993732</span></span>
+<span><span class="co">#&gt; sd   0.03813351 1.090425 0.1381599</span></span></code></pre></div>
 <p>We can also visualize these these posterior marginal distributions
 with</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">

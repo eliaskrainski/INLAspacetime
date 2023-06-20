@@ -106,11 +106,6 @@
 <!-- install.packages("INLAspacetime") -->
 <!-- ``` -->
 </div>
-</div>
-<div class="section level1">
-<h1 id="see-the-vignettes-for-examples">See the vignettes for examples<a class="anchor" aria-label="anchor" href="#see-the-vignettes-for-examples"></a>
-</h1>
-<p>We will have tutorials and examples at <a href="https://eliaskrainski.github.io/INLAspacetime/" class="uri">https://eliaskrainski.github.io/INLAspacetime/</a></p>
 <div class="section level2">
 <h2 id="we-have-implemented">We have implemented<a class="anchor" aria-label="anchor" href="#we-have-implemented"></a>
 </h2>
@@ -133,10 +128,10 @@
 <span>    y    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">dataf</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 'data.frame':    5 obs. of  4 variables:</span></span>
-<span><span class="co">#&gt;  $ s1  : num  0.562 -0.628 0.289 -0.762 0.138</span></span>
-<span><span class="co">#&gt;  $ s2  : num  0.7239 -0.4697 0.741 -0.0625 0.4605</span></span>
-<span><span class="co">#&gt;  $ time: num  2.16 3.24 2.24 1.96 3.07</span></span>
-<span><span class="co">#&gt;  $ y   : num  1.335 -0.157 -0.244 1.887 1.967</span></span></code></pre></div>
+<span><span class="co">#&gt;  $ s1  : num  0.0241 0.2559 -0.2758 -0.402 -0.4737</span></span>
+<span><span class="co">#&gt;  $ s2  : num  -0.714 -0.503 0.47 0.889 -0.525</span></span>
+<span><span class="co">#&gt;  $ time: num  2.94 3.38 2.78 2.75 3.92</span></span>
+<span><span class="co">#&gt;  $ y   : num  0.889 -0.505 -2.055 0.181 -1.489</span></span></code></pre></div>
 <p>Loading the packages:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">INLA</span><span class="op">)</span></span>
@@ -144,7 +139,11 @@
 <span><span class="co">#&gt; Loading required package: foreach</span></span>
 <span><span class="co">#&gt; Loading required package: parallel</span></span>
 <span><span class="co">#&gt; Loading required package: sp</span></span>
-<span><span class="co">#&gt; This is INLA_23.04.24 built 2023-04-24 19:15:35 UTC.</span></span>
+<span><span class="co">#&gt; The legacy packages maptools, rgdal, and rgeos, underpinning this package</span></span>
+<span><span class="co">#&gt; will retire shortly. Please refer to R-spatial evolution reports on</span></span>
+<span><span class="co">#&gt; https://r-spatial.org/r/2023/05/15/evolution4.html for details.</span></span>
+<span><span class="co">#&gt; This package is now running under evolution status 0</span></span>
+<span><span class="co">#&gt; This is INLA_23.05.30-1 built 2023-05-30 11:52:19 UTC.</span></span>
 <span><span class="co">#&gt;  - See www.r-inla.org/contact-us for how to get help.</span></span>
 <span><span class="co">#&gt;  - To enable PARDISO sparse library; see inla.pardiso()</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eliaskrainski/INLAspacetime" class="external-link">INLAspacetime</a></span><span class="op">)</span></span>
@@ -206,12 +205,18 @@
 <p>Summary of the model parameters</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">summary.fixed</span></span>
-<span><span class="co">#&gt;               mean       sd 0.025quant 0.5quant 0.975quant     mode kld</span></span>
-<span><span class="co">#&gt; Intercept 1.563217 2.443731  -3.226407 1.563217   6.352841 1.563217   0</span></span>
+<span><span class="co">#&gt;                 mean       sd 0.025quant   0.5quant 0.975quant       mode kld</span></span>
+<span><span class="co">#&gt; Intercept 0.05131383 2.836826  -5.508763 0.05131383   5.611391 0.05131383   0</span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">summary.hyperpar</span></span>
 <span><span class="co">#&gt;                       mean        sd 0.025quant  0.5quant 0.975quant      mode</span></span>
-<span><span class="co">#&gt; Theta1 for field 0.7197222 0.2919869  0.1260452 0.7264757   1.277273 0.7525981</span></span>
-<span><span class="co">#&gt; Theta2 for field 1.2222390 0.1857073  0.8676396 1.2179021   1.599153 1.2014638</span></span></code></pre></div>
+<span><span class="co">#&gt; Theta1 for field 0.7245241 0.2869156  0.1510135 0.7273932   1.281024 0.7398477</span></span>
+<span><span class="co">#&gt; Theta2 for field 1.3431779 0.1768367  1.0017426 1.3409227   1.697996 1.3312603</span></span></code></pre></div>
+<div class="section level2">
+<h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
+</h2>
+<p><a href="articles/web/barrierExample.html">Spatial models for domains with barrier</a></p>
+<p><a href="articles/web/piemonte.html">Spatio-temporal examples</a></p>
+</div>
 </div>
 
   </main><aside class="col-md-3"><div class="links">
