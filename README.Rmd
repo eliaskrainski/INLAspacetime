@@ -70,6 +70,7 @@ This is a basic example which fit a spacetime model for some fake data.
 The model fitting using **inlabru** facilitates coding.
 
 ```{r fakedata}
+set.seed(1)
 n <- 5
 dataf <- data.frame(
     s1   = runif(n, -1, 1),
@@ -157,5 +158,5 @@ result$summary.hyperpar
 
 ## Vignettes
 
-Please check it out at the <Tutorials> from
-[here](https://eliaskrainski.github.io/INLAspacetime/)
+Please check it out at the 
+[Tutorials](https://eliaskrainski.github.io/INLAspacetime/)
