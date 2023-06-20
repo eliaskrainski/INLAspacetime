@@ -56,11 +56,6 @@ remotes::install_github("eliaskrainski/INLAspacetime",  build_vignettes=TRUE)
 <!-- install.packages("INLAspacetime") -->
 <!-- ``` -->
 
-# See the vignettes for examples
-
-We will have  tutorials and examples at
-[https://eliaskrainski.github.io/INLAspacetime/](https://eliaskrainski.github.io/INLAspacetime/)
-
 ## We have implemented 
 
 1. some of the models presented in 
@@ -159,3 +154,9 @@ Summary of the model parameters
 result$summary.fixed
 result$summary.hyperpar
 ```
+
+## Vignettes
+
+[Spatial models for domains with barrier](articles/web/barrierExample.html)
+
+[Spatio-temporal examples](articles/web/piemonte.html)

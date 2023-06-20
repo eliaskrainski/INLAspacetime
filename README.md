@@ -48,11 +48,6 @@ remotes::install_github("eliaskrainski/INLAspacetime",  build_vignettes=TRUE)
 <!-- install.packages("INLAspacetime") -->
 <!-- ``` -->
 
-# See the vignettes for examples
-
-We will have tutorials and examples at
-<https://eliaskrainski.github.io/INLAspacetime/>
-
 ## We have implemented
 
 1.  some of the models presented in <https://arxiv.org/abs/2006.04917>
@@ -74,10 +69,10 @@ dataf <- data.frame(
     y    = rnorm(n, 0, 1))
 str(dataf)
 #> 'data.frame':    5 obs. of  4 variables:
-#>  $ s1  : num  0.562 -0.628 0.289 -0.762 0.138
-#>  $ s2  : num  0.7239 -0.4697 0.741 -0.0625 0.4605
-#>  $ time: num  2.16 3.24 2.24 1.96 3.07
-#>  $ y   : num  1.335 -0.157 -0.244 1.887 1.967
+#>  $ s1  : num  0.0241 0.2559 -0.2758 -0.402 -0.4737
+#>  $ s2  : num  -0.714 -0.503 0.47 0.889 -0.525
+#>  $ time: num  2.94 3.38 2.78 2.75 3.92
+#>  $ y   : num  0.889 -0.505 -2.055 0.181 -1.489
 ```
 
 Loading the packages:
@@ -88,7 +83,11 @@ library(INLA)
 #> Loading required package: foreach
 #> Loading required package: parallel
 #> Loading required package: sp
-#> This is INLA_23.04.24 built 2023-04-24 19:15:35 UTC.
+#> The legacy packages maptools, rgdal, and rgeos, underpinning this package
+#> will retire shortly. Please refer to R-spatial evolution reports on
+#> https://r-spatial.org/r/2023/05/15/evolution4.html for details.
+#> This package is now running under evolution status 0
+#> This is INLA_23.05.30-1 built 2023-05-30 11:52:19 UTC.
 #>  - See www.r-inla.org/contact-us for how to get help.
 #>  - To enable PARDISO sparse library; see inla.pardiso()
 library(INLAspacetime)
@@ -168,10 +167,17 @@ Summary of the model parameters
 
 ``` r
 result$summary.fixed
-#>               mean       sd 0.025quant 0.5quant 0.975quant     mode kld
-#> Intercept 1.563217 2.443731  -3.226407 1.563217   6.352841 1.563217   0
+#>                 mean       sd 0.025quant   0.5quant 0.975quant       mode kld
+#> Intercept 0.05131383 2.836826  -5.508763 0.05131383   5.611391 0.05131383   0
 result$summary.hyperpar
 #>                       mean        sd 0.025quant  0.5quant 0.975quant      mode
-#> Theta1 for field 0.7197222 0.2919869  0.1260452 0.7264757   1.277273 0.7525981
-#> Theta2 for field 1.2222390 0.1857073  0.8676396 1.2179021   1.599153 1.2014638
+#> Theta1 for field 0.7245241 0.2869156  0.1510135 0.7273932   1.281024 0.7398477
+#> Theta2 for field 1.3431779 0.1768367  1.0017426 1.3409227   1.697996 1.3312603
 ```
+
+## Vignettes
+
+[Spatial models for domains with
+barrier](articles/web/barrierExample.html)
+
+[Spatio-temporal examples](articles/web/piemonte.html)
