@@ -120,7 +120,8 @@
 </h1>
 <p>This is a basic example which fit a spacetime model for some fake data. The model fitting using <strong>inlabru</strong> facilitates coding.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">5</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">5</span></span>
 <span><span class="va">dataf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>    s1   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,</span>
 <span>    s2   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,</span>
@@ -128,10 +129,10 @@
 <span>    y    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">dataf</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 'data.frame':    5 obs. of  4 variables:</span></span>
-<span><span class="co">#&gt;  $ s1  : num  0.0241 0.2559 -0.2758 -0.402 -0.4737</span></span>
-<span><span class="co">#&gt;  $ s2  : num  -0.714 -0.503 0.47 0.889 -0.525</span></span>
-<span><span class="co">#&gt;  $ time: num  2.94 3.38 2.78 2.75 3.92</span></span>
-<span><span class="co">#&gt;  $ y   : num  0.889 -0.505 -2.055 0.181 -1.489</span></span></code></pre></div>
+<span><span class="co">#&gt;  $ s1  : num  -0.469 -0.256 0.146 0.816 -0.597</span></span>
+<span><span class="co">#&gt;  $ s2  : num  0.797 0.889 0.322 0.258 -0.876</span></span>
+<span><span class="co">#&gt;  $ time: num  1.62 1.53 3.06 2.15 3.31</span></span>
+<span><span class="co">#&gt;  $ y   : num  -0.00577 2.40465 0.76359 -0.79901 -1.14766</span></span></code></pre></div>
 <p>Loading the packages:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">INLA</span><span class="op">)</span></span>
@@ -205,17 +206,16 @@
 <p>Summary of the model parameters</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">summary.fixed</span></span>
-<span><span class="co">#&gt;                 mean       sd 0.025quant   0.5quant 0.975quant       mode kld</span></span>
-<span><span class="co">#&gt; Intercept 0.05131383 2.836826  -5.508763 0.05131383   5.611391 0.05131383   0</span></span>
+<span><span class="co">#&gt;                mean      sd 0.025quant  0.5quant 0.975quant      mode kld</span></span>
+<span><span class="co">#&gt; Intercept 0.5211454 3.49482  -6.328575 0.5211454   7.370866 0.5211454   0</span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">summary.hyperpar</span></span>
-<span><span class="co">#&gt;                       mean        sd 0.025quant  0.5quant 0.975quant      mode</span></span>
-<span><span class="co">#&gt; Theta1 for field 0.7245241 0.2869156  0.1510135 0.7273932   1.281024 0.7398477</span></span>
-<span><span class="co">#&gt; Theta2 for field 1.3431779 0.1768367  1.0017426 1.3409227   1.697996 1.3312603</span></span></code></pre></div>
+<span><span class="co">#&gt;                      mean        sd 0.025quant 0.5quant 0.975quant      mode</span></span>
+<span><span class="co">#&gt; Theta1 for field 1.202935 0.5125858  0.3321324 1.162519   2.324768 0.9707531</span></span>
+<span><span class="co">#&gt; Theta2 for field 1.435746 0.1706775  1.1044643 1.434143   1.776487 1.4273398</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
 </h2>
-<p><a href="articles/web/barrierExample.html">Spatial models for domains with barrier</a></p>
-<p><a href="articles/web/piemonte.html">Spatio-temporal examples</a></p>
+<p>Please check it out at the <a href="https://eliaskrainski.github.io/INLAspacetime/">Tutorials</a></p>
 </div>
 </div>
 
