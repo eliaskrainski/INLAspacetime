@@ -157,6 +157,5 @@ result$summary.hyperpar
 
 ## Vignettes
 
-[Spatial models for domains with barrier](articles/web/barrierExample.html)
-
-[Spatio-temporal examples](articles/web/piemonte.html)
+Please check it out at the <Tutorials> from
+[here](https://eliaskrainski.github.io/INLAspacetime/)

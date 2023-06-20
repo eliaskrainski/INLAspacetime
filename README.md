@@ -69,10 +69,10 @@ dataf <- data.frame(
     y    = rnorm(n, 0, 1))
 str(dataf)
 #> 'data.frame':    5 obs. of  4 variables:
-#>  $ s1  : num  0.0241 0.2559 -0.2758 -0.402 -0.4737
-#>  $ s2  : num  -0.714 -0.503 0.47 0.889 -0.525
-#>  $ time: num  2.94 3.38 2.78 2.75 3.92
-#>  $ y   : num  0.889 -0.505 -2.055 0.181 -1.489
+#>  $ s1  : num  0.144 0.728 -0.1 -0.157 0.285
+#>  $ s2  : num  -0.505 -0.387 0.384 0.543 -0.47
+#>  $ time: num  1.38 2.76 3.88 3.15 2.04
+#>  $ y   : num  -0.28 0.5 -0.113 1.223 0.62
 ```
 
 Loading the packages:
@@ -167,17 +167,15 @@ Summary of the model parameters
 
 ``` r
 result$summary.fixed
-#>                 mean       sd 0.025quant   0.5quant 0.975quant       mode kld
-#> Intercept 0.05131383 2.836826  -5.508763 0.05131383   5.611391 0.05131383   0
+#>                  mean      sd 0.025quant    0.5quant 0.975quant        mode kld
+#> Intercept -0.09938272 1.10605    -2.2672 -0.09938272   2.068435 -0.09938272   0
 result$summary.hyperpar
 #>                       mean        sd 0.025quant  0.5quant 0.975quant      mode
-#> Theta1 for field 0.7245241 0.2869156  0.1510135 0.7273932   1.281024 0.7398477
-#> Theta2 for field 1.3431779 0.1768367  1.0017426 1.3409227   1.697996 1.3312603
+#> Theta1 for field 1.0987104 0.4212753  0.1925823 1.1219448   1.840253 1.2473562
+#> Theta2 for field 0.1162948 0.3065656 -0.4361980 0.1015839   0.766330 0.0273421
 ```
 
 ## Vignettes
 
-[Spatial models for domains with
-barrier](articles/web/barrierExample.html)
-
-[Spatio-temporal examples](articles/web/piemonte.html)
+Please check it out at the <Tutorials> from
+[here](https://eliaskrainski.github.io/INLAspacetime/)
