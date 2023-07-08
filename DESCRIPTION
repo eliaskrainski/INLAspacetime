@@ -42,7 +42,7 @@ Imports:
     sf
 Suggests:
     INLA (>= 23.03.26),
-    inlabru (>= 2.7.0.9021),
+    inlabru (>= 2.8.0),
     knitr,
     ggplot2,
     rmarkdown,
@@ -52,5 +52,3 @@ Suggests:
     splancs
 VignetteBuilder: knitr
 BuildVignettes: true
-Remotes:
-    inlabru-org/inlabru
