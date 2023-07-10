@@ -312,12 +312,12 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 		ith = 0;
 		double daux = 0.5 * (double) dimension;
 		if (ifix[0] == 0) {
-			double lam1 = -log(prs->doubles[1]) * ( prs->doubles[0]^daux);
+			double lam1 = -log(prs->doubles[1]) * pow(prs->doubles[0], daux);
 			ret[0] += log(lam1) - daux * theta[ith] - lam1 * exp(-daux * theta[ith]) + log(daux);
 			ith++;
 		}
 		if (ifix[1] == 0) {
-			double lam2 = -log(prt->doubles[1]) * ( prt->doubles[0]^0.5 );
+			double lam2 = -log(prt->doubles[1]) * sqrt(prt->doubles[0]);
 			ret[0] += log(lam2) - 0.5 * theta[ith] - lam2 * exp(-0.5 * theta[ith]) + log(0.5);
 			ith++;
 		}
