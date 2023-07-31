@@ -1,8 +1,96 @@
+#' Spacetime precision matrix.
+#'
+#' To build the the precision matrix for a spacetime model
+#' given the temporal and the spatial meshes.
+#'
+#' @param tmesh a mesh object over the time domain.
+#' @param smesh a mesh object over the spatial domain.
+#' @param model a string identifying the model.
+#' So far we have the following models:
+#' '102', '121', '202' and '220' models.
+#' @return a (sparse) precision matrix,
+#' as in Lindgren et. al. (2023)
+#' @export
+stModel.precision <-
+  function(smesh, tmesh, model, theta, verbose = FALSE) {
+
+    stopifnot(model %in% c("102", "121", "202", "220"))
+
+    stopifnot(any(substr(smesh$manifold, 1, 1) %in% c("S", "R")))
+    Rmanifold <- (substr(smesh$manifold, 1, 1) == "R") + 0L
+
+    dimension <- as.integer(substr(smesh$manifold, 2, 2))
+    stopifnot(dimension > 0)
+
+    alphas <- as.integer(strsplit(model, "")[[1]])
+    alpha <- alphas[3] + alphas[2] * (alphas[1] - 0.5)
+    nu.s <- alpha - dimension / 2
+    nu.t <- min(alphas[1] - 0.5, nu.s / alphas[2])
+
+    if (verbose) {
+      print(c(alphas = alphas))
+      print(c(alpha = alpha, nu.s = nu.s, nu.t = nu.t))
+    }
+
+    log.C.t <- lgamma(alphas[1] - 0.5) - lgamma(alphas[1]) - 0.5 * log(4 * pi)
+    cc <- c(
+      c1 = 0.5 * log(8 * nu.s),
+      c2 = -0.5 * log(8 * nu.t),
+      c3 = NA
+    )
+    if (Rmanifold) {
+      log.C.Rd <- lgamma(alpha - (dimension * 0.5)) - lgamma(alpha) -
+        (dimension * 0.5) * log(4 * pi)
+      cc[3] <- 0.5 * (log.C.t + log.C.Rd)
+      if (verbose) {
+        cat("R manifold, cc[3] = ", cc[3], "\n")
+      }
+    } else {
+      log.C.S2.part <- -log(4 * pi) ## S1???
+      cc[3] <- 0.5 * (log.C.t + log.C.S2.part
+      ) ## c3 part for S2 (S1???), to be completed in C
+      if (verbose) {
+        cat("S manifold, cc[3] = ", cc[3], "\n")
+      }
+    }
+    if (verbose) {
+      print(c(cc = cc))
+    }
+
+    mm <- stModel.matrices(smesh, tmesh, model, constr = FALSE)
+    n <- smesh$n * tmesh$n
+    nm <- ncol(mm$TT)
+    stopifnot(nm == length(mm$bb))
+    jmm <- pmatch(paste0("M", 1:nm), names(mm))
+    stopifnot(length(jmm[complete.cases(jmm)]) == nm)
+
+    lgammas <- params2gammas(
+      theta, alphas[1], alphas[2], alphas[3], smanifold = smesh$manifold)
+
+    params <- double(nm)
+    for(i in 1:nm) {
+      a1 <- lgammas[1] * mm$TT[1, i]
+      a2 <- lgammas[1] * mm$TT[2, i]
+      params[i] <- exp(2 * (lgammas[3] + a1 + a2) * mm$bb[i])
+    }
+
+    lmats <- upperPadding(mm[jmm], relative = FALSE)
+
+    val <- sparseMatrix(
+      i = lmats$graph@i + 1L,
+      j = lmats$graph@j + 1L,
+      x = drop(lmats$xx %*% params)
+    )
+
+    return(forceSymmetric(val))
+
+  }
+
 #' Define the spacetime model matrices.
 #'
 #' This function computes all the matrices needed to build
-#' the precision matrix for a non-stationary and non-separable
-#' spatio-temporal model, as in ...
+#' the precision matrix for spatio-temporal model,
+#' as in Lindgren et. al. (2023)
 #'
 #' @param tmesh a mesh object over the time domain.
 #' @param smesh a mesh object over the spatial domain.

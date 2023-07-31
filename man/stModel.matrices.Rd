@@ -30,8 +30,8 @@ a list containing needed objects for model definition.
 }
 \description{
 This function computes all the matrices needed to build
-the precision matrix for a non-stationary and non-separable
-spatio-temporal model, as in ...
+the precision matrix for spatio-temporal model,
+as in Lindgren et. al. (2023)
 }
 \details{
 See the paper and the vignette('stspdemodels') for details.
