@@ -8,6 +8,7 @@
 #' @param model a string identifying the model.
 #' So far we have the following models:
 #' '102', '121', '202' and '220' models.
+#' @param verbose logical to print intermediate objects.
 #' @return a (sparse) precision matrix,
 #' as in Lindgren et. al. (2023)
 #' @export
@@ -100,7 +101,7 @@ stModel.precision <-
 #' @param constr logical to indicate if the integral of the field
 #' over the domain is to be constrained to zero. Default value is FALSE.
 #' @details
-#' See the paper and the vignette('stspdemodels') for details.
+#' See the paper for details.
 #' @return a list containing needed objects for model definition.
 #' 1. 'manifold' to spedify the a string with the model identification
 #' 2. a length three vector with the constants `c1`, `c2` and `c3`
