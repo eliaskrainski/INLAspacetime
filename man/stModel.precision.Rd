@@ -15,6 +15,9 @@ stModel.precision(smesh, tmesh, model, theta, verbose = FALSE)
 So far we have the following models:
 '102', '121', '202' and '220' models.}
 
+\item{theta}{numeric vector of length three with
+\eqn{log(gamma_s, gamma_t, gamma_e)}.}
+
 \item{verbose}{logical to print intermediate objects.}
 }
 \value{

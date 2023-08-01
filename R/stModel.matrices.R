@@ -8,6 +8,8 @@
 #' @param model a string identifying the model.
 #' So far we have the following models:
 #' '102', '121', '202' and '220' models.
+#' @param theta numeric vector of length three with
+#' \eqn{log(gamma_s, gamma_t, gamma_e)}.
 #' @param verbose logical to print intermediate objects.
 #' @return a (sparse) precision matrix,
 #' as in Lindgren et. al. (2023)
