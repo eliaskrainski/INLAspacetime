@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../../index.html">INLAspacetime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.6.003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.6.104</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -447,9 +447,9 @@ the intercept with</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">summary.fix</span></span>
 <span><span class="co">#&gt;               mean        sd 0.025quant 0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; Intercept 10.11285 0.4097119    9.30707 10.10411   10.96845 10.10508</span></span>
+<span><span class="co">#&gt; Intercept 10.11299 0.4101878   9.306188 10.10424   10.96949 10.10519</span></span>
 <span><span class="co">#&gt;                    kld</span></span>
-<span><span class="co">#&gt; Intercept 8.918797e-07</span></span></code></pre></div>
+<span><span class="co">#&gt; Intercept 8.663504e-07</span></span></code></pre></div>
 <p>For the hyper-parameters the computations were performed in an
 internal scale. That is log of range and log(<span class="math inline">\(\sigma\)</span>), and <span class="math inline">\(\log(1/\sigma_e^2)\)</span>. However, we can
 transform each of the hyper-parameters from the internal marginal scale
@@ -482,8 +482,8 @@ data:</p>
 <span>             <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/INLA/man/marginal.html" class="external-link">inla.zmarginal</a></span><span class="op">(</span><span class="va">m</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;         sigma.e    range     sigma</span></span>
 <span><span class="co">#&gt; true 1.00000000 4.000000 1.0000000</span></span>
-<span><span class="co">#&gt; mean 1.04426880 4.043263 0.9010638</span></span>
-<span><span class="co">#&gt; sd   0.03813216 1.080526 0.1391441</span></span></code></pre></div>
+<span><span class="co">#&gt; mean 1.04428634 4.041961 0.9013457</span></span>
+<span><span class="co">#&gt; sd   0.03813044 1.078826 0.1393268</span></span></code></pre></div>
 <p>We can also visualize these these posterior marginal distributions
 with</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
