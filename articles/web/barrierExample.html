@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../../index.html">INLAspacetime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.6.104</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.6.105</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,7 +74,7 @@
 Krainski</h4>
             
             <h4 data-toc-skip class="date">Created in March, 2023. Last
-update: Tue 01 Aug, 2023</h4>
+update: Sun 27 Aug, 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/eliaskrainski/INLAspacetime/blob/HEAD/vignettes/web/barrierExample.Rmd" class="external-link"><code>vignettes/web/barrierExample.Rmd</code></a></small>
       <div class="d-none name"><code>barrierExample.Rmd</code></div>
@@ -180,10 +180,14 @@ tutorial.</p>
 <span><span class="co">#&gt; package maintainers should consider adding sf to Suggests:.</span></span>
 <span><span class="co">#&gt; The sp package is now running under evolution status 2</span></span>
 <span><span class="co">#&gt;      (status 2 uses the sf package in place of rgdal)</span></span>
-<span><span class="co">#&gt; This is INLA_23.06.29 built 2023-06-30 04:18:35 UTC.</span></span>
+<span><span class="co">#&gt; This is INLA_23.08.26 built 2023-08-26 14:18:34 UTC.</span></span>
 <span><span class="co">#&gt;  - See www.r-inla.org/contact-us for how to get help.</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eliaskrainski/INLAspacetime" class="external-link">INLAspacetime</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.inlabru.org" class="external-link">inlabru</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Registered S3 methods overwritten by 'inlabru':</span></span>
+<span><span class="co">#&gt;   method       from   </span></span>
+<span><span class="co">#&gt;   $.fm_crs     fmesher</span></span>
+<span><span class="co">#&gt;   print.fm_crs fmesher</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -384,8 +388,8 @@ part</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n0</span>, <span class="va">bb</span><span class="op">[</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">]</span>, <span class="va">bb</span><span class="op">[</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Then we check which of these is inside the barrier</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">xy.b</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="fu">splancs</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/splancs/man/inout.html" class="external-link">inout</a></span><span class="op">(</span><span class="va">xy0</span>, <span class="va">barrier1</span><span class="op">)</span><span class="op">)</span> <span class="op">|</span></span>
-<span>  <span class="op">(</span><span class="fu">splancs</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/splancs/man/inout.html" class="external-link">inout</a></span><span class="op">(</span><span class="va">xy0</span>, <span class="va">barrier2</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">xy.b</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="fu">splancs</span><span class="fu">::</span><span class="fu"><a href="https://rsbivand.github.io/splancs/reference/inout.html" class="external-link">inout</a></span><span class="op">(</span><span class="va">xy0</span>, <span class="va">barrier1</span><span class="op">)</span><span class="op">)</span> <span class="op">|</span></span>
+<span>  <span class="op">(</span><span class="fu">splancs</span><span class="fu">::</span><span class="fu"><a href="https://rsbivand.github.io/splancs/reference/inout.html" class="external-link">inout</a></span><span class="op">(</span><span class="va">xy0</span>, <span class="va">barrier2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">ii</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="op">!</span><span class="va">xy.b</span><span class="op">)</span></span></code></pre></div>
 <p>The locations to form the data consider only the locations in the
 desired domain and outside the barrier</p>
@@ -447,9 +451,9 @@ the intercept with</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">summary.fix</span></span>
 <span><span class="co">#&gt;               mean        sd 0.025quant 0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; Intercept 10.11299 0.4101878   9.306188 10.10424   10.96949 10.10519</span></span>
+<span><span class="co">#&gt; Intercept 10.11305 0.4101731   9.306266 10.10431   10.96942 10.10525</span></span>
 <span><span class="co">#&gt;                    kld</span></span>
-<span><span class="co">#&gt; Intercept 8.663504e-07</span></span></code></pre></div>
+<span><span class="co">#&gt; Intercept 8.287669e-07</span></span></code></pre></div>
 <p>For the hyper-parameters the computations were performed in an
 internal scale. That is log of range and log(<span class="math inline">\(\sigma\)</span>), and <span class="math inline">\(\log(1/\sigma_e^2)\)</span>. However, we can
 transform each of the hyper-parameters from the internal marginal scale
@@ -482,8 +486,8 @@ data:</p>
 <span>             <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/INLA/man/marginal.html" class="external-link">inla.zmarginal</a></span><span class="op">(</span><span class="va">m</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;         sigma.e    range     sigma</span></span>
 <span><span class="co">#&gt; true 1.00000000 4.000000 1.0000000</span></span>
-<span><span class="co">#&gt; mean 1.04428634 4.041961 0.9013457</span></span>
-<span><span class="co">#&gt; sd   0.03813044 1.078826 0.1393268</span></span></code></pre></div>
+<span><span class="co">#&gt; mean 1.04433197 4.042357 0.9014069</span></span>
+<span><span class="co">#&gt; sd   0.03811663 1.077435 0.1391699</span></span></code></pre></div>
 <p>We can also visualize these these posterior marginal distributions
 with</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
@@ -511,8 +515,8 @@ to the raster data with</p>
 the barriers.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gInBarrier</span> <span class="op">&lt;-</span> </span>
-<span>  <span class="op">(</span><span class="fu">splancs</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/splancs/man/inout.html" class="external-link">inout</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">grid.df</span><span class="op">$</span><span class="va">x</span>, <span class="va">grid.df</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>, <span class="va">barrier1</span><span class="op">)</span><span class="op">)</span> <span class="op">|</span></span>
-<span>  <span class="op">(</span><span class="fu">splancs</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/splancs/man/inout.html" class="external-link">inout</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">grid.df</span><span class="op">$</span><span class="va">x</span>, <span class="va">grid.df</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>, <span class="va">barrier2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="op">(</span><span class="fu">splancs</span><span class="fu">::</span><span class="fu"><a href="https://rsbivand.github.io/splancs/reference/inout.html" class="external-link">inout</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">grid.df</span><span class="op">$</span><span class="va">x</span>, <span class="va">grid.df</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>, <span class="va">barrier1</span><span class="op">)</span><span class="op">)</span> <span class="op">|</span></span>
+<span>  <span class="op">(</span><span class="fu">splancs</span><span class="fu">::</span><span class="fu"><a href="https://rsbivand.github.io/splancs/reference/inout.html" class="external-link">inout</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">grid.df</span><span class="op">$</span><span class="va">x</span>, <span class="va">grid.df</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>, <span class="va">barrier2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>We can now visualize the posterior mean with</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gg0</span> <span class="op">+</span> </span>
