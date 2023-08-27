@@ -9,6 +9,7 @@
 #'
 #' @import methods
 #' @import Matrix
+#' @import fmesher
 #' @importFrom sp CRS
 
 INLAspacetime <- function() {

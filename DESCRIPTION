@@ -1,7 +1,7 @@
 Package: INLAspacetime
 Type: Package
 Title: Spatial and Spatio-Temporal Models using 'INLA'
-Version: 0.1.6.104
+Version: 0.1.6.105
 Authors@R: c(
   person("Elias Teixeira", "Krainski", email = "eliaskrainski@gmail.com",
          role = c("cre", "aut", "cph"), 
@@ -39,7 +39,8 @@ Imports:
     methods,
     stats,
     utils,
-    sf
+    sf,
+    fmesher
 Suggests:
     INLA (>= 23.03.26),
     inlabru (>= 2.8.0),

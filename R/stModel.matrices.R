@@ -177,8 +177,8 @@ stModel.matrices <-
       }
     }
 
-    tfe <- INLA::inla.mesh.fem(tmesh, order = 2)
-    sfe <- INLA::inla.mesh.fem(smesh, order = 4)
+    tfe <- fmesher::fm_fem(tmesh, order = 2)
+    sfe <- fmesher::fm_fem(smesh, order = 4)
 
     ns <- nrow(sfe$c0)
     nt <- nrow(tfe$c0)
@@ -297,7 +297,7 @@ stModel.matrices <-
 #' for the supplied mesh.
 #' @export
 Jmatrices <- function(tmesh) {
-  tfe <- INLA::inla.mesh.fem(tmesh, 2L)
+  tfe <- fmesher::fm_fem(tmesh, order = 2L)
   nt <- nrow(tfe$g1)
   h <- mean(diff(tmesh$loc))
 
