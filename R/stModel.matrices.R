@@ -309,9 +309,9 @@ Jmatrices <- function(tmesh) {
     J1 <- NULL
   } else {
     J1 <- Matrix::sparseMatrix(
-      i = c(1, 1, 2, nt - 1, nt - 1, nt),
-      j = c(1, 2, 2, nt - 1, nt, nt),
-      x = c(5, -1, 5, 5, -1, 5) / 4
+      i = c(1,  1,  2, 2, nt - 1, nt - 1,     nt, nt),
+      j = c(1,  2,  1, 2, nt - 1,     nt, nt - 1, nt),
+      x = c(5, -1, -1, 5,      5,     -1,     -1,  5) / 4
     )
   }
 
@@ -325,9 +325,9 @@ Jmatrices <- function(tmesh) {
     J3 <- NULL
   } else {
     J3 <- Matrix::sparseMatrix(
-      i = c(1, 1, 2, nt - 1, nt - 1, nt),
-      j = c(1, 2, 2, nt - 1, nt, nt),
-      x = c(2, -2, 2, 2, -2, 2) / (h^2)
+      i = c(1,  1,  2, 2, nt-1, nt-1,   nt, nt),
+      j = c(1,  2,  1, 2, nt-1,   nt, nt-1, nt),
+      x = c(2, -2, -2, 2,   2,   -2,    -2,  2) / (h^2)
     )
   }
 
