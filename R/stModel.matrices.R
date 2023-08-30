@@ -302,8 +302,10 @@ Jmatrices <- function(tmesh) {
   h <- mean(diff(tmesh$loc))
 
   J0 <- tfe$c0
-  J0[2, 2] <- tfe$c0[2, 2] / 2
-  J0[nt - 1, nt - 1] <- tfe$c0[nt - 1, nt - 1] / 2
+  if (!tmesh$cyclic) {
+    J0[2, 2] <- tfe$c0[2, 2] / 2
+    J0[nt - 1, nt - 1] <- tfe$c0[nt - 1, nt - 1] / 2
+  }
 
   if (tmesh$cyclic) {
     J1 <- NULL
