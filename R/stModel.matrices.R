@@ -318,10 +318,12 @@ Jmatrices <- function(tmesh) {
   }
 
   J2 <- tfe$g1 * 2
-  J2[2, 2] <- tfe$g1[2, 2]
-  J2[1, 2] <- J2[2, 1] <- tfe$g1[1, 2]
-  J2[nt, nt - 1] <- J2[nt - 1, nt] <- tfe$g1[nt, nt - 1]
-  J2[nt - 1, nt - 1] <- tfe$g1[nt - 1, nt - 1]
+  if (!tmesh$cyclic) {
+    J2[2, 2] <- tfe$g1[2, 2]
+    J2[1, 2] <- J2[2, 1] <- tfe$g1[1, 2]
+    J2[nt, nt - 1] <- J2[nt - 1, nt] <- tfe$g1[nt, nt - 1]
+    J2[nt - 1, nt - 1] <- tfe$g1[nt - 1, nt - 1]
+  }
 
   if (tmesh$cyclic) {
     J3 <- NULL
@@ -334,12 +336,14 @@ Jmatrices <- function(tmesh) {
   }
 
   J4 <- tfe$g2
-  J4[1, 1] <- tfe$g2[1, 1] / 3
-  J4[nt, nt] <- tfe$g2[nt, nt] / 3
-  J4[1, 2] <- J4[2, 1] <- tfe$g2[1, 2] / 2
-  J4[nt - 1, nt] <- J4[nt, nt - 1] <- tfe$g2[nt - 1, nt] / 2
-  J4[2, 2] <- tfe$g2[2, 2] * 5 / 7
-  J4[nt - 1, nt - 1] <- tfe$g2[nt - 1, nt - 1] * 5 / 7
+  if (!tmesh$cyclic) {
+    J4[1, 1] <- tfe$g2[1, 1] / 3
+    J4[nt, nt] <- tfe$g2[nt, nt] / 3
+    J4[1, 2] <- J4[2, 1] <- tfe$g2[1, 2] / 2
+    J4[nt - 1, nt] <- J4[nt, nt - 1] <- tfe$g2[nt - 1, nt] / 2
+    J4[2, 2] <- tfe$g2[2, 2] * 5 / 7
+    J4[nt - 1, nt - 1] <- tfe$g2[nt - 1, nt - 1] * 5 / 7
+  }
 
   return(list(J0 = J0, J1 = J1, J2 = J2, J3 = J3, J4 = J4))
 }
