@@ -343,19 +343,19 @@ would take less iterations to converge:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit102</span><span class="op">$</span><span class="va">cpu</span></span>
 <span><span class="co">#&gt;        Pre    Running       Post      Total </span></span>
-<span><span class="co">#&gt;   1.122127 800.464392   6.786452 808.372970</span></span></code></pre></div>
+<span><span class="co">#&gt;   1.153795 792.245589   6.721834 800.121217</span></span></code></pre></div>
 <p>Summary of the posterior marginal distributions for the fixed
 effects</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit102</span><span class="op">$</span><span class="va">summary.fixed</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">5</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="co">#&gt;                  mean          sd   0.025quant   0.975quant</span></span>
-<span><span class="co">#&gt; Intercept  3.73692143 0.246266097  3.250981515  4.222522310</span></span>
-<span><span class="co">#&gt; A         -0.17937731 0.050007292 -0.278499488 -0.081369736</span></span>
-<span><span class="co">#&gt; WS        -0.06042670 0.008442171 -0.076971140 -0.043860769</span></span>
-<span><span class="co">#&gt; TEMP      -0.12240946 0.035189621 -0.191484303 -0.053469477</span></span>
-<span><span class="co">#&gt; HMIX      -0.02372990 0.013205474 -0.049587348  0.002205067</span></span>
-<span><span class="co">#&gt; PREC      -0.05355170 0.008607335 -0.070415557 -0.036657027</span></span>
-<span><span class="co">#&gt; EMI        0.03629973 0.015191629  0.006146495  0.065810277</span></span></code></pre></div>
+<span><span class="co">#&gt;                  mean          sd   0.025quant  0.975quant</span></span>
+<span><span class="co">#&gt; Intercept  3.73695763 0.246344892  3.250854268  4.22272039</span></span>
+<span><span class="co">#&gt; A         -0.17936928 0.050032938 -0.278544636 -0.08131114</span></span>
+<span><span class="co">#&gt; WS        -0.06043954 0.008439061 -0.076977750 -0.04387954</span></span>
+<span><span class="co">#&gt; TEMP      -0.12232756 0.035174143 -0.191373739 -0.05341924</span></span>
+<span><span class="co">#&gt; HMIX      -0.02376854 0.013199356 -0.049613302  0.00215532</span></span>
+<span><span class="co">#&gt; PREC      -0.05356689 0.008603470 -0.070423067 -0.03667965</span></span>
+<span><span class="co">#&gt; EMI        0.03628971 0.015194465  0.006130535  0.06580542</span></span></code></pre></div>
 <p>For the hyperparameters, we transform the posterior marginal
 distributions for the model hyperparameters from the ones computed in
 internal scale, <span class="math inline">\(\log(1/\sigma^2_e)\)</span>,
@@ -378,10 +378,10 @@ parametrization, <span class="math inline">\(\sigma_e\)</span>, <span class="mat
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/INLA/man/marginal.html" class="external-link">inla.zmarginal</a></span><span class="op">(</span><span class="va">m</span>, silent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">shyper</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">7</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;                mean           sd  quant0.025  quant0.975</span></span>
-<span><span class="co">#&gt; sigma_e   0.1810206  0.003767895   0.1737459   0.1885436</span></span>
-<span><span class="co">#&gt; range_s 280.5797228 17.010419199 248.8166175 315.6046353</span></span>
-<span><span class="co">#&gt; range_t  49.8832281  8.104959465  36.1292128  67.8879839</span></span>
-<span><span class="co">#&gt; sigma_u   1.1370349  0.086787849   0.9788457   1.3194864</span></span></code></pre></div>
+<span><span class="co">#&gt; sigma_e   0.1809588  0.003769026   0.1736914   0.1884935</span></span>
+<span><span class="co">#&gt; range_s 280.6087175 17.034929567 248.9601912 315.8411047</span></span>
+<span><span class="co">#&gt; range_t  49.9291841  8.115105859  36.1311839  67.9310490</span></span>
+<span><span class="co">#&gt; sigma_u   1.1359558  0.086770418   0.9777106   1.3182871</span></span></code></pre></div>
 <p>However, it is better to look at the posterior marginal itself, and
 we will visualize it later.</p>
 <p>The model fitted in <span class="citation">Cameletti et al.
@@ -399,7 +399,7 @@ al. (2013)</span> with</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">shyper</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fl">1</span><span class="op">]</span>, </span>
 <span>  a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">h</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fl">8</span> <span class="op">*</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">/</span> <span class="va">shyper</span><span class="op">[</span><span class="fl">3</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     sigma_e     sigma_u     range_s           a </span></span>
-<span><span class="co">#&gt;   0.1810206   1.1370349 280.5797228   0.9606995</span></span></code></pre></div>
+<span><span class="co">#&gt;   0.1809588   1.1359558 280.6087175   0.9607349</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -433,24 +433,24 @@ with it</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">results</span>, <span class="kw">function</span><span class="op">(</span><span class="va">r</span><span class="op">)</span> <span class="va">r</span><span class="op">$</span><span class="va">cpu</span><span class="op">)</span></span>
 <span><span class="co">#&gt;               u102         u121</span></span>
-<span><span class="co">#&gt; Pre       1.122127    0.5912018</span></span>
-<span><span class="co">#&gt; Running 800.464392 3142.2407811</span></span>
-<span><span class="co">#&gt; Post      6.786452    4.5008988</span></span>
-<span><span class="co">#&gt; Total   808.372970 3147.3328817</span></span></code></pre></div>
+<span><span class="co">#&gt; Pre       1.153795    0.7105403</span></span>
+<span><span class="co">#&gt; Running 792.245589 3173.2201099</span></span>
+<span><span class="co">#&gt; Post      6.721834    5.1492677</span></span>
+<span><span class="co">#&gt; Total   800.121217 3179.0799179</span></span></code></pre></div>
 <p>and the number of fn-calls during the optimization are</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">results</span>, <span class="kw">function</span><span class="op">(</span><span class="va">r</span><span class="op">)</span> <span class="va">r</span><span class="op">$</span><span class="va">misc</span><span class="op">$</span><span class="va">nfunc</span><span class="op">)</span></span>
 <span><span class="co">#&gt; u102 u121 </span></span>
-<span><span class="co">#&gt;  305  511</span></span></code></pre></div>
+<span><span class="co">#&gt;  275  446</span></span></code></pre></div>
 <p>The posterior mode for each parameter in each model (in internal
 scale) are</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">results</span>, <span class="kw">function</span><span class="op">(</span><span class="va">r</span><span class="op">)</span> <span class="va">r</span><span class="op">$</span><span class="va">mode</span><span class="op">$</span><span class="va">theta</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                                                  u102      u121</span></span>
-<span><span class="co">#&gt; Log precision for the Gaussian observations 3.4191277  3.593512</span></span>
-<span><span class="co">#&gt; Theta1 for field                            5.6336495  7.291621</span></span>
-<span><span class="co">#&gt; Theta2 for field                            3.8845170 10.983094</span></span>
-<span><span class="co">#&gt; Theta3 for field                            0.1204029  2.155592</span></span></code></pre></div>
+<span><span class="co">#&gt; Log precision for the Gaussian observations 3.4200222  3.597609</span></span>
+<span><span class="co">#&gt; Theta1 for field                            5.6326086  7.280326</span></span>
+<span><span class="co">#&gt; Theta2 for field                            3.8865519 10.944963</span></span>
+<span><span class="co">#&gt; Theta3 for field                            0.1196121  2.142180</span></span></code></pre></div>
 <p>We compute the posterior marginal distribution for the
 hyper-parameters in the user-interpretable scale, like we did before for
 the first model, with</p>
@@ -516,8 +516,8 @@ version (LCPO), summarized as the mean.</p>
 <span>    LCPO <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">r</span><span class="op">$</span><span class="va">cpo</span><span class="op">$</span><span class="va">cpo</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;             DIC       WAIC        LPO       LCPO</span></span>
-<span><span class="co">#&gt; u102 -0.3767683 -0.2593200 -0.4053421 -0.1174134</span></span>
-<span><span class="co">#&gt; u121 -0.4110550 -0.3159906 -0.5080621 -0.1158289</span></span></code></pre></div>
+<span><span class="co">#&gt; u102 -0.3768125 -0.2592834 -0.4054226 -0.1174082</span></span>
+<span><span class="co">#&gt; u121 -0.4110888 -0.3171652 -0.5092709 -0.1159713</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="the-automatic-group-leave-out-cross-validation">The automatic group-leave-out cross validation<a class="anchor" aria-label="anchor" href="#the-automatic-group-leave-out-cross-validation"></a>
@@ -541,7 +541,7 @@ observation under model “102” we have</p>
 <span><span class="co">#&gt; [1]  52  76  98 100 106 124</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $corr</span></span>
-<span><span class="co">#&gt; [1] 0.2578197 0.4297376 0.3005885 1.0000000 0.3299283 0.4297376</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.2579230 0.4298348 0.3006028 1.0000000 0.3299353 0.4298348</span></span></code></pre></div>
 <p>and for the result under model “121” we have</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">g5cv</span><span class="op">$</span><span class="va">u121</span><span class="op">$</span><span class="va">group</span><span class="op">[[</span><span class="fl">100</span><span class="op">]</span><span class="op">]</span></span>
@@ -549,7 +549,7 @@ observation under model “102” we have</p>
 <span><span class="co">#&gt; [1]  52  76  98 100 124 148</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $corr</span></span>
-<span><span class="co">#&gt; [1] 0.1672936 0.3736475 0.1672936 1.0000000 0.3760854 0.1641083</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.1654457 0.3716258 0.1654457 1.0000000 0.3740730 0.1623327</span></span></code></pre></div>
 <p>which has intersection but are not the same, for the model setup
 used.</p>
 <p>We can check which are these observations in the dataset</p>
@@ -575,7 +575,7 @@ lower number is better</p>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">g5cv</span>, <span class="kw">function</span><span class="op">(</span><span class="va">r</span><span class="op">)</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">r</span><span class="op">$</span><span class="va">cv</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;       u102       u121 </span></span>
-<span><span class="co">#&gt; 0.04089492 0.06984455</span></span></code></pre></div>
+<span><span class="co">#&gt; 0.04148266 0.06944199</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

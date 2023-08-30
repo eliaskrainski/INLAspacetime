@@ -448,9 +448,9 @@ the intercept with</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">summary.fix</span></span>
 <span><span class="co">#&gt;               mean        sd 0.025quant 0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; Intercept 10.11306 0.4102034   9.306218 10.10433   10.96952 10.10527</span></span>
+<span><span class="co">#&gt; Intercept 10.11305 0.4105216   9.305546  10.1043   10.97018 10.10524</span></span>
 <span><span class="co">#&gt;                    kld</span></span>
-<span><span class="co">#&gt; Intercept 8.395592e-07</span></span></code></pre></div>
+<span><span class="co">#&gt; Intercept 8.570597e-07</span></span></code></pre></div>
 <p>For the hyper-parameters the computations were performed in an
 internal scale. That is log of range and log(<span class="math inline">\(\sigma\)</span>), and <span class="math inline">\(\log(1/\sigma_e^2)\)</span>. However, we can
 transform each of the hyper-parameters from the internal marginal scale
@@ -481,10 +481,10 @@ data:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span>true <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>sigma.e <span class="op">=</span> <span class="va">sigma.e</span>, range <span class="op">=</span> <span class="va">ranges</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, sigma <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
 <span>      <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">pmarginals</span>, <span class="kw">function</span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span>
 <span>             <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/INLA/man/marginal.html" class="external-link">inla.zmarginal</a></span><span class="op">(</span><span class="va">m</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;        sigma.e    range     sigma</span></span>
-<span><span class="co">#&gt; true 1.0000000 4.000000 1.0000000</span></span>
-<span><span class="co">#&gt; mean 1.0443269 4.042240 0.9014478</span></span>
-<span><span class="co">#&gt; sd   0.0380953 1.077194 0.1393613</span></span></code></pre></div>
+<span><span class="co">#&gt;         sigma.e    range     sigma</span></span>
+<span><span class="co">#&gt; true 1.00000000 4.000000 1.0000000</span></span>
+<span><span class="co">#&gt; mean 1.04427649 4.041528 0.9017618</span></span>
+<span><span class="co">#&gt; sd   0.03810935 1.077536 0.1393859</span></span></code></pre></div>
 <p>We can also visualize these these posterior marginal distributions
 with</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
