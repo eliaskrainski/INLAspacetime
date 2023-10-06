@@ -62,6 +62,7 @@ downloadUtilFiles <- function(data.dir, year = 2022, force = FALSE) {
 #' \url{https://www.ncei.noaa.gov/pub/data/ghcn/daily/by_year/}
 #' see references bellow.
 #' @param variable string with the variable name(s) to be selected
+#' @param station string (vector) with the station(s) to be selected
 #' @param qflag a string with quality control flag(s)
 #' @param verbose logical indicating if progress is to be printed
 #' @param astype function to convert data to a class,
@@ -84,6 +85,7 @@ downloadUtilFiles <- function(data.dir, year = 2022, force = FALSE) {
 #' @export
 ghcndSelect <- function(gzfile,
                         variable = c("TMIN", "TAVG", "TMAX"),
+                        station = NULL,
                         qflag = "",
                         verbose = TRUE,
                         astype = as.integer) {
@@ -106,7 +108,7 @@ ghcndSelect <- function(gzfile,
   }
 
   if (verbose) {
-    cat("readed ", nrow(d), "")
+    cat("readed ", nrow(d), "observations.")
     t1 <- Sys.time()
     print(t1 - t0)
   }
@@ -121,13 +123,29 @@ ghcndSelect <- function(gzfile,
 
 
   ii <- ii[which(d$V6[ii] %in% qflag)]
-  d <- d[ii, ]
+    d <- d[ii, ]
 
   if (verbose) {
-    cat("Selected ", length(ii), "observations. ")
+    cat("Selected ", length(ii), "observations.")
     t3 <- Sys.time()
     print(t3 - t2)
   }
+
+    if(is.null(station)) {
+        t4 <- t3
+    } else {
+        ii <- which(d$V1 %in% station)
+        d <- d[ii, ]
+        if (verbose) {
+            cat("Selected ", length(ii),
+                "observations from", length(station),
+                "stations.")
+            t4 <- Sys.time()
+            print(t4 - t3)
+        }        
+    }
+
+    if(length(ii)==0) return(NULL)
 
   cnames <- c("day", "station")
   names(d)[2:1] <- cnames
@@ -139,11 +157,12 @@ ghcndSelect <- function(gzfile,
     d <- tapply(d[, 4], d[, cnames[c(2, 1, 3)]], astype)
     d <- d[, , pmatch(variable, dimnames(d)[[3]]), drop = FALSE]
   }
-  if (verbose) {
-    cat("Wide data dim =", dim(d), "")
-    t4 <- Sys.time()
-    print(t4 - t3)
-  }
+
+    if (verbose) {
+        cat("Wide data dim =", dim(d), "")
+        t5 <- Sys.time()
+        print(t5 - t4)
+    }
 
   return(d)
 }

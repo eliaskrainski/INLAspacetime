@@ -7,6 +7,7 @@
 ghcndSelect(
   gzfile,
   variable = c("TMIN", "TAVG", "TMAX"),
+  station = NULL,
   qflag = "",
   verbose = TRUE,
   astype = as.integer
@@ -19,6 +20,8 @@ the daily data file file. E.g. 2023.csv.gz from
 see references bellow.}
 
 \item{variable}{string with the variable name(s) to be selected}
+
+\item{station}{string (vector) with the station(s) to be selected}
 
 \item{qflag}{a string with quality control flag(s)}
 

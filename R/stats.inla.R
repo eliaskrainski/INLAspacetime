@@ -91,12 +91,7 @@ stats.inla <- function(m, i = NULL, y, fsummarize = mean) {
   r <- c(
     dic = fsummarize(m$dic$local.dic[i]),
     waic = fsummarize(m$waic$local.waic[i]),
-    lpo = -fsummarize(dnorm(
-      y[i], m$summary.fitted.value$mean[i],
-      sqrt(m$summary.fitted.value$sd[i]^2 +
-        sigma2.mean),
-      log = TRUE
-    )),
+    lpo = -fsummarize(log(m$po$po[i])),
     lcpo = -fsummarize(log(m$cpo$cpo[i])),
     mse = fsummarize((y[i] - m$summary.fitted.value$mean[i])^2),
     mae = fsummarize(abs(y[i] - m$summary.fitted.value$mean[i])),
