@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">INLAspacetime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.7.002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.7.004</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,6 +58,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ghcndSelect</span><span class="op">(</span></span>
 <span>  <span class="va">gzfile</span>,</span>
 <span>  variable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TMIN"</span>, <span class="st">"TAVG"</span>, <span class="st">"TMAX"</span><span class="op">)</span>,</span>
+<span>  station <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  qflag <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  astype <span class="op">=</span> <span class="va">as.integer</span></span>
@@ -75,6 +76,10 @@ see references bellow.</p></dd>
 
 <dt>variable</dt>
 <dd><p>string with the variable name(s) to be selected</p></dd>
+
+
+<dt>station</dt>
+<dd><p>string (vector) with the station(s) to be selected</p></dd>
 
 
 <dt>qflag</dt>
