@@ -23,16 +23,17 @@
 #' See the paper.
 #' @return objects to be used in the f() formula term in INLA.
 #' @export
+#' @importFrom fmesher fm_manifold
 stModel.define <-
   function(smesh, tmesh, model, control.priors,
            constr = FALSE, debug = FALSE, verbose = FALSE,
            useINLAprecomp = TRUE, libpath = NULL) {
     stopifnot(model %in% c("102", "121", "202", "220"))
 
-    stopifnot(any(substr(smesh$manifold, 1, 1) %in% c("S", "R")))
-    Rmanifold <- (substr(smesh$manifold, 1, 1) == "R") + 0L
+    stopifnot(fm_manifold(smesh), c("S", "R"))
+    Rmanifold <- fm_manifold(smesh, "R") + 0L
 
-    dimension <- as.integer(substr(smesh$manifold, 2, 2))
+    dimension <- fm_manifold_dim(smesh)
     stopifnot(dimension > 0)
 
     alphas <- as.integer(strsplit(model, "")[[1]])

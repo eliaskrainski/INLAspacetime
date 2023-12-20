@@ -162,7 +162,7 @@ The solution needs the triangles inside the barrier domain to be identified.
 For each triangle center we check if it is inside or not of the barrier domain
 and and create a vector to identify to which domain is each triangle center inside
 ```{r ibarrier}
-triBarrier <- unlist(fm_contains(
+triBarrier <- unlist(fmesher::fm_contains(
   x = barriers, 
   y = mesh, 
   type = "centroid"))
