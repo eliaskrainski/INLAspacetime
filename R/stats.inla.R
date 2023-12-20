@@ -86,7 +86,7 @@ stats.inla <- function(m, i = NULL, y, fsummarize = mean) {
     i <- 1:length(m$dic$local.dic)
   }
   sigma2.mean <- INLA::inla.emarginal(
-    exp,
+    function(x) exp(-x),
     m$internal.marginals.hyperpar[[1]])
   r <- c(
     dic = fsummarize(m$dic$local.dic[i]),
