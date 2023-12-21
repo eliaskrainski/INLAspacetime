@@ -31,8 +31,10 @@ in the non-separable part.}
 \item{alpha.e}{spatial order of the spatial differential operator
 in the separable part.}
 
-\item{lgammas}{numeric of length 3 with \eqn{log(\gamma_k)}{log(gamma[k])}
-model parameters (TODO: document the parameter order)}
+\item{lgammas}{numeric of length 3 with
+\eqn{log(\gamma_k)}{log(gamma[k])}
+model parameters. The parameter order is
+log(gamma.s, gamma.t, gamma.e)}
 }
 \value{
 the part of \code{sigma} from the spatial constant and \verb{\\gamma_s}.
