@@ -56,8 +56,10 @@ params2gammas <- function(lparams, alpha.t, alpha.s, alpha.e, smanifold = "R2") 
   return(lg)
 }
 #' @rdname paramsUtils
-#' @param lgammas numeric of length 3 with \eqn{log(\gamma_k)}{log(gamma[k])}
-#' model parameters (TODO: document the parameter order)
+#' @param lgammas numeric of length 3 with
+#' \eqn{log(\gamma_k)}{log(gamma[k])}
+#' model parameters. The parameter order is
+#'  log(gamma.s, gamma.t, gamma.e)
 #' @param alpha.t temporal order of the SPDE
 #' @param alpha.s spatial order of the spatial differential operator
 #' in the non-separable part.

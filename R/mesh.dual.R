@@ -49,13 +49,11 @@ mesh.dual <- function(mesh, SP = TRUE,
       xx <- p[, 1] - mesh$loc[i, 1]
     }
     p <- p[order(atan2(yy, xx)), ]
-    if(SP)
-      p <- sp::Polygons(list(sp::Polygon(pls[[i]])), i)
+    #p <- sp::Polygons(list(sp::Polygon(pls[[i]])), i)
     return(p)
   }, mc.cores = mc.cores)
-  if (SP) {
-    return(sp::SpatialPolygons(pls))
-  } else {
-    return(pls)
-  }
+  pls <- sp::SpatialPolygons(pls)
+  if(!SP)
+    pls <- st_as_sf(pls)
+  return(pls)
 }

@@ -23,7 +23,7 @@ M <- ~ -1 + Intercept(1) +
 
 ### define the spacetime model
 stmodel <- stModel.define(
-    smesh, tmesh, '121', 
+    smesh, tmesh, '121', debug = TRUE,
     control.priors=list(
         prs=c(1, 0.5),
         prt=c(5, 0.5),
@@ -47,7 +47,7 @@ result <-
                  hyper = lkprec), 
              data=dataf),
         options = list(
-            verbose=TRUE)
+            num.threads = "2:1")
         )
 
 result$summary.hyperpar
