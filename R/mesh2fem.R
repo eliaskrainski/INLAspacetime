@@ -74,6 +74,29 @@ mesh2fem.barrier <- function(mesh, barrier.triangles = NULL) {
     warning("No 'barrier.triangles', using 'mesh2fem(mesh, order = 2)'!")
     return(mesh2fem(mesh = mesh, order = 2L))
   }
+
+  stopifnot(fm_manifold(mesh, c("S", "R")))
+  Rmanifold <- fm_manifold(mesh, "R") + 0L
+
+  dimension <- fm_manifold_dim(mesh)
+  stopifnot(dimension > 0)
+
+  ### safe to use from triangle area from:
+  hh <- INLA::inla.mesh.fem(mesh, order = 1)$ta
+  if(Rmanifold==0) {
+    stopifnot(all.equal(mesh$crs, fmesher:::fm_crs("sphere"))) ### assume sphere
+    ll_crs <- sf::st_crs("+proj=longlat  +datum=WGS84")
+    po_crs <- sf::st_crs("+proj=moll +x_0=0 +y_0=0 +lat_0=0 +lon_0=180 +units=km")
+    ao_crs <- sf::st_crs("+proj=moll +x_0=0 +y_0=0 +lat_0=0 +lon_0=0 +units=km")
+    llloc <- fmesher::fm_transform(mesh, crs = ll_crs)$loc
+    ploc <- fmesher::fm_transform(mesh, crs = po_crs)$loc
+    mesh <- fmesher::fm_transform(mesh, crs = ao_crs)
+    ile <- which((llloc[, 1] < (-175)) | (llloc[, 1]>175))
+    Rsq <- 6371^2
+    Ea <- 4 * pi * Rsq
+    hhS <- hh * Ea
+  }
+
   barrier.triangles <- unique(sort(barrier.triangles))
   itv <- list(
     setdiff(
@@ -108,7 +131,21 @@ mesh2fem.barrier <- function(mesh, barrier.triangles = NULL) {
     ng <- nc <- 0
     for (j in itv[[o]]) {
       it <- mesh$graph$tv[j, ]
-      h <- Heron(mesh$loc[it, 1], mesh$loc[it, 2])
+      h <- hh[it]
+      hS <- hhS[it]
+      if(any(it %in% ile)) {
+        ##h <- Heron(ploc[it, 1], ploc[it, 2])
+        g1x[ng + 1:9] <- Stiffness(
+          ploc[it, 1],
+          ploc[it, 2]
+        ) / hS
+      } else {
+        ##h <- Heron(mesh$loc[it, 1], mesh$loc[it, 2])
+        g1x[ng + 1:9] <- Stiffness(
+          mesh$loc[it, 1],
+          mesh$loc[it, 2]
+        ) / hS
+      }
 
       c0[it] <- c0[it] + h / 3
       iic[nc + 1:9] <- it[ii0c]
@@ -117,10 +154,6 @@ mesh2fem.barrier <- function(mesh, barrier.triangles = NULL) {
 
       iig[ng + 1:9] <- it[ii0g]
       jjg[ng + 1:9] <- it[jj0g]
-      g1x[ng + 1:9] <- Stiffness(
-        mesh$loc[it, 1],
-        mesh$loc[it, 2]
-      ) / h
 
       nc <- nc + 9L
       ng <- ng + 9L
@@ -135,7 +168,7 @@ mesh2fem.barrier <- function(mesh, barrier.triangles = NULL) {
     res$D[[o]] <- INLA::inla.as.dgTMatrix(Matrix::sparseMatrix(
       i = iig[ijxg], j = jjg[ijxg], x = g1x[ijxg], dims = c(n, n)
     ))
-    res$C[[o]] <- c0 * 3
+    res$C[[o]] <- c0 ## * 3
     res$hdim <- res$hdim + 1L
   }
   res$I <- INLA::inla.as.dgTMatrix(res$I)
