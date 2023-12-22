@@ -30,7 +30,7 @@ stModel.define <-
            useINLAprecomp = TRUE, libpath = NULL) {
     stopifnot(model %in% c("102", "121", "202", "220"))
 
-    stopifnot(fm_manifold(smesh), c("S", "R"))
+    stopifnot(fm_manifold(smesh, c("S", "R")))
     Rmanifold <- fm_manifold(smesh, "R") + 0L
 
     dimension <- fm_manifold_dim(smesh)
