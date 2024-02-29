@@ -1,17 +1,20 @@
 #' Extracts the dual of a mesh object.
 #' @aliases mesh.dual
 #' @param mesh a 2d mesh object.
-#' @param SP logical indicating if the output is to be returned
-#' as a SpatialPolygons object. Default is TRUE.
+#' @param returnclass if NULL will return a list of polygon coordinates.
+#' if "SP" will return a SpatialPolygons object.
+#' if "sf" will return a sfc_multipolygon object.
 #' @param mc.cores number of threads to be used.
 #' @return a list of polygons or a SpatialPolygons object.
 #' @export
-mesh.dual <- function(mesh, SP = TRUE,
+mesh.dual <- function(mesh,
+                      returnclass = c("list", "SP", "sf"),
                       mc.cores = getOption("mc.cores", 2L)) {
   requireNamespace("parallel")
   if (mesh$manifold != "R2") {
     stop("This only works for R2!")
   }
+  returnclass <- match.arg(returnclass, c("list", "SP", "sf"))
   ce <- t(sapply(1:nrow(mesh$graph$tv), function(i) {
     colMeans(mesh$loc[mesh$graph$tv[i, ], 1:2])
   }))
@@ -49,11 +52,17 @@ mesh.dual <- function(mesh, SP = TRUE,
       xx <- p[, 1] - mesh$loc[i, 1]
     }
     p <- p[order(atan2(yy, xx)), ]
-    #p <- sp::Polygons(list(sp::Polygon(pls[[i]])), i)
-    return(p)
+    return(switch(
+      returnclass,
+      list = p,
+      SP = sp::Polygons(list(sp::Polygon(pls[[i]])), i),
+      sf = sf::st_polygon(list(p[c(1:nrow(p), 1), ]))
+    ))
   }, mc.cores = mc.cores)
-  pls <- sp::SpatialPolygons(pls)
-  if(!SP)
-    pls <- st_as_sf(pls)
-  return(pls)
+  return(switch(
+    returnclass,
+    list = pls,
+    SP = sp::SpatialPolygons(pls),
+    sf = sf::st_sfc(sf::st_multipolygon(pls))
+  ))
 }
