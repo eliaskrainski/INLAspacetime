@@ -9,14 +9,15 @@ ar2precision(n, a)
 \arguments{
 \item{n}{the size of the model.}
 
-\item{a}{the length three vector with the coefficients. See details.}
+\item{a}{a length three vector with the coefficients.
+See details.}
 }
 \value{
 the precision matrix as a sparse matrix object with edge correction.
 }
 \description{
 Creates a precision matrix as a sparse matrix object
-considering the specification stated in {details}.
+considering the specification stated in {Details}.
 }
 \section{Details}{
 

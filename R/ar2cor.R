@@ -4,7 +4,7 @@
 #'
 #' @param a1 the first auto-regression coefficient.
 #' @param a2 the second auto-regression coefficient.
-#' @param k maximun length for evaluating the auto-correlation.
+#' @param k maximum lag for evaluating the auto-correlation.
 #' @section Details:
 #'  Let the second order auto-regression model defined as
 #'   `x_t + a_1 x_{t-1} + a_2 x_{t-2} = w_t`
@@ -17,14 +17,23 @@
 #' plot(ar2cor(-1.7, 0.963), type = "o")
 ar2cor <- function(a1, a2, k = 30) {
   a <- -cbind(a1, a2)
-  r <- matrix(NA, nrow(a), k)
+  n <- nrow(a)
+  k <- as.integer(k)
+  stopifnot(k>0)
+  r <- matrix(double(n * k), n, k)
   r[, 1] <- a[, 1] / (1 - a[, 2])
   if (k > 1) {
     r[, 2] <- (a[, 1]^2 + a[, 2] - a[, 2]^2) / (1 - a[, 2])
   }
   if (k > 2) {
-    for (j in 3:k) {
-      r[, j] <- a[, 1] * r[, j - 1] + a[, 2] * r[, j - 2]
+    if(FALSE) {
+      r <- t(.C("ar2cor", n, k, a[,1], a[,2],
+                r = t(r),
+                PACKAGE = "INLAspacetime")$r)
+    } else {
+      for (j in 3:k) {
+        r[, j] <- a[, 1] * r[, j - 1] + a[, 2] * r[, j - 2]
+      }
     }
   }
   return(drop(r))

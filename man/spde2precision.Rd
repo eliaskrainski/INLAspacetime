@@ -18,6 +18,7 @@ the precision matrix as a sparse matrix object.
 }
 \description{
 Creates a precision matrix as a sparse matrix object.
+For general code look at the functions in the INLA package.
 }
 \section{Warning}{
 

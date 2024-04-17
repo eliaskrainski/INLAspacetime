@@ -2,33 +2,33 @@
 % Please edit documentation in R/worldMap.R
 \name{worldMap}
 \alias{worldMap}
-\title{Get the world map}
+\title{Helper functions to retrieve the world map,
+a world polygon, and create grid centers.}
 \usage{
 worldMap(
-  crs = sp::CRS("+proj=moll +units=km"),
+  crs = "+proj=moll +units=km",
   scale = "medium",
-  returnclass = c("sp", "sf")
+  returnclass = c("sf", "sv")
 )
 }
 \arguments{
-\item{crs}{a CRS object for the target coordinates.
+\item{crs}{a string with the projection.
 Default is the Mollweide projection with units in kilometers.}
 
-\item{scale}{see the help from \code{\link[rnaturalearth:ne_countries]{rnaturalearth::ne_countries()}}}
+\item{scale}{see the help from the 'ne_countries'
+of the 'rnaturalearth' package}
 
-\item{returnclass}{defined by the \link{sp} if returnclass = "sp" or
-by the \link{sf} package if returnclass = "sf".}
+\item{returnclass}{defined by the
+\link{sf} package if returnclass = "sf"
+or \link{terra} if returnclass = "sv".}
 }
 \value{
-the world map
+the world map of the countries.
 }
 \description{
-Consider the world map, fix the wrap around and convert to the
-Mollweide projection in km distance (default, can be changed).
-}
-\details{
-Requires the \code{rnaturalearth} package
+Retrieve the map of the countries
 }
 \references{
-the world map data is from the maps R package.
+The land and ocean maps are obtained with
+the 'rnaturalearth' package.
 }
