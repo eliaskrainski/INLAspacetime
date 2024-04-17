@@ -1,10 +1,12 @@
 #' Illustrative code for building a mesh in 2d domain.
 #'
-#' Creates a mesh object.
+#' Creates a mesh object. This is just a test code.
+#' For efficient, reliable and general code
+#' use the \pkg{fmesher} package.
 #'
 #' @param loc a two column matrix with location coordinates.
 #' @param domain a two column matrix defining the domain.
-#' @param max.edge the maximun edge length.
+#' @param max.edge the maximum edge length.
 #' @param offset the length of the outer extension.
 #' @param SP logical indicating if the output will include the SpatialPolygons.
 #' @section Warning:

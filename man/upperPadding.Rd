@@ -3,7 +3,7 @@
 \name{upperPadding}
 \alias{upperPadding}
 \title{Prepare a matrix or a list of matrices
-for use in some cgeneric code.}
+for use in some 'cgeneric' code.}
 \usage{
 upperPadding(M, relative = FALSE)
 }

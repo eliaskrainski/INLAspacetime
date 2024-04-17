@@ -263,6 +263,9 @@ stModel.matrices <-
 #' @param tmesh Temporal mesh
 #' @return return a list of temporal finite element method matrices
 #' for the supplied mesh.
+#' @details
+#' Temporal GMRF representation with stationary boundary conditions
+#' as in Appendix E of the paper.
 #' @export
 Jmatrices <- function(tmesh) {
   tfe <- fmesher::fm_fem(tmesh, order = 2L)

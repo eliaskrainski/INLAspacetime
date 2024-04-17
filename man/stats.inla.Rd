@@ -2,7 +2,8 @@
 % Please edit documentation in R/stats.inla.R
 \name{stats.inla}
 \alias{stats.inla}
-\title{To retrieve goodness of fit statistics.}
+\title{To retrieve goodness of fit statistics
+for a specific model class.}
 \usage{
 stats.inla(m, i = NULL, y, fsummarize = mean)
 }

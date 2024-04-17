@@ -1,5 +1,5 @@
 #' Prepare a matrix or a list of matrices
-#' for use in some cgeneric code.
+#' for use in some 'cgeneric' code.
 #'
 #' Define a graph of the union of the supplied matrices
 #' and return the row ordered diagonal plus upper triangle

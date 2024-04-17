@@ -13,14 +13,15 @@ mesh.dual(
 \arguments{
 \item{mesh}{a 2d mesh object.}
 
-\item{returnclass}{if NULL will return a list of polygon coordinates.
-if "SP" will return a SpatialPolygons object.
-if "sf" will return a sfc_multipolygon object.}
+\item{returnclass}{if
+'list' return a list of polygon coordinates,
+if "SP" return a SpatialPolygons object,
+if "sf" return a sfc_multipolygon object.}
 
 \item{mc.cores}{number of threads to be used.}
 }
 \value{
-a list of polygons or a SpatialPolygons object.
+see {returnclass}
 }
 \description{
 Extracts the dual of a mesh object.

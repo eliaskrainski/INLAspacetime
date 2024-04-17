@@ -11,7 +11,7 @@ mesh2d(loc, domain, max.edge, offset, SP = TRUE)
 
 \item{domain}{a two column matrix defining the domain.}
 
-\item{max.edge}{the maximun edge length.}
+\item{max.edge}{the maximum edge length.}
 
 \item{offset}{the length of the outer extension.}
 
@@ -21,7 +21,9 @@ mesh2d(loc, domain, max.edge, offset, SP = TRUE)
 a mesh object.
 }
 \description{
-Creates a mesh object.
+Creates a mesh object. This is just a test code.
+For efficient, reliable and general code
+use the \pkg{fmesher} package.
 }
 \section{Warning}{
 

@@ -1,4 +1,4 @@
-#' Internal util functions
+#' Internal util functions for polygon properties.
 #'
 #' Function used internally to compute the area of a triangle.
 #' @rdname polyUtils
@@ -29,6 +29,8 @@ Area <- function(x, y) {
 #' Function to compute area of a S2 triangle
 #' @rdname polyUtils
 #' @aliases s2trArea
+#' @param tr the triangle coordinates
+#' @param R the radius of the spherical domain
 #' @return the area of a triangle in S2
 s2trArea <- function(tr, R = 1) {
   costh <- R * R +

@@ -6,7 +6,7 @@
 \alias{s2trArea}
 \alias{flatArea}
 \alias{Stiffness}
-\title{Internal util functions}
+\title{Internal util functions for polygon properties.}
 \usage{
 Heron(x, y)
 
@@ -20,6 +20,10 @@ Stiffness(tr)
 }
 \arguments{
 \item{x, y}{coordinate vectors.}
+
+\item{tr}{the triangle coordinates}
+
+\item{R}{the radius of the spherical domain}
 }
 \value{
 the area of a 2d triangle

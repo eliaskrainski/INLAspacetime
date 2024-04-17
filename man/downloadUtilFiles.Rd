@@ -3,7 +3,7 @@
 \name{downloadUtilFiles}
 \alias{downloadUtilFiles}
 \alias{donwloadUtilFiles}
-\title{Donload the data files used}
+\title{Download files from the NOAA's GHCN daily data}
 \usage{
 downloadUtilFiles(data.dir, year = 2022, force = FALSE)
 }
@@ -21,5 +21,5 @@ a named character vector with the local file names:
 daily.data, stations.all, elevation.
 }
 \description{
-Donload the data files used
+Download files from the NOAA's GHCN daily data
 }

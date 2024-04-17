@@ -1,11 +1,12 @@
 #' Extracts the dual of a mesh object.
 #' @aliases mesh.dual
 #' @param mesh a 2d mesh object.
-#' @param returnclass if NULL will return a list of polygon coordinates.
-#' if "SP" will return a SpatialPolygons object.
-#' if "sf" will return a sfc_multipolygon object.
+#' @param returnclass if
+#' 'list' return a list of polygon coordinates,
+#' if "SP" return a SpatialPolygons object,
+#' if "sf" return a sfc_multipolygon object.
 #' @param mc.cores number of threads to be used.
-#' @return a list of polygons or a SpatialPolygons object.
+#' @return see {returnclass}
 #' @export
 mesh.dual <- function(mesh,
                       returnclass = c("list", "SP", "sf"),

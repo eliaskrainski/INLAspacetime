@@ -1,4 +1,9 @@
-#' Funtions to help converting from/to user/internal parametrization.
+#' Functions to help converting
+#' from/to user/internal parametrization.
+#' The internal parameters are
+#' 'gamma_s, 'gamma_t', 'gamma_E'
+#' The user parameters are
+#' 'r_s', 'r_t', 'sigma'
 #' @rdname paramsUtils
 #' @name paramsUtils
 #' @aliases gammas2params
@@ -7,6 +12,7 @@
 #' @param alpha the resulting spatial order.
 #' @param smanifold spatial domain manifold, which could be
 #'  "S1", "S2", "R1", "R2" and "R3".
+#' @details See equation (23) in the paper.
 #' @return the part of `sigma` from the spatial constant and `\gamma_s`.
 lgsConstant <- function(lg.s, alpha, smanifold) {
   stopifnot(substr(smanifold, 1, 1) %in% c("R", "S"))
@@ -32,9 +38,12 @@ lgsConstant <- function(lg.s, alpha, smanifold) {
   }
   return(gsCs)
 }
+#' Convert from user parameters to SPDE parameters
 #' @rdname paramsUtils
 #' @param lparams log(spatial range, temporal range, sigma)
 #' @return log(gamma.s, gamma.t, gamma.e)
+#' @details
+#' See equations (19), (20) and (21) in the paper.
 #' @export
 #' @examples
 #' params2gammas(log(c(1, 1, 1)), 1, 2, 1, "R2")
@@ -55,6 +64,7 @@ params2gammas <- function(lparams, alpha.t, alpha.s, alpha.e, smanifold = "R2") 
   lg[3] <- 0.5 * (lct + lcs - lg[2]) - lparams[3]
   return(lg)
 }
+#' Convert from SPDE parameters to user parameters
 #' @rdname paramsUtils
 #' @param lgammas numeric of length 3 with
 #' \eqn{log(\gamma_k)}{log(gamma[k])}
@@ -65,6 +75,8 @@ params2gammas <- function(lparams, alpha.t, alpha.s, alpha.e, smanifold = "R2") 
 #' in the non-separable part.
 #' @param alpha.e spatial order of the spatial differential operator
 #' in the separable part.
+#' @details
+#' See equations (19), (20) and (21) in the paper.
 #' @return log(spatial range, temporal range, sigma)
 #' @export
 #' @examples

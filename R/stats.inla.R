@@ -1,4 +1,5 @@
-#' To retrieve goodness of fit statistics.
+#' To retrieve goodness of fit statistics
+#' for a specific model class.
 #'
 #' Extracts dic, waic and log-cpo from an output returned by the inla function
 #' from the INLA package or by the bru function from the inlabru package,

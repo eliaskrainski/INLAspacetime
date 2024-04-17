@@ -5,7 +5,12 @@
 \alias{lgsConstant}
 \alias{gammas2params}
 \alias{params2gammas}
-\title{Funtions to help converting from/to user/internal parametrization.}
+\title{Functions to help converting
+from/to user/internal parametrization.
+The internal parameters are
+'gamma_s, 'gamma_t', 'gamma_E'
+The user parameters are
+'r_s', 'r_t', 'sigma'}
 \usage{
 lgsConstant(lg.s, alpha, smanifold)
 
@@ -44,7 +49,23 @@ log(gamma.s, gamma.t, gamma.e)
 log(spatial range, temporal range, sigma)
 }
 \description{
-Funtions to help converting from/to user/internal parametrization.
+Functions to help converting
+from/to user/internal parametrization.
+The internal parameters are
+'gamma_s, 'gamma_t', 'gamma_E'
+The user parameters are
+'r_s', 'r_t', 'sigma'
+
+Convert from user parameters to SPDE parameters
+
+Convert from SPDE parameters to user parameters
+}
+\details{
+See equation (23) in the paper.
+
+See equations (19), (20) and (21) in the paper.
+
+See equations (19), (20) and (21) in the paper.
 }
 \examples{
 params2gammas(log(c(1, 1, 1)), 1, 2, 1, "R2")

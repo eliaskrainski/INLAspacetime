@@ -1,17 +1,17 @@
 #' Spatial and Spatio-Temporal Models using INLA
 #'
 #' This package main purpose is to provide user friendly functions
-#' to fit temporal, spatial and spatio-temporal models using the
-#' INLA software available at www.r-inla.org
-#'
+#' to fit temporal, spatial and space-time models using the
+#' INLA software available at www.r-inla.org as well the
+#' inlabru package available
+#' @docType package
+#' @name INLAspacetime
 #' @return opens the Vignettes directory on a browser
-#' @export
-#'
+#' @import methods
 #' @import methods
 #' @import Matrix
 #' @import fmesher
-#' @importFrom sp CRS
-
+#' @export
 INLAspacetime <- function() {
   print("Welcome to the INLAspacetime package!")
   utils::browseVignettes("INLAspacetime")

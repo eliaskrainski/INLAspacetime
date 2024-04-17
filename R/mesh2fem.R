@@ -96,12 +96,12 @@ mesh2fem.barrier <- function(mesh, barrier.triangles = NULL) {
     R.i <- sqrt(rowSums(mesh$loc^2))
     hh <- sapply(1:nrow(mesh$graph$tv), function(i) {
       it <- mesh$graph$tv[i, ]
-      INLAspacetime:::s2trArea(mesh$loc[it, ], R.i[1])
+      s2trArea(mesh$loc[it, ], R.i[1])
     })
   } else {
     hh <- sapply(1:nrow(mesh$graph$tv), function(i) {
       it <- mesh$graph$tv[i, ]
-      INLAspacetime:::Heron(mesh$loc[it, 1], mesh$loc[it, 2])
+      Heron(mesh$loc[it, 1], mesh$loc[it, 2])
     })
   }
 

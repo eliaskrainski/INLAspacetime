@@ -16,3 +16,7 @@ for the supplied mesh.
 \description{
 The 2nd order temporal matrices with boundary correction
 }
+\details{
+Temporal GMRF representation with stationary boundary conditions
+as in Appendix E of the paper.
+}
