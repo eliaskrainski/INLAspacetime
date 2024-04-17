@@ -11,7 +11,7 @@ ar2cor(a1, a2, k = 30)
 
 \item{a2}{the second auto-regression coefficient.}
 
-\item{k}{maximun length for evaluating the auto-correlation.}
+\item{k}{maximum lag for evaluating the auto-correlation.}
 }
 \value{
 the autocorrelation as a vector or matrix, whenever \code{a1} or \code{a2} are
