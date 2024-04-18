@@ -19,7 +19,7 @@ Description: Prepare objects to implement models over spatial and
   'INLA', enabling fast parallel computations.
   We implemented the spatial barrier model, see Bakka et. al. (2019) 
   <doi:10.1016/j.spasta.2019.01.002>, and some of the spatio-temporal 
-  models in Lindgren et. al. (2023) <arXiv:2006.04917>. 
+  models in Lindgren et. al. (2023) <doi:10.48550/arXiv.2006.04917>. 
   Details are provided in the available vignettes and from the URL bellow.
 URL: https://github.com/eliaskrainski/INLAspacetime
 Additional_repositories: https://inla.r-inla-download.org/R/testing

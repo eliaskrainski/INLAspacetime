@@ -1,7 +1,7 @@
 #' Precision matrix for an AR2 model.
 #'
 #' Creates a precision matrix as a sparse matrix object
-#' considering the specification stated in {Details}.
+#' considering the specification stated in Details.
 #'
 #' @param n the size of the model.
 #' @param a a length three vector with the coefficients.

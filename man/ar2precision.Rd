@@ -17,7 +17,7 @@ the precision matrix as a sparse matrix object with edge correction.
 }
 \description{
 Creates a precision matrix as a sparse matrix object
-considering the specification stated in {Details}.
+considering the specification stated in Details.
 }
 \section{Details}{
 

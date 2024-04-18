@@ -6,7 +6,7 @@
 \usage{
 mesh.dual(
   mesh,
-  returnclass = c("list", "SP", "sf"),
+  returnclass = c("list", "sf", "SP"),
   mc.cores = getOption("mc.cores", 2L)
 )
 }
@@ -15,13 +15,13 @@ mesh.dual(
 
 \item{returnclass}{if
 'list' return a list of polygon coordinates,
-if "SP" return a SpatialPolygons object,
-if "sf" return a sfc_multipolygon object.}
+if "sf" return a sfc_multipolygon object,
+if "SP" return a SpatialPolygons object.}
 
 \item{mc.cores}{number of threads to be used.}
 }
 \value{
-see {returnclass}
+one of the three in 'returnclass'
 }
 \description{
 Extracts the dual of a mesh object.

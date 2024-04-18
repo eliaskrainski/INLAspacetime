@@ -3,13 +3,13 @@
 #' @param mesh a 2d mesh object.
 #' @param returnclass if
 #' 'list' return a list of polygon coordinates,
-#' if "SP" return a SpatialPolygons object,
-#' if "sf" return a sfc_multipolygon object.
+#' if "sf" return a sfc_multipolygon object,
+#' if "SP" return a SpatialPolygons object.
 #' @param mc.cores number of threads to be used.
-#' @return see {returnclass}
+#' @return one of the three in 'returnclass'
 #' @export
 mesh.dual <- function(mesh,
-                      returnclass = c("list", "SP", "sf"),
+                      returnclass = c("list", "sf", "SP"),
                       mc.cores = getOption("mc.cores", 2L)) {
   requireNamespace("parallel")
   if (mesh$manifold != "R2") {
