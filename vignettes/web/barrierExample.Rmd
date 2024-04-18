@@ -126,7 +126,7 @@ library(inlabru)
 library(patchwork)
 ```
 
-```{r lic, echo = FALSE}
+```{r lic, echo = FALSE, eval = FALSE}
 inla.setOption(
     pardiso.license = "~/.pardiso.lic" 
 )
