@@ -5,7 +5,6 @@
 #' INLA software available at www.r-inla.org as well the
 #' inlabru package available
 #' @docType package
-#' @rdname INLAspacetime
 #' @return opens the Vignettes directory on a browser
 #' @import methods
 #' @import methods
