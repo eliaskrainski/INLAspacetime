@@ -3,19 +3,21 @@
 #' @param mesh a 2d mesh object.
 #' @param returnclass if
 #' 'list' return a list of polygon coordinates,
-#' if "sf" return a sfc_multipolygon object,
-#' if "SP" return a SpatialPolygons object.
+#' if "sf" return a 'sf' sfc_multipolygon object,
+#' if "sv" return a 'terra', SpatVector object,
+#' if "SP" return a 'sp' SpatialPolygons object.
 #' @param mc.cores number of threads to be used.
 #' @return one of the three in 'returnclass'
 #' @export
 mesh.dual <- function(mesh,
-                      returnclass = c("list", "sf", "SP"),
+                      returnclass = c("list", "sf", "sv", "SP"),
                       mc.cores = getOption("mc.cores", 2L)) {
   requireNamespace("parallel")
   if (mesh$manifold != "R2") {
     stop("This only works for R2!")
   }
-  returnclass <- match.arg(returnclass, c("list", "SP", "sf"))
+  crs <- mesh$crs
+  returnclass <- match.arg(returnclass)
   ce <- t(sapply(1:nrow(mesh$graph$tv), function(i) {
     colMeans(mesh$loc[mesh$graph$tv[i, ], 1:2])
   }))
@@ -56,14 +58,21 @@ mesh.dual <- function(mesh,
     return(switch(
       returnclass,
       list = p,
-      SP = sp::Polygons(list(sp::Polygon(pls[[i]])), i),
-      sf = sf::st_polygon(list(p[c(1:nrow(p), 1), ]))
+      sf = sf::st_polygon(list(p[c(1:nrow(p), 1), ])),
+      sv = sf::st_polygon(list(p[c(1:nrow(p), 1), ])),
+      SP = sp::Polygons(list(sp::Polygon(p)), i)
     ))
   }, mc.cores = mc.cores)
+  if(is.na(crs) | is.null(crs))
+    crs <- ""
   return(switch(
     returnclass,
     list = pls,
-    SP = sp::SpatialPolygons(pls),
-    sf = sf::st_sfc(sf::st_multipolygon(pls))
+    sf = sf::st_sfc(sf::st_multipolygon(pls),
+                    crs = crs),
+    sv = terra::vect(sf::st_sfc(sf::st_multipolygon(pls),
+                                crs = crs)),
+    SP = sp::SpatialPolygons(pls,
+                             proj4string = sp::CRS(crs))
   ))
 }

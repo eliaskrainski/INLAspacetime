@@ -6,7 +6,7 @@
 \usage{
 mesh.dual(
   mesh,
-  returnclass = c("list", "sf", "SP"),
+  returnclass = c("list", "sf", "sv", "SP"),
   mc.cores = getOption("mc.cores", 2L)
 )
 }
@@ -15,8 +15,9 @@ mesh.dual(
 
 \item{returnclass}{if
 'list' return a list of polygon coordinates,
-if "sf" return a sfc_multipolygon object,
-if "SP" return a SpatialPolygons object.}
+if "sf" return a 'sf' sfc_multipolygon object,
+if "sv" return a 'terra', SpatVector object,
+if "SP" return a 'sp' SpatialPolygons object.}
 
 \item{mc.cores}{number of threads to be used.}
 }
