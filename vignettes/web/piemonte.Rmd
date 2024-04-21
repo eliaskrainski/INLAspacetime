@@ -285,11 +285,6 @@ fit102 <-
   <<fitcode>>
 ```
 
-The computing time is
-```{r cpu1}
-fit102$cpu
-```
-
 Summary of the posterior marginal distributions for the fixed effects 
 ```{r sfixef}
 fit102$summary.fixed[, c(1, 2, 3, 5)]
@@ -359,7 +354,7 @@ results <- list("u102" = fit102, "u121" = fit121)
 
 The computing time for each model fit
 ```{r cpu}
-sapply(results, function(r) r$cpu)
+sapply(results, function(r) r$cpu.used)
 ```
 and the number of fn-calls during the optimization are
 ```{r nfn}

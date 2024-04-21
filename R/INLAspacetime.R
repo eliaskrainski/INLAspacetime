@@ -4,7 +4,6 @@
 #' to fit temporal, spatial and space-time models using the
 #' INLA software available at www.r-inla.org as well the
 #' inlabru package available
-#' @docType package
 #' @return opens the Vignettes directory on a browser
 #' @import methods
 #' @import methods

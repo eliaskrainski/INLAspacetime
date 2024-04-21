@@ -15,18 +15,10 @@
 #' @export
 mesh2projector <- function(mesh, loc = NULL, lattice = NULL,
                            xlim = NULL, ylim = NULL, dims = c(100, 100)) {
-  heron <- function(x, y) {
-    ### function to compute the area of a triangle
-    aa <- sqrt((x[2] - x[1])^2 + (y[2] - y[1])^2)
-    bb <- sqrt((x[3] - x[2])^2 + (y[3] - y[2])^2)
-    cc <- sqrt((x[1] - x[3])^2 + (y[1] - y[3])^2)
-    s <- 0.5 * (aa + bb + cc)
-    sqrt(s * (s - aa) * (s - bb) * (s - cc))
-  }
   proj1f <- function(i, xy) {
     a <- numeric(3)
     for (j in 1:3) {
-      a[j] <- heron(
+      a[j] <- Heron(
         c(mesh$loc[mesh$graph$tv[
           i, -j
         ], 1], xy[1]),
