@@ -14,7 +14,14 @@ The user parameters are
 \usage{
 lgsConstant(lg.s, alpha, smanifold)
 
-params2gammas(lparams, alpha.t, alpha.s, alpha.e, smanifold = "R2")
+params2gammas(
+  lparams,
+  alpha.t,
+  alpha.s,
+  alpha.e,
+  smanifold = "R2",
+  verbose = FALSE
+)
 
 gammas2params(lgammas, alpha.t, alpha.s, alpha.e, smanifold = "R2")
 }
@@ -35,6 +42,8 @@ in the non-separable part.}
 
 \item{alpha.e}{spatial order of the spatial differential operator
 in the separable part.}
+
+\item{verbose}{logical if it is to print internal variables}
 
 \item{lgammas}{numeric of length 3 with
 \eqn{log(\gamma_k)}{log(gamma[k])}

@@ -86,6 +86,13 @@ double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_
 	}
 
 	switch (cmd) {
+
+	case INLA_CGENERIC_VOID:
+	{
+	  assert(!(cmd == INLA_CGENERIC_VOID));
+	  break;
+	}
+
 	case INLA_CGENERIC_GRAPH:
 	{
 		int M = N + N - 1, k = 0;

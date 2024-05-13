@@ -3,11 +3,15 @@
 void ar2cor(int *n, int *k,
             double *a1, double *a2,
             double *r) {
-  int i,j,l=2*(*k)*(*n);
-   for(i=0; i<(*n); i++) {
-     for(j=0; j<(*k); j++) {
-       r[l] = a1[i] * r[l-1] + a2[i]*r[l-2];
-       l++;
-     }
-   }
+  int i, j, l0=2, l1=1, l2=0;
+  double a, b, r1, r2;
+  for(i=0; i<(*n); i++) {
+    a = a1[i];
+    b = a2[i];
+    for(j=2; j<(*k); j++) {
+      r2 = b * r[l2++];
+      r1 = a * r[l1++];
+      r[l0++] = r1 + r2;
+    }
+  }
 }

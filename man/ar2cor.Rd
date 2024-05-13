@@ -4,7 +4,7 @@
 \alias{ar2cor}
 \title{Illustrative code to compute the auto-correlation for an AR2 model.}
 \usage{
-ar2cor(a1, a2, k = 30)
+ar2cor(a1, a2, k = 30, useC = FALSE)
 }
 \arguments{
 \item{a1}{the first auto-regression coefficient.}
@@ -12,6 +12,8 @@ ar2cor(a1, a2, k = 30)
 \item{a2}{the second auto-regression coefficient.}
 
 \item{k}{maximum lag for evaluating the auto-correlation.}
+
+\item{useC}{just a test (to use C code).}
 }
 \value{
 the autocorrelation as a vector or matrix, whenever \code{a1} or \code{a2} are
@@ -28,6 +30,7 @@ where \code{w_t ~ N(0, 1)}.
 }
 
 \examples{
+ar2cor(c(-1.7, -1.8), 0.963, k = 5)
 plot(ar2cor(-1.7, 0.963), type = "o")
 }
 \seealso{

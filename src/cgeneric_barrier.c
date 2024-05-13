@@ -125,6 +125,13 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 
 
 	switch (cmd) {
+
+	case INLA_CGENERIC_VOID:
+	{
+	  assert(!(cmd == INLA_CGENERIC_VOID));
+	  break;
+	}
+
 	case INLA_CGENERIC_GRAPH:
 	{
 		int k = 2;
