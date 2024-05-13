@@ -5,7 +5,7 @@
 #' INLA software available at www.r-inla.org as well the
 #' inlabru package available
 #' @return opens the Vignettes directory on a browser
-#' @import methods
+#' @useDynLib INLAspacetime, .registration = TRUE
 #' @import methods
 #' @import Matrix
 #' @import fmesher

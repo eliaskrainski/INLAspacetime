@@ -1,18 +1,18 @@
 
 /* cgeneric_sstspde.c
- * 
+ *
  * Copyright (C) 2022-2023 Elias Krainski
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -180,8 +180,11 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 	}
 	assert(nth < 4);
 
+//	FILE *fp = fopen("cg_stspde.log", "w");
+
 	if (theta) {
-		// interpretable parameters 
+// fprintf(stderr, "theta[%f, %f, %f]\n",  theta[0], theta[1], theta[2]);
+	  // interpretable parameters
 		// theta = log(range_s, range_t, sigma)
 		// g_s = sqrt(8 * v_s) / r_s ;
 		// log(g_s) = c1 - log(r_s) ;
@@ -218,13 +221,17 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 			}
 		}
 
+//		fprintf(stderr, "lgamma[%f, %f, %f]\n", lg[0], lg[1], lg[2]);
+
 		assert(nth == ith);
 
 		for (int i = 0, k = 0; i < nm; i++) {
 			a1 = lg[0] * tt->x[k++];
 			a2 = lg[1] * tt->x[k++];
 			params[i] = exp(2 * (lg[2] + a1 + a2)) * bb->doubles[i];
+	//		fprintf(stderr, "params[%d] = %f \n", i, params[i]);
 		}
+		//fclose(fp);
 
 //		if (verbose | debug) {
 //			fprintf(stderr, "theta = ");
@@ -278,7 +285,7 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 
 	case INLA_CGENERIC_MU:
 	{
-		// return (N, mu). if N==0 then mu is not needed as its taken to be mu[]==0 
+		// return (N, mu). if N==0 then mu is not needed as its taken to be mu[]==0
 		ret = Calloc(1, double);
 		ret[0] = 0;
 	}
@@ -287,7 +294,7 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 	case INLA_CGENERIC_INITIAL:
 	{
 		// return c(P, initials)
-		// where P is the number of hyperparameters 
+		// where P is the number of hyperparameters
 		ret = Calloc(nth + 1, double);
 		ith = 0;
 		ret[ith++] = (double) nth;

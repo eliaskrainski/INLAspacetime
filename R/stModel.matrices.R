@@ -27,8 +27,11 @@ stModel.precision <-
 
     alphas <- as.integer(strsplit(model, "")[[1]])
     lgammas <- params2gammas(
-      theta, alphas[1], alphas[2], alphas[3], smanifold = smesh$manifold)
-
+      theta, alphas[1], alphas[2], alphas[3],
+      smanifold = smesh$manifold,
+      verbose = verbose)
+    if(verbose)
+      print(c(lg = lgammas))
     mm <- stModel.matrices(smesh, tmesh, model, constr = FALSE)
 
     n <- smesh$n * tmesh$n
@@ -43,8 +46,10 @@ stModel.precision <-
     for(i in 1:nm) {
       a1 <- lgammas[1] * mm$TT[1, i]
       a2 <- lgammas[2] * mm$TT[2, i]
-      params[i] <- exp(2 * (lgammas[3] + a1 + a2) * mm$bb[i])
+      params[i] <- exp(2 * (lgammas[3] + a1 + a2)) * mm$bb[i]
     }
+    if(verbose)
+      print(c(p = params))
 
     val <- sparseMatrix(
       i = lmats$graph@i + 1L,

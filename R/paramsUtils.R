@@ -23,11 +23,11 @@ lgsConstant <- function(lg.s, alpha, smanifold) {
       lgamma(nu.s) - lgamma(alpha) - (d / 2) * log(4 * pi)
   } else {
     pi.d <- (4 * pi)^(d/2)
-    if (lgamma[1] < log(0.5)) {
+    if (lg.s < log(0.5)) {
       gsCs <- -2 * alpha * lg.s - log(pi.d)
     } else {
       if (d == 1) warning("fix this")
-      if (lgamma[1] < 2) {
+      if (lg.s < 2) {
         gs2 <- exp(lg.s * 2)
         k0 <- 0:50
         gsCs <- log(sum((1 + 2 * k0) / (pi.d * (gs2 + k0 * (k0 + 1))^alpha)))
@@ -41,13 +41,15 @@ lgsConstant <- function(lg.s, alpha, smanifold) {
 #' Convert from user parameters to SPDE parameters
 #' @rdname paramsUtils
 #' @param lparams log(spatial range, temporal range, sigma)
+#' @param verbose logical if it is to print internal variables
 #' @return log(gamma.s, gamma.t, gamma.e)
 #' @details
 #' See equations (19), (20) and (21) in the paper.
 #' @export
 #' @examples
 #' params2gammas(log(c(1, 1, 1)), 1, 2, 1, "R2")
-params2gammas <- function(lparams, alpha.t, alpha.s, alpha.e, smanifold = "R2") {
+params2gammas <- function(lparams, alpha.t, alpha.s, alpha.e,
+                          smanifold = "R2", verbose = FALSE) {
   alpha <- alpha.e + alpha.s * (alpha.t - 0.5)
   stopifnot(substr(smanifold, 1, 1) %in% c("R", "S"))
   d <- as.integer(substr(smanifold, 2, 2))
@@ -58,9 +60,13 @@ params2gammas <- function(lparams, alpha.t, alpha.s, alpha.e, smanifold = "R2") 
     gamma.t = -0.5 * log(8 * (alpha.t - 0.5)),
     gamma.e = NA
   )
+  if(verbose)
+    print(c(c=lg[1:2]))
   lg[2] <- lg[2] + alpha.s * lg[1] + lparams[2]
   lct <- lgamma(alpha.t - 0.5) - lgamma(alpha.t) - 0.5 * log(4 * pi)
   lcs <- lgsConstant(lg[1], alpha, smanifold)
+  if(verbose)
+    print(c(lct = lct, lcs = lcs))
   lg[3] <- 0.5 * (lct + lcs - lg[2]) - lparams[3]
   return(lg)
 }

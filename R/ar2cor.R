@@ -26,7 +26,7 @@ ar2cor <- function(a1, a2, k = 30) {
     r[, 2] <- (a[, 1]^2 + a[, 2] - a[, 2]^2) / (1 - a[, 2])
   }
   if (k > 2) {
-    if(FALSE) {
+    if(TRUE) {
       r <- t(.C("ar2cor", n, k, a[,1], a[,2],
                 r = t(r),
                 PACKAGE = "INLAspacetime")$r)
