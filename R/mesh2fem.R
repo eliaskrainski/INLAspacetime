@@ -90,19 +90,22 @@ mesh2fem.barrier <- function(mesh, barrier.triangles = NULL) {
   dimension <- fm_manifold_dim(mesh)
   stopifnot(dimension > 1)
 
-  ### safe to use from triangle area from:
-  hh <- INLA::inla.mesh.fem(mesh, order = 1)$ta
-  if(Rmanifold==0) {
-    R.i <- sqrt(rowSums(mesh$loc^2))
-    hh <- sapply(1:nrow(mesh$graph$tv), function(i) {
-      it <- mesh$graph$tv[i, ]
-      s2trArea(mesh$loc[it, ], R.i[1])
-    })
+  if(TRUE) {
+    ### safe to use from triangle area from:
+    hh <- INLA::inla.mesh.fem(mesh, order = 1)$ta
   } else {
-    hh <- sapply(1:nrow(mesh$graph$tv), function(i) {
-      it <- mesh$graph$tv[i, ]
-      Heron(mesh$loc[it, 1], mesh$loc[it, 2])
-    })
+    if(Rmanifold==0) {
+      R.i <- sqrt(rowSums(mesh$loc^2))
+      hh <- sapply(1:nrow(mesh$graph$tv), function(i) {
+        it <- mesh$graph$tv[i, ]
+        s2trArea(mesh$loc[it, ], R.i[1])
+      })
+    } else {
+      hh <- sapply(1:nrow(mesh$graph$tv), function(i) {
+        it <- mesh$graph$tv[i, ]
+        Heron(mesh$loc[it, 1], mesh$loc[it, 2])
+      })
+    }
   }
 
   barrier.triangles <- unique(sort(barrier.triangles))
