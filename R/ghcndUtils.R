@@ -33,7 +33,7 @@ downloadUtilFiles <- function(data.dir, year = 2022, force = FALSE) {
   ### all the available stations information
   sfl <- "ghcnd-stations.txt"
   loc.sfl <- file.path(data.dir, sfl)
-  fle <- file.exists(loc.dfl)
+  fle <- file.exists(loc.sfl)
   if (force | (!fle)) {
     if(fle) {
       file.remove(loc.sfl)
