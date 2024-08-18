@@ -46,5 +46,5 @@ has the following non-zero elements:
 ar2precision(7, c(1, -1.5, 0.9))
 }
 \seealso{
-\link{ar2cor}
+\link{ar2cov}
 }
