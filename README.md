@@ -50,7 +50,8 @@ remotes::install_github("eliaskrainski/INLAspacetime",  build_vignettes=TRUE)
 
 ## We have implemented
 
-1.  some of the models presented in <https://arxiv.org/abs/2006.04917>
+1.  some of the models presented in
+    <https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf>
 
 2.  the barrier model proposed in
     <https://doi.org/10.1016/j.spasta.2019.01.002>
@@ -81,17 +82,13 @@ Loading the packages:
 ``` r
 library(INLA)
 #> Loading required package: Matrix
-#> Loading required package: foreach
-#> Loading required package: parallel
 #> Loading required package: sp
-#> The legacy packages maptools, rgdal, and rgeos, underpinning this package
-#> will retire shortly. Please refer to R-spatial evolution reports on
-#> https://r-spatial.org/r/2023/05/15/evolution4.html for details.
-#> This package is now running under evolution status 0
-#> This is INLA_23.05.30-1 built 2023-05-30 11:52:19 UTC.
+#> This is INLA_24.06.04 built 2024-06-03 20:33:29 UTC.
 #>  - See www.r-inla.org/contact-us for how to get help.
-#>  - To enable PARDISO sparse library; see inla.pardiso()
+#>  - List available models/likelihoods/etc with inla.list.models()
+#>  - Use inla.doc(<NAME>) to access documentation
 library(INLAspacetime)
+#> Loading required package: fmesher
 library(inlabru)
 ```
 
@@ -160,20 +157,18 @@ result <-
         ),
       verbose = !TRUE)
     )
-#> Warning in inla.model.properties.generic(inla.trim.family(model), mm[names(mm) == : Model 'cgeneric' in section 'latent' is marked as 'experimental'; changes may appear at any time.
-#>   Use this model with extra care!!! Further warnings are disabled.
 ```
 
 Summary of the model parameters
 
 ``` r
 result$summary.fixed
-#>                mean      sd 0.025quant  0.5quant 0.975quant      mode kld
-#> Intercept 0.5211454 3.49482  -6.328575 0.5211454   7.370866 0.5211454   0
+#>                mean       sd 0.025quant  0.5quant 0.975quant      mode kld
+#> Intercept 0.5264782 3.500849   -6.33506 0.5264782   7.388016 0.5264782   0
 result$summary.hyperpar
-#>                      mean        sd 0.025quant 0.5quant 0.975quant      mode
-#> Theta1 for field 1.202935 0.5125858  0.3321324 1.162519   2.324768 0.9707531
-#> Theta2 for field 1.435746 0.1706775  1.1044643 1.434143   1.776487 1.4273398
+#>                      mean        sd 0.025quant 0.5quant 0.975quant     mode
+#> Theta1 for field 1.190361 0.4867876  0.3624381 1.153754   2.255723 0.972674
+#> Theta2 for field 1.435282 0.1709783  1.1034628 1.433661   1.776664 1.426789
 ```
 
 ## Vignettes
