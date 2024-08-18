@@ -1,6 +1,7 @@
-#' Illustrative code to compute the auto-correlation for an AR2 model.
+#' Illustrative code to compute the covariance of
+#' the second order autoregression (AR2) model.
 #'
-#' Computes the auto-correlation.
+#' Computes the auto-covariance for given coefficients.
 #'
 #' @param a1 the first auto-regression coefficient.
 #' @param a2 the second auto-regression coefficient.
@@ -15,9 +16,9 @@
 #' @seealso [ar2precision]
 #' @export
 #' @examples
-#' ar2cor(c(-1.7, -1.8), 0.963, k = 5)
-#' plot(ar2cor(-1.7, 0.963), type = "o")
-ar2cor <- function(a1, a2, k = 30, useC = FALSE) {
+#' ar2cov(c(-1.7, -1.8), 0.963, k = 5)
+#' plot(ar2cov(-1.7, 0.963), type = "o")
+ar2cov <- function(a1, a2, k = 30, useC = FALSE) {
   a <- -cbind(a1, a2)
   n <- nrow(a)
   k <- as.integer(k)
@@ -28,7 +29,7 @@ ar2cor <- function(a1, a2, k = 30, useC = FALSE) {
     if (k > 1) {
       r[2, ] <- (a[, 1]^2 + a[, 2] - a[, 2]^2) / (1 - a[, 2])
       if(k>2) {
-        r <- .C("ar2cor", n, k, a[,1], a[,2],
+        r <- .C("ar2cov", n, k, a[,1], a[,2],
                 r = r,
                 PACKAGE = "INLAspacetime")$r
       }

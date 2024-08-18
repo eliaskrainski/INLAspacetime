@@ -1,6 +1,8 @@
-#include "ar2cor.h"
+#include "ar2cov.h"
 
-void ar2cor(int *n, int *k,
+// function to compute the autocovariance for
+// the second order autoregression model - AR2
+void ar2cov(int *n, int *k,
             double *a1, double *a2,
             double *r) {
   int i, j, l0=2, l1=1, l2=0;
