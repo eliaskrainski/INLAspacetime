@@ -5,13 +5,15 @@
 # ' from the 'rnaturalearth' package.
 #'
 #' @param crs a string with the projection.
-#' Default is the Mollweide projection with units in kilometers.
-#' @param scale see the help from the 'ne_countries'
-#' of the 'rnaturalearth' package
-#' @param returnclass defined by the
-#' [sf] package if returnclass = "sf"
-#' or [terra] if returnclass = "sv".
-#' @return the world map of the countries.
+#' Default is the Mollweide projection
+#' with units in kilometers.
+#' @param scale The scale of map to return.
+#' Please see the help of 'ne_countries' function
+#' from the 'rnaturalearth' package.
+#' @param returnclass A string determining the class
+#' of the spatial object to return.
+#' Please see the help of 'ne_countries' function
+#' from the 'rnaturalearth' package.
 #' @references
 #'  The land and ocean maps are obtained with
 #'  the 'rnaturalearth' package.
