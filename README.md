@@ -21,6 +21,13 @@ precision matrix compiling it so that INLA can use it internally.
 
 ## Installation
 
+The ‘INLA’ package is a suggested one, but you will need it for actually
+fitting a model. You can install it with
+
+``` r
+install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/testing"), dep=TRUE) 
+```
+
 You can install the current [CRAN](https://CRAN.R-project.org) version
 of INLAspacetime:
 
@@ -81,12 +88,6 @@ Loading the packages:
 
 ``` r
 library(INLA)
-#> Loading required package: Matrix
-#> Loading required package: sp
-#> This is INLA_24.06.04 built 2024-06-03 20:33:29 UTC.
-#>  - See www.r-inla.org/contact-us for how to get help.
-#>  - List available models/likelihoods/etc with inla.list.models()
-#>  - Use inla.doc(<NAME>) to access documentation
 library(INLAspacetime)
 #> Loading required package: fmesher
 library(inlabru)
@@ -167,8 +168,8 @@ result$summary.fixed
 #> Intercept 0.5264782 3.500849   -6.33506 0.5264782   7.388016 0.5264782   0
 result$summary.hyperpar
 #>                      mean        sd 0.025quant 0.5quant 0.975quant     mode
-#> Theta1 for field 1.190361 0.4867876  0.3624381 1.153754   2.255723 0.972674
-#> Theta2 for field 1.435282 0.1709783  1.1034628 1.433661   1.776664 1.426789
+#> Theta1 for field 1.190360 0.4867876  0.3624381 1.153754   2.255723 0.972674
+#> Theta2 for field 1.435282 0.1709783  1.1034628 1.433661   1.776665 1.426789
 ```
 
 ## Vignettes

@@ -33,6 +33,13 @@ INLA can use it internally.
 
 ## Installation
 
+The 'INLA' package is a suggested one, but you will need it 
+for actually fitting a model. You can install it with
+```{r eval = !require(INLA)}
+install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/testing"), dep=TRUE) 
+```
+
+
 You can install the current [CRAN](https://CRAN.R-project.org) version of INLAspacetime:
 ```{r cran-installation, eval = FALSE}
 install.packages("INLAspacetime")
