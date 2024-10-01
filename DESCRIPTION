@@ -1,7 +1,7 @@
 Package: INLAspacetime
 Type: Package
 Title: Spatial and Spatio-Temporal Models using 'INLA'
-Version: 0.1.9
+Version: 0.1.9.001
 Authors@R: c(
   person("Elias Teixeira", "Krainski", email = "eliaskrainski@gmail.com",
          role = c("cre", "aut", "cph"), 
@@ -27,7 +27,7 @@ Additional_repositories: https://inla.r-inla-download.org/R/testing
 BugReports: https://github.com/eliaskrainski/INLAspacetime/issues
 License: GPL (>=2) 
 Encoding: UTF-8
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 NeedsCompilation: yes
 Roxygen: list(markdown = TRUE)
 Depends:
