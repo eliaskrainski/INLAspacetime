@@ -82,6 +82,30 @@ mesh2fem.barrier <- function(mesh, barrier.triangles = NULL) {
   if (is.null(barrier.triangles)) {
     warning("No 'barrier.triangles', using 'mesh2fem(mesh, order = 2)'!")
     return(mesh2fem(mesh = mesh, order = 2L))
+  } else {
+    if(is.list(barrier.triangles)) {
+      ntv1 <- nrow(mesh$graph$tv)
+      for(i in 1:length(barrier.triangles)) {
+        barrier.triangles[[i]] <- unique(sort(barrier.triangles[[i]]))
+        stopifnot(all(barrier.triangles[[i]] %in% (1:ntv1)))
+      }
+      itv <- c(list(
+        setdiff(
+          1:ntv1, unlist(barrier.triangles))),
+        barrier.triangles
+      )
+      ntv <- sapply(itv, length)
+    } else {
+      barrier.triangles <- unique(sort(barrier.triangles))
+      itv <- list(
+        setdiff(
+          1:nrow(mesh$graph$tv),
+          barrier.triangles
+        ),
+        barrier.triangles
+      )
+      ntv <- sapply(itv, length)
+    }
   }
 
   stopifnot(fm_manifold(mesh, c("S", "R")))
@@ -108,22 +132,11 @@ mesh2fem.barrier <- function(mesh, barrier.triangles = NULL) {
     }
   }
 
-  barrier.triangles <- unique(sort(barrier.triangles))
-  itv <- list(
-    setdiff(
-      1:nrow(mesh$graph$tv),
-      barrier.triangles
-    ),
-    barrier.triangles
-  )
-  ntv <- sapply(itv, length)
   n <- nrow(mesh$loc)
 
-  c1aux <- c(2, 2, 2, 1, 1, 1, 1, 1, 1)
-  ii0c <- c(1, 2, 3, 1, 2, 1, 3, 2, 3)
-  jj0c <- c(1, 2, 3, 2, 1, 3, 1, 3, 2)
-  ii0g <- rep(1:3, each = 3)
-  jj0g <- rep(1:3, 3)
+  c1aux <- matrix(1, 3, 3) + diag(3)
+  ii0 <- rep(1:3, each = 3)
+  jj0 <- rep(1:3, 3)
 
   res <- list(
     I = Diagonal(n, x = rep(0.0, n)),
@@ -132,46 +145,38 @@ mesh2fem.barrier <- function(mesh, barrier.triangles = NULL) {
     hdim = 0L
   )
 
-  for (o in 1:2) {
+  for (o in 1:length(itv)) {
     c0 <- double(n)
-    jjc <- iic <- integer(ntv[o] * 9L)
-    jjg <- iig <- integer(ntv[o] * 9L)
+    ii <- integer(ntv[o] * 9L)
+    jj <- integer(ntv[o] * 9L)
     g1x <- double(ntv[o] * 9L)
     c1x <- double(ntv[o] * 9L)
 
     ng <- nc <- 0
     for (j in itv[[o]]) {
       it <- mesh$graph$tv[j, ]
-      h <- hh[it]
+      h <- hh[j]
       fa <- flatArea(mesh$loc[it, ])
       g1x[ng + 1:9] <- Stiffness(mesh$loc[it, ]) / fa
-
       c0[it] <- c0[it] + h / 3
-      iic[nc + 1:9] <- it[ii0c]
-      jjc[nc + 1:9] <- it[jj0c]
       c1x[nc + 1:9] <- h * c1aux / 12
-
-      iig[ng + 1:9] <- it[ii0g]
-      jjg[ng + 1:9] <- it[jj0g]
-
+      ii[ng + 1:9] <- it[ii0]
+      jj[ng + 1:9] <- it[jj0]
       nc <- nc + 9L
       ng <- ng + 9L
     }
 
-    ijxc <- which((iic > 0) | (jjc > 0))
-    ijxg <- which((iig > 0) | (jjg > 0))
+    ijx <- which((ii > 0) | (jj > 0))
     res$I <- res$I +
-      INLA::inla.as.dgTMatrix(Matrix::sparseMatrix(
-        i = iic[ijxc], j = jjc[ijxc], x = c1x[ijxc], dims = c(n, n)
-      ))
-    res$D[[o]] <- INLA::inla.as.dgTMatrix(Matrix::sparseMatrix(
-      i = iig[ijxg], j = jjg[ijxg], x = g1x[ijxg], dims = c(n, n)
+      Matrix::sparseMatrix(
+        i = ii[ijx], j = jj[ijx], x = c1x[ijx], dims = c(n, n)
+      )
+    res$D[[o]] <- INLA::inla.as.sparse(Matrix::sparseMatrix(
+      i = ii[ijx], j = jj[ijx], x = g1x[ijx], dims = c(n, n)
     ))
-    res$C[[o]] <- c0 ## * 3
+    res$C[[o]] <- c0
     res$hdim <- res$hdim + 1L
   }
-  res$I <- INLA::inla.as.dgTMatrix(res$I)
-  res$D[[1]] <- INLA::inla.as.dgTMatrix(res$D[[1]])
-  res$D[[2]] <- INLA::inla.as.dgTMatrix(res$D[[2]])
+  res$I <- INLA::inla.as.sparse(res$I)
   return(res)
 }
