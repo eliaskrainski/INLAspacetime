@@ -168,8 +168,8 @@ result$summary.fixed
 #> Intercept 0.5264782 3.500849   -6.33506 0.5264782   7.388016 0.5264782   0
 result$summary.hyperpar
 #>                      mean        sd 0.025quant 0.5quant 0.975quant     mode
-#> Theta1 for field 1.190360 0.4867876  0.3624381 1.153754   2.255723 0.972674
-#> Theta2 for field 1.435282 0.1709783  1.1034628 1.433661   1.776665 1.426789
+#> Theta1 for field 1.190361 0.4867876  0.3624381 1.153754   2.255724 0.972674
+#> Theta2 for field 1.435282 0.1709783  1.1034628 1.433661   1.776664 1.426789
 ```
 
 ## Vignettes

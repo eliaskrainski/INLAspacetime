@@ -34,7 +34,7 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 
 	double *ret = NULL;
 	int N, M, ith, nth, ifix[2];
-	double sigma, range, params[4];
+	double sigma2, range2, params[4];
 
 	// the size of the model
 	assert(data->n_ints > 1);
@@ -90,24 +90,24 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 		// theta = log(range, sigma)
 		ith = 0;
 		if (ifix[0] == 1) {
-			range = prange->doubles[0];
+		  range2 = SQR(prange->doubles[0]);
 		} else {
-			range = exp(theta[ith++]);
+			range2 = exp(theta[ith++] * 2.0);
 		}
 
 		if (ifix[1] == 1) {
-			sigma = prange->doubles[0];
+		  sigma2 = SQR(psigma->doubles[0]);
 		} else {
-			sigma = exp(theta[ith++]);
+			sigma2 = exp(theta[ith++] * 2.0);
 		}
 
-		double pi6s2 = 1.9098593171 / SQR(sigma);      // 6 / ( pi * sigma^2)
-		double r2 = SQR(range);
+		double pi6s2 = 1.9098593171 / sigma2;      // 6 / ( pi * sigma^2)
+		double pi2s2 = 0.6366197724 / sigma2;
 
-		params[0] = pi6s2 / (r2);
-		params[1] = pi6s2 / (8);
-		params[2] = pi6s2 / (8);
-		params[3] = r2 * pi6s2 / (64);
+		params[0] = pi2s2 / (range2);
+		params[1] = pi2s2 / (8);
+		params[2] = pi2s2 / (8);
+		params[3] = range2 * pi2s2 / (64);
 
 		assert(nth == ith);
 
@@ -155,7 +155,7 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 		double zerof = 0.0, onef = 1.0;
 		char trans = 'N';
 
-		dgemv_(&trans, &M, &nm, &onef, &xx->x[0], &M, params, &one, &zerof, &ret[offset], &one, F_ONE);
+		dgemv_(&trans, &M, &nm, &onef, &xx->x[0], &M, &params[0], &one, &zerof, &ret[offset], &one, F_ONE);
 
 		ret[0] = -1;				       /* REQUIRED */
 		ret[1] = M;				       /* REQUIRED */
