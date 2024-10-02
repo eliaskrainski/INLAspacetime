@@ -21,7 +21,8 @@ barrierModel.define(
 \item{mesh}{a spatial mesh}
 
 \item{barrier.triangles}{a integer vector to specify which
-triangles centers are in the barrier domain}
+triangles centers are in the barrier domain,
+or a list with integer vector if more than one.}
 
 \item{prior.range}{numeric vector containing U and a
 to define the probability statements P(range < U) = a

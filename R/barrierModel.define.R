@@ -2,7 +2,8 @@
 #'
 #' @param mesh a spatial mesh
 #' @param barrier.triangles a integer vector to specify which
-#' triangles centers are in the barrier domain
+#' triangles centers are in the barrier domain,
+#' or a list with integer vector if more than one.
 #' @param prior.range numeric vector containing U and a
 #' to define the probability statements P(range < U) = a
 #' used to setup the PC-prior for range.
@@ -56,7 +57,7 @@ barrierModel.define <-
     if(length(range.fraction) == 1) {
       range.fraction <- rep(range.fraction, no-1)
     } else {
-      stopifnot(length(range.fraction)==no)
+      stopifnot(length(range.fraction)==(no-1))
     }
 
     Imat <- bfem$I
