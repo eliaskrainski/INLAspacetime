@@ -1,0 +1,75 @@
+---
+title: "The SPDE model with transparent barriers implementation"
+author: "Elias T Krainski"
+date: "October-2024"
+output: pdf_document
+bibliography: web/INLAspacetime.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# The transparent barrier model
+
+This model considers an SPDE over a domain 
+$\Omega$ which is partitioned into $k$
+subdomains $\Omega_d$, $d\in\{1,\ldots,k\}$, 
+where $\cup_{d=1}^k\Omega_d=\Omega$.
+A common marginal variance is assumed
+but the range can be particular to each $\Omega_d$, $r_d$.
+
+From @bakka2019barrier, the precision matrix is 
+\[
+\mathbf{Q} = \frac{1}{\sigma^2}\mathbf{R}\mathbf{\tilde{C}}^{-1}\mathbf{R}
+\textrm{ for } 
+ \mathbf{R}_r = \mathbf{C} +
+ \frac{1}{8}\sum_{d=1}^kr_d^2\mathbf{G}_d ,
+\;\;\;
+\mathbf{\tilde{C}}_r = 
+\frac{\pi}{2}\sum_{d=1}^kr_d^2\mathbf{\tilde{C}}_d
+\]
+where $\sigma^2$ is the marginal variance. 
+The Finite Element Method - FEM matrices:
+$\mathbf{C}$, defined as
+\[ \mathbf{C}_{i,j} = \langle \psi_i, \psi_j \rangle = 
+  \int_\Omega \psi_i(\mathbf{s}) \psi_j(\mathbf{s}) \partial \mathbf{s},\]
+computed over the whole domain,
+while $\mathbf{G}_d$ and $\mathbf{\tilde{C}}_d$ 
+are defined as a pair of matrices for each subdomain
+\[ (\mathbf{G}_d)_{i,j} = \langle 1_{\Omega_d} \nabla \psi_i, \nabla \psi_j \rangle = 
+  \int_{\Omega_d} \nabla \psi_i(\mathbf{s}) \nabla \psi_j(\mathbf{s}) \partial \mathbf{s}\; \textrm{ and }\;
+ (\mathbf{\tilde{C}}_d)_{i,i} = \langle 1_{\Omega_d} \psi_i, 1 \rangle = 
+  \int_{\Omega_d} \psi_i(\mathbf{s}) \partial \mathbf{s} . \]
+
+In the case when $r = r_1 = r_2 = \ldots = r_k$ we have
+$\mathbf{R}_r = \mathbf{C}+\frac{r^2}{8}\mathbf{G}$ 
+and $\mathbf{\tilde{C}}_r = \frac{\pi r^2}{2}\mathbf{\tilde{C}}$
+giving 
+\[ \mathbf{Q} = \frac{2}{\pi\sigma^2}(
+\frac{1}{r^2}\mathbf{C}\mathbf{\tilde{C}}^{-1}\mathbf{C} + 
+\frac{1}{8}\mathbf{C}\mathbf{\tilde{C}}^{-1}\mathbf{G} +
+\frac{1}{8}\mathbf{G}\mathbf{\tilde{C}}^{-1}\mathbf{C} +
+\frac{r^2}{64}\mathbf{G}\mathbf{\tilde{C}}^{-1}\mathbf{G} 
+) \]
+which coincides with the stationary case in @lindgren2015bayesian,
+when using $\tilde{\mathbf{C}}$ in place of $\mathbf{C}$.
+
+# Implementation
+
+In practice we define $r_d$ as $r_d = p_d r$, 
+for known $p_1,\ldots,p_k$ constants. 
+This gives
+\[ \mathbf{\tilde{C}}_r = 
+\frac{\pi r^2}{2}\sum_{d=1}^kp_d^2\mathbf{\tilde{C}}_d =
+\frac{\pi r^2}{2} \mathbf{\tilde{C}}_{p_1,\ldots,p_k}
+\textrm{ and }
+\frac{1}{8}\sum_{d=1}^kr_d^2\mathbf{G}_d =
+\frac{r^2}{8}\sum_{d=1}^kp_d^2\mathbf{\tilde{G}}_d = 
+\frac{r^2}{8}\mathbf{\tilde{G}}_{p_1,\ldots,p_k}
+\]
+where $\mathbf{\tilde{C}}_{p_1,\ldots,p_k}$
+and $\mathbf{\tilde{G}}_{p_1,\ldots,p_k}$ are pre-computed.
+
+
+# References
