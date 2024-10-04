@@ -101,8 +101,7 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 			sigma2 = exp(theta[ith++] * 2.0);
 		}
 
-		double pi6s2 = 1.9098593171 / sigma2;      // 6 / ( pi * sigma^2)
-		double pi2s2 = 0.6366197724 / sigma2;
+		double pi2s2 = 0.6366197724 / sigma2;  // 2 / ( pi * sigma^2)
 
 		params[0] = pi2s2 / (range2);
 		params[1] = pi2s2 / (8);
