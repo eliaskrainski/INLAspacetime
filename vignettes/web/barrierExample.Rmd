@@ -126,11 +126,6 @@ library(inlabru)
 library(patchwork)
 ```
 
-```{r lic, echo = FALSE, eval = FALSE}
-inla.setOption(
-    pardiso.license = "~/.pardiso.lic" 
-)
-```
 
 # Model definition and discretization
 
@@ -352,9 +347,9 @@ xy0 <- cbind(
 
 Then we check which of these is inside the barrier
 ```{r ib}
-xy.b <- (splancs::inout(xy0, barrier1)) |
-  (splancs::inout(xy0, barrier2))
-ii <- which(!xy.b)
+ii <- which(sapply(st_intersects(
+  x = st_as_sf(data.frame(x=xy0[, 1], y = xy0[, 2]), coords = c('x', 'y')),
+  y = barriers), length)==0)
 ``` 
 
 The locations to form the data consider only the locations in the desired domain
@@ -496,9 +491,9 @@ grid.df$u.sd <- as.vector(
 To help the visualization, we will filter the grid pixels 
 considering the barriers.
 ```{r ibarrierpix}
-gInBarrier <- 
-  (splancs::inout(cbind(grid.df$x, grid.df$y), barrier1)) |
-  (splancs::inout(cbind(grid.df$x, grid.df$y), barrier2))
+gInBarrier <- which(sapply(st_intersects(
+  x = st_as_sf(grid.df, coords = c('x', 'y')),
+  y = barriers), length)==0)
 ```
 
 We can now visualize the posterior mean with
