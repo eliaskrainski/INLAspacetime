@@ -2,7 +2,9 @@
 title: "The SPDE model with transparent barriers"
 author: "Elias T Krainski"
 date: "October-2024"
-output: rmarkdown::html_vignette
+output: 
+  - rmarkdown::html_vignette
+  - rmarkdown::pdf_document
 bibliography: web/INLAspacetime.bib
 vignette: >
   %\VignetteIndexEntry{The SPDE model with transparent barriers}

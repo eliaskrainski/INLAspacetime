@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 ## Vignettes
 
-These examples/tutorials are available on
+These potentially long running examples/tutorials are available on
 (https://eliaskrainski.github.io/INLAspacetime/)
 
 ```{r, echo=FALSE,results="asis"}
