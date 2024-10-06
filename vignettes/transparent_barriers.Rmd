@@ -1,9 +1,13 @@
 ---
-title: "The SPDE model with transparent barriers implementation"
+title: "The SPDE model with transparent barriers"
 author: "Elias T Krainski"
 date: "October-2024"
 output: pdf_document
 bibliography: web/INLAspacetime.bib
+vignette: >
+  %\VignetteIndexEntry{The SPDE model with transparent barriers}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}

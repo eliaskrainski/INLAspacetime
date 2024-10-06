@@ -23,3 +23,6 @@ daily.data, stations.all, elevation.
 \description{
 Download files from the NOAA's GHCN daily data
 }
+\seealso{
+\code{\link[=ghcndSelect]{ghcndSelect()}}
+}

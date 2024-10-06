@@ -16,8 +16,9 @@ ghcndSelect(
 \arguments{
 \item{gzfile}{the local filename for
 the daily data file file. E.g. 2023.csv.gz from
-\url{https://www.ncei.noaa.gov/pub/data/ghcn/daily/by_year/}
-see references bellow.}
+the daily GHCN data repository at NCEI-NOAA, at
+"https://www.ncei.noaa.gov/pub/data/ghcn/daily/by_year/".
+Please see the references bellow.}
 
 \item{variable}{string with the variable name(s) to be selected}
 

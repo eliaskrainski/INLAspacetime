@@ -5,6 +5,7 @@
 #' @param force logical indicating if it is to force
 #' the download. If FALSE each file will be downloaded
 #' if it does not exists locally yet.
+#' @seealso [ghcndSelect()]
 #' @return a named character vector with the local file names:
 #' daily.data, stations.all, elevation.
 #' @export
@@ -71,8 +72,9 @@ downloadUtilFiles <- function(data.dir, year = 2022, force = FALSE) {
 #' @aliases ghcndSelect
 #' @param gzfile the local filename for
 #' the daily data file file. E.g. 2023.csv.gz from
-#' \url{https://www.ncei.noaa.gov/pub/data/ghcn/daily/by_year/}
-#' see references bellow.
+#' the daily GHCN data repository at NCEI-NOAA, at
+#' "https://www.ncei.noaa.gov/pub/data/ghcn/daily/by_year/".
+#' Please see the references bellow.
 #' @param variable string with the variable name(s) to be selected
 #' @param station string (vector) with the station(s) to be selected
 #' @param qflag a string with quality control flag(s)
