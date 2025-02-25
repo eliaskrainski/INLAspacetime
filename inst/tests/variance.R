@@ -2,10 +2,18 @@ library(parallel)
 library(INLA)
 library(INLAspacetime)
 
+sphere <- !FALSE
+
+outer(1:2, c(3,1,0.3), function(a,b) sqrt(8*a)/b)
+
 lpars0 <- list(
-    srange = seq(0, 2, 1),
-    trange = seq(1.0, 3.0, 1),
+    srange = log(c(1, 3, 10)), 
+    trange = log(c(5,20)),
     sigma = seq(-3, 3, 1))
+
+outer(1:2, exp(lpars0$srange), function(a,b) sqrt(8*a)/b)
+
+sapply(lpars0, exp)
 
 sapply(lpars0, function(b) range(exp(b)))
 
@@ -14,16 +22,16 @@ str(upars <- expand.grid(lpars0))
 nt <- 20
 tmesh <- inla.mesh.1d(1:nt)
 
-ldomain <- cbind(
-    x = c(0, 1, 1, 0, 0) * 5,
-    y = c(0, 0, 1, 1, 0) * 5
-)
-mean(apply(ldomain, 2, function(x) diff(range(x))))
-
-smesh <- inla.mesh.2d(
-    loc.domain = ldomain, 
-    offset = c(1, 2),
-    max.edge = c(0.4, 2))
+if(sphere){
+    smesh <- inla.mesh.create(globe = 10)
+} else {
+    smesh <- inla.mesh.2d(
+        loc.domain = c(0,0), 
+        offset = 2,
+        max.edge = 0.2,
+        n = 4
+    )
+}
 smesh$n
 
 c(nt, smesh$n, nt*smesh$n)
@@ -47,14 +55,15 @@ t0 <- Sys.time()
 vv <- t(simplify2array(mclapply(1:nrow(upars), function(i) {
     cat(i, "")
     v <- sapply(models, function(m)
-        mean(log(diag(inla.qinv(stModel.precision(
-            smesh = smesh,
-            tmesh = tmesh,
-            model = m,
-            theta = c(upars$srange[i],
-                      upars$trange[i],
-                      upars$sigma[i])
-        ))))))
+        mean(log(diag(inla.qinv(
+            stModel.precision(
+                smesh = smesh,
+                tmesh = tmesh,
+                model = m,
+                theta = c(upars$srange[i],
+                          upars$trange[i],
+                          upars$sigma[i])
+            ))))))
     if((i%%10)==0) cat(':', i, "\n")
     return(v)
 }, mc.cores = 6L)))
