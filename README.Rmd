@@ -25,9 +25,11 @@ knitr::opts_chunk$set(
 [![pkgdown](https://github.com/eliaskrainski/INLAspacetime/workflows/pkgdown/badge.svg)](https://github.com/eliaskrainski/INLAspacetime/actions)
 <!-- badges: end -->
 
-This is a R package to implement certain spatial and spatio-temporal models
-taking use to the `cgeneric` interface in the INLA package. 
-This interface is a way to implement models by writing `C`
+This is a R package to implement certain spatial and spatio-temporal models,
+including some of the spatio-temporal models proposed 
+[here](https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf). 
+It uses the `cgeneric` interface in the INLA package, 
+to implement models by writing `C`
 code to build the precision matrix compiling it so that 
 INLA can use it internally.
 

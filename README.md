@@ -15,9 +15,11 @@ no-suggestions](https://github.com/eliaskrainski/INLAspacetime/workflows/R-CMD-c
 <!-- badges: end -->
 
 This is a R package to implement certain spatial and spatio-temporal
-models taking use to the `cgeneric` interface in the INLA package. This
-interface is a way to implement models by writing `C` code to build the
-precision matrix compiling it so that INLA can use it internally.
+models taking use to the `cgeneric` interface in the INLA package,
+including some of the spatio-temporal models proposed
+[here](https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf).
+This interface is a way to implement models by writing `C` code to build
+the precision matrix compiling it so that INLA can use it internally.
 
 ## Installation
 
@@ -158,18 +160,203 @@ result <-
         ),
       verbose = !TRUE)
     )
+#> 
+#>  *** inla.core.safe:  The inla program failed, but will rerun in case better initial values may help. try=1/1
+#> Warning in iinla(model = info[["model"]], lhoods = info[["lhoods"]], options = info[["options"]]): iinla: Problem in inla: Error in inla.core.safe(formula = formula, family = family, contrasts = contrasts,  : 
+#>   The inla-program exited with an error. Unless you interupted it yourself, please rerun with verbose=TRUE and check the output carefully.
+#>   If this does not help, please contact the developers at <help@r-inla.org>.
+#> The inla program failed and the maximum number of tries has been reached.
+#> iinla: Problem in inla: 1: rmarkdown::render("/home/eliask/github/INLAspacetime/README.Rmd", 
+#>        encoding = "UTF-8")
+#> 2: knitr::knit(knit_input, knit_output, envir = envir, quiet = quiet)
+#> 3: process_file(text, output)
+#> 4: xfun:::handle_error(withCallingHandlers(if (tangle) process_tangle(group)  [...]
+#>        error = function(e) if (xfun::pkg_available("rlang", "1.0.0")) rlang:: [...]
+#>        function(loc) {
+#>            setwd(wd)
+#>            write_utf8(res, output %n% stdout())
+#>            paste0("\nQuitting from lines ", loc)
+#>        }, if (labels[i] != "") sprintf(" [%s]", labels[i]), get_loc)
+#> 5: withCallingHandlers(if (tangle) process_tangle(group) else process_group(g [...]
+#>        error = function(e) if (xfun::pkg_available("rlang", "1.0.0")) rlang:: [...]
+#> 6: process_group(group)
+#> 7: call_block(x)
+#> 8: block_exec(params)
+#> 9: eng_r(options)
+#> 10: in_input_dir(evaluate(code, envir = env, new_device = FALSE, 
+#>        keep_warning = if (is.numeric(options$warning)) TRUE else options$warning, 
+#>        keep_message = if (is.numeric(options$message)) TRUE else options$message, 
+#>        stop_on_error = if (is.numeric(options$error)) options$error else {
+#>            if (options$error && options$include) 
+#>                0L
+#>            else 2L
+#>        }, output_handler = knit_handlers(options$render, options)))
+#> 11: in_dir(input_dir(), expr)
+#> 12: evaluate(code, envir = env, new_device = FALSE, keep_warning = if (is.nume [...]
+#>        keep_message = if (is.numeric(options$message)) TRUE else options$message, 
+#>        stop_on_error = if (is.numeric(options$error)) options$error else {
+#>            if (options$error && options$include) 
+#>                0L
+#>            else 2L
+#>        }, output_handler = knit_handlers(options$render, options))
+#> 13: evaluate::evaluate(...)
+#> 14: withRestarts(with_handlers({
+#>        for (expr in tle$exprs) {
+#>            ev <- withVisible(eval(expr, envir))
+#>            watcher$capture_plot_and_output()
+#>            watcher$print_value(ev$value, ev$visible, envir)
+#>        }
+#>        TRUE
+#>    }, handlers), eval_continue = function() TRUE, eval_stop = function() FALSE)
+#> 15: withRestartList(expr, restarts)
+#> 16: withOneRestart(withRestartList(expr, restarts[-nr]), restarts[[nr]])
+#> 17: doWithOneRestart(return(expr), restart)
+#> 18: withRestartList(expr, restarts[-nr])
+#> 19: withOneRestart(expr, restarts[[1L]])
+#> 20: doWithOneRestart(return(expr), restart)
+#> 21: with_handlers({
+#>        for (expr in tle$exprs) {
+#>            ev <- withVisible(eval(expr, envir))
+#>            watcher$capture_plot_and_output()
+#>            watcher$print_value(ev$value, ev$visible, envir)
+#>        }
+#>        TRUE
+#>    }, handlers)
+#> 22: eval(call)
+#> 23: eval(call)
+#> 24: withCallingHandlers(code, message = function (cnd) 
+#>    {
+#>        watcher$capture_plot_and_output()
+#>        if (on_message$capture) {
+#>            watcher$push(cnd)
+#>        }
+#>        if (on_message$silence) {
+#>            invokeRestart("muffleMessage")
+#>        }
+#>    }, warning = function (cnd) 
+#>    {
+#>        if (getOption("warn") >= 2 || getOption("warn") < 0) {
+#>            return()
+#>        }
+#>        watcher$capture_plot_and_output()
+#>        if (on_warning$capture) {
+#>            cnd <- sanitize_call(cnd)
+#>            watcher$push(cnd)
+#>        }
+#>        if (on_warning$silence) {
+#>            invokeRestart("muffleWarning")
+#>        }
+#>    }, error = function (cnd) 
+#>    {
+#>        watcher$capture_plot_and_output()
+#>        cnd <- sanitize_call(cnd)
+#>        watcher$push(cnd)
+#>        switch(on_error, continue = invokeRestart("eval_continue"), 
+#>            stop = invokeRestart("eval_stop"), error = NULL)
+#>    })
+#> 25: withVisible(eval(expr, envir))
+#> 26: eval(expr, envir)
+#> 27: eval(expr, envir)
+#> 28: bru(components = linpred, datalike, options = list(control.inla = list(int [...]
+#>        verbose = !TRUE))
+#> 29: iinla(model = info[["model"]], lhoods = info[["lhoods"]], options = info[[ [...]
+#> 30: fm_try_callstack(...)
+#> 31: do.call(INLA::inla, inla.options.merged, envir = environment(model$effects))
+#> 32: (function (formula = NULL, family = "gaussian", contrasts = NULL, 
+#>        data = NULL, quantiles = c(0.025, 0.5, 0.975), E = NULL, 
+#>        offset = NULL, scale = NULL, weights = NULL, Ntrials = NULL, 
+#>        strata = NULL, lp.scale = NULL, link.covariates = NULL, verbose = inla [...]
+#>        lincomb = NULL, selection = NULL, control.compute = list(), 
+#>        control.predictor = list(), control.family = list(), control.inla = list(), 
+#>        control.fixed = list(), control.mode = list(), control.expert = list(), 
+#>        control.hazard = list(), control.lincomb = list(), control.update = list(), 
+#>        control.lp.scale = list(), control.pardiso = list(), only.hyperparam = [...]
+#>        inla.call = inla.getOption("inla.call"), inla.arg = inla.getOption("in [...]
+#>        num.threads = inla.getOption("num.threads"), keep = inla.getOption("keep"), 
+#>        working.directory = inla.getOption("working.directory"), 
+#>        silent = inla.getOption("silent"), inla.mode = inla.getOption("inla.mode"), 
+#>        safe = inla.getOption("safe"), debug = inla.getOption("debug"), 
+#>        .parent.frame = environment(formula)) 
+#>    {
+#>        set.warn <- function(a, b) {
+#>            if (length(grep("(expand|E|weights|scale|offset|lp[.]scale)([.][.] [...]
+#>                b)) == 0) {
+#>                warning(paste0("Argument '", a, "=", b, "' expanded to NULL or [...]
+#>                    "  This might be an error and you are requested to check t [...]
+#>                    "  Move on with default values...\n"), immediate. = TRUE)
+#>            }
+#>            return(invisible())
+#>        }
+#>        is.set <- !is.null(substitute(E))
+#>        nm <- if (is.set) 
+#>            paste(collapse = " ", as.character(substitute(E)))
+#>        else ""
+#>        tmp <- try(eval(substitute(E), envir = data, enclos = .parent.frame), 
+#>            silent = TRUE)
+#>        E <- if (inherits(tmp, "try-error")) 
+#>            NULL
+#>        else tmp
+#>        if (is.set && inherits(tmp, "try-error")) 
+#>            set.warn("E", nm)
+#>        is.set <- !is.null(substitute(offset))
+#>        nm <- if (is.set) 
+#>            paste(collapse = " ", as.character(substitute(offset)))
+#>        else ""
+#>        tmp <- try(eval(substitute(offset), envir = data, enclos = .parent.frame), 
+#>            silent = TRUE)
+#>        offset <- if (inherits(tmp, "try-error")) 
+#>            NULL
+#>        else tmp
+#>        if (is.set && inherits(tmp, "try-error")) 
+#>            set.warn("offset", nm)
+#>        is.set <- !is.null(substitute(scale))
+#>        nm <- if (is.set) 
+#>            paste(collapse = " ", as.character(substitute(scale)))
+#>        else ""
+#>        tmp <- try(eval(substitute(scale), envir = data, enclos = .parent.frame), 
+#>            silent = TRUE)
+#>        scale <- if (inherits(tmp, "try-error")) 
+#>            NULL
+#>        else tmp
+#>        if (is.set && inherits(tmp, "try-error")) 
+#>            set.warn("scale", nm)
+#>        is.set <- !is.null(substitute(weights))
+#>        nm <- if (is.set) 
+#>            paste(collapse = " ", as.character(substitute(weights)))
+#>        else ""
+#>        tmp <- try(eval(substitute(weights), envir = data, enclos = .parent.frame), 
+#>            silent = TRUE)
+#>        weights <- if (inherits(tmp, "try-error")) 
+#>            NULL
+#>        else tmp
+#>        if (is.set && inherits(tmp, "try-error")) 
+#>            set.warn("weights", nm)
+#>        is.set <- !is.null(substitute(Ntrials))
+#>        nm <- if (is.set) 
+#>            paste(collapse = " ", as.character(substitute(Ntrials)))
+#>        else ""
+#>        tmp <- try(eval(substitute(Ntrials), envir = data, enclos = .parent.frame), 
+#>            silent = TRUE)
+#>        Ntrials <- if (inherits(tmp, "try-error")) 
+#>            NULL
+#>        else tmp
+#>        if (is.set && inherits(tmp, "try-error")) 
+#>            set.warn("Ntrials", nm)
+#>        is.set <- !is.null(substitute(strata))
+#>        nm <- if (is.set) 
+#>            paste(collapse = " ", as.character(substitute(strata)))
+#>        else ""
+#>        tmp <- try(eval(substitut
+#> iinla: Giving up and returning last successfully obtained result for diagnostic purposes.
 ```
 
 Summary of the model parameters
 
 ``` r
 result$summary.fixed
-#>                mean       sd 0.025quant  0.5quant 0.975quant      mode kld
-#> Intercept 0.5264782 3.500849   -6.33506 0.5264782   7.388016 0.5264782   0
+#> NULL
 result$summary.hyperpar
-#>                      mean        sd 0.025quant 0.5quant 0.975quant     mode
-#> Theta1 for field 1.190361 0.4867876  0.3624381 1.153754   2.255724 0.972674
-#> Theta2 for field 1.435282 0.1709783  1.1034628 1.433661   1.776664 1.426789
+#> NULL
 ```
 
 ## Vignettes
