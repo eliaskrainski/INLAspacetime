@@ -26,7 +26,7 @@
  */
 
 #include <stdio.h>
-#include "cgeneric_defs.h"
+#include "INLAspacetime.h"
 
 double *inla_cgeneric_ar2ss_model(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgeneric_data_tp * data)
 {
