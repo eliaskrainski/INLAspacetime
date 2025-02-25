@@ -13,20 +13,26 @@
 #' If a=0 then U is taken to be the fixed value of the parameter.
 #' @param constr logical to indicate if the integral of the field
 #' over the domain is to be constrained to zero. Default value is FALSE.
-#' @param debug logical indicating if to run in debug mode.
-#' @param verbose logical indicating if to print parameter values.
+#' @param debug integer indicating the verbose level.
+#' Will be used as logical by INLA.
 #' @param useINLAprecomp logical indicating if is to be used
 #' shared object pre-compiled by INLA. Not considered if
 #' libpath is provided.
 #' @param libpath string to the shared object. Default is NULL.
 #' @details
-#' See the paper.
+#' The matrices of the kronecker product in Theorem 4.1 of
+#' Lindgren et. al. (2024) are computed with the
+#' [stModel.matrices] and the parameters are as Eq (19-21),
+#' but parametrized in log scale.
 #' @return objects to be used in the f() formula term in INLA.
+#' @references Lindgren et. al. (2024).
+#' A diffusion-based spatio-temporal extension of Gaussian Matérn fields.
+#' [SORT 48 (1), 3-66](https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf)
 #' @export
 #' @importFrom fmesher fm_manifold
 stModel.define <-
   function(smesh, tmesh, model, control.priors,
-           constr = FALSE, debug = FALSE, verbose = FALSE,
+           constr = FALSE, debug = FALSE,
            useINLAprecomp = TRUE, libpath = NULL) {
     stopifnot(model %in% c("102", "121", "202", "220"))
 
@@ -36,12 +42,26 @@ stModel.define <-
     dimension <- fm_manifold_dim(smesh)
     stopifnot(dimension > 0)
 
+    if (is.null(libpath)) {
+      if (useINLAprecomp) {
+        libpath <- INLA::inla.external.lib("INLAspacetime")
+      } else {
+        libpath <- system.file("libs", package = "INLAspacetime")
+        if (Sys.info()["sysname"] == "Windows") {
+          libpath <- file.path(libpath, "INLAspacetime.dll")
+        } else {
+          libpath <- file.path(libpath, "INLAspacetime.so")
+        }
+      }
+    }
+    stopifnot(file.exists(libpath))
+
     alphas <- as.integer(strsplit(model, "")[[1]])
     alpha <- alphas[3] + alphas[2] * (alphas[1] - 0.5)
     nu.s <- alpha - dimension / 2
     nu.t <- min(alphas[1] - 0.5, nu.s / alphas[2])
 
-    if (verbose) {
+    if (debug) {
       print(c(alphas = alphas))
       print(c(alpha = alpha, nu.s = nu.s, nu.t = nu.t))
     }
@@ -56,18 +76,18 @@ stModel.define <-
       log.C.Rd <- lgamma(alpha - (dimension * 0.5)) - lgamma(alpha) -
         (dimension * 0.5) * log(4 * pi)
       cc[3] <- 0.5 * (log.C.t + log.C.Rd)
-      if (verbose) {
+      if (debug) {
         cat("R manifold, cc[3] = ", cc[3], "\n")
       }
     } else {
       log.C.S2.part <- -log(4 * pi) ## S1???
       cc[3] <- 0.5 * (log.C.t + log.C.S2.part
       ) ## c3 part for S2 (S1???), to be completed in C
-      if (verbose) {
+      if (debug) {
         cat("S manifold, cc[3] = ", cc[3], "\n")
       }
     }
-    if (verbose) {
+    if (debug) {
       print(c(cc = cc))
     }
 
@@ -77,19 +97,6 @@ stModel.define <-
     stopifnot(nm == length(mm$bb))
     jmm <- pmatch(paste0("M", 1:nm), names(mm))
     stopifnot(length(jmm[complete.cases(jmm)]) == nm)
-
-    if (is.null(libpath)) {
-      if (useINLAprecomp) {
-        libpath <- INLA::inla.external.lib("INLAspacetime")
-      } else {
-        libpath <- system.file("libs", package = "INLAspacetime")
-        if (Sys.info()["sysname"] == "Windows") {
-          libpath <- file.path(libpath, "INLAspacetime.dll")
-        } else {
-          libpath <- file.path(libpath, "INLAspacetime.so")
-        }
-      }
-    }
 
     lmats <- upperPadding(mm[jmm], relative = FALSE)
     stopifnot(n == nrow(lmats$graph))
@@ -101,7 +108,6 @@ stModel.define <-
         shlib = libpath,
         n = n,
         debug = as.integer(debug),
-        verbose = as.integer(verbose),
         Rmanifold = as.integer(Rmanifold),
         dimension = as.integer(dimension),
         aaa = as.integer(alphas),

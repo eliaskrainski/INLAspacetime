@@ -11,7 +11,6 @@ stModel.define(
   control.priors,
   constr = FALSE,
   debug = FALSE,
-  verbose = FALSE,
   useINLAprecomp = TRUE,
   libpath = NULL
 )
@@ -35,9 +34,8 @@ If a=0 then U is taken to be the fixed value of the parameter.}
 \item{constr}{logical to indicate if the integral of the field
 over the domain is to be constrained to zero. Default value is FALSE.}
 
-\item{debug}{logical indicating if to run in debug mode.}
-
-\item{verbose}{logical indicating if to print parameter values.}
+\item{debug}{integer indicating the verbose level.
+Will be used as logical by INLA.}
 
 \item{useINLAprecomp}{logical indicating if is to be used
 shared object pre-compiled by INLA. Not considered if
@@ -52,5 +50,13 @@ objects to be used in the f() formula term in INLA.
 Define a spacetime model object for the \code{f()} call.
 }
 \details{
-See the paper.
+The matrices of the kronecker product in Theorem 4.1 of
+Lindgren et. al. (2024) are computed with the
+\link{stModel.matrices} and the parameters are as Eq (19-21),
+but parametrized in log scale.
+}
+\references{
+Lindgren et. al. (2024).
+A diffusion-based spatio-temporal extension of Gaussian Matérn fields.
+\href{https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf}{SORT 48 (1), 3-66}
 }
