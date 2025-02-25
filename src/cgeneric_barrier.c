@@ -45,23 +45,17 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 	assert(!strcasecmp(data->ints[1]->name, "debug"));     // this will always be the case
 	int debug = data->ints[1]->ints[0];		       // this will always be the case
 	assert(debug >= 0);				       // just to 'find an use for "debug"
-	if(debug>1) debug = 1;
 
-	assert(!strcasecmp(data->ints[2]->name, "verbose"));
-	int verbose = data->ints[2]->ints[0];
-	assert(verbose >= 0);
-	if(verbose>0) verbose = 1;
-
-	assert(!strcasecmp(data->ints[3]->name, "ii"));
-	inla_cgeneric_vec_tp *ii = data->ints[3];
+	assert(!strcasecmp(data->ints[2]->name, "ii"));
+	inla_cgeneric_vec_tp *ii = data->ints[2];
 	M = ii->len;
 
-	assert(!strcasecmp(data->ints[4]->name, "jj"));
-	inla_cgeneric_vec_tp *jj = data->ints[4];
+	assert(!strcasecmp(data->ints[3]->name, "jj"));
+	inla_cgeneric_vec_tp *jj = data->ints[3];
 	assert(M == jj->len);
 
 	// prior parameters
-	assert(!strcasecmp(data->doubles[0]->name, "prs"));
+	assert(!strcasecmp(data->doubles[0]->name, "prange"));
 	inla_cgeneric_vec_tp *prange = data->doubles[0];
 	assert(prange->len == 2);
 
@@ -110,7 +104,7 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 
 		assert(nth == ith);
 
-//		if (verbose | debug) {
+//		if (debug) {
 //			fprintf(stderr, "theta = ");
 //			for (int i = 0; i < nth; i++)
 //				fprintf(stderr, "%f ", theta[i]);
@@ -192,16 +186,17 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 		// PC-priors
 		ret[0] = 0.0;
 		ith = 0;
-		double daux = 2 * 0.5;
+		double lam, daux = 2 * 0.5;
 		if (ifix[0] == 0) {
-			double lam1 = -log(prange->doubles[1]) / prange->doubles[0];
-			ret[0] += log(lam1 * daux) - daux * theta[ith] - lam1 * exp(-daux * theta[ith]) + log(daux);
+			lam = -log(prange->doubles[1]) / prange->doubles[0];
+//			ret[0] += log(lam1 * daux) - daux * theta[ith] - lam1 * exp(-daux * theta[ith]) + log(daux);
+			ret[0] += pclogrange(theta[ith], lam, 2L);
 			ith++;
 		}
 		if (ifix[1] == 0) {
-			double lam2 = -log(psigma->doubles[1]) / psigma->doubles[0];
-			ret[0] += log(lam2) + theta[ith] - lam2 * exp(theta[ith]);
-			ith++;
+			lam = -log(psigma->doubles[1]) / psigma->doubles[0];
+		  ret[0] += pclogsigma(theta[ith], lam);
+		  ith++;
 		}
 		assert(ith == nth);
 	}

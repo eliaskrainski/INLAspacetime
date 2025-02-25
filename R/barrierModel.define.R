@@ -102,7 +102,6 @@ barrierModel.define <-
         shlib = libpath,
         n = as.integer(n),
         debug = as.integer(debug),
-        verbose = as.integer(verbose),
         prange = prior.range, ## TO DO: name on current CRAN version, change to 'prange'
         psigma = prior.sigma,
         ii = lmats$graph@i,
