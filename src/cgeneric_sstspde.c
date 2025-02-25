@@ -46,16 +46,16 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 	assert(debug >= 0);				       // just to 'find an use for "debug" ...'
 	if (debug>0) debug = 1;
 
-	assert(!strcasecmp(data->ints[3]->name, "Rmanifold"));
-	int Rmanifold = data->ints[3]->ints[0];
+	assert(!strcasecmp(data->ints[2]->name, "Rmanifold"));
+	int Rmanifold = data->ints[2]->ints[0];
 	assert(Rmanifold >= 0);
 
-	assert(!strcasecmp(data->ints[4]->name, "dimension"));
-	int dimension = data->ints[4]->ints[0];
+	assert(!strcasecmp(data->ints[3]->name, "dimension"));
+	int dimension = data->ints[3]->ints[0];
 	assert(dimension > 0);
 
-	assert(!strcasecmp(data->ints[5]->name, "aaa"));
-	inla_cgeneric_vec_tp *aaa = data->ints[5];
+	assert(!strcasecmp(data->ints[4]->name, "aaa"));
+	inla_cgeneric_vec_tp *aaa = data->ints[4];
 	assert(aaa->len == 3);
 	double alphas = ((double) aaa->ints[1]);
 	double alpha = ((double) aaa->ints[2]) + alphas * (((double) aaa->ints[0]) - 0.5);
@@ -64,17 +64,17 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 	// if(ialpha>4L) isalphaInt = 0L; // to work in the c3S computation
 	double aaux = 0.5 * ((double) dimension) - alpha;
 
-	assert(!strcasecmp(data->ints[6]->name, "nm"));
-	int nm = data->ints[6]->ints[0];
+	assert(!strcasecmp(data->ints[5]->name, "nm"));
+	int nm = data->ints[5]->ints[0];
 	assert(nm > 0);
 	double params[nm];
 
-	assert(!strcasecmp(data->ints[7]->name, "ii"));
-	inla_cgeneric_vec_tp *ii = data->ints[7];
+	assert(!strcasecmp(data->ints[6]->name, "ii"));
+	inla_cgeneric_vec_tp *ii = data->ints[6];
 	M = ii->len;
 
-	assert(!strcasecmp(data->ints[8]->name, "jj"));
-	inla_cgeneric_vec_tp *jj = data->ints[8];
+	assert(!strcasecmp(data->ints[7]->name, "jj"));
+	inla_cgeneric_vec_tp *jj = data->ints[7];
 	assert(M == jj->len);
 
 	assert(!strcasecmp(data->doubles[0]->name, "cc"));
