@@ -75,7 +75,7 @@ https://doi.org/10.1016/j.spasta.2019.01.002
 
 # A spacetime example
 
-Fit a spacetime model for some fake data.
+Simulate some fake data.
 
 ```{r fakedata}
 set.seed(1)
@@ -88,11 +88,10 @@ dataf <- data.frame(
 str(dataf)
 ```
 
-Loading the packages:
+Loading packages:
 ```{r library}
 library(fmesher)
 library(INLA)
-library(inlabru)
 library(INLAspacetime)
 ```
 
@@ -134,7 +133,7 @@ stmodel <- stModel.define(
     )
 ```
 
-## Fitting the model
+## Fit the model
 
 Define a projector matrix from the spatial 
 and temporal meshes to the data
@@ -148,11 +147,12 @@ Aproj <- inla.spde.make.A(
 )
 ```
 
-Create a 'fake' column to be used as index
+Create a 'fake' column to be used as index. 
 in the `f()` term
 ```{r st}
 dataf$st <- NA
 ```
+
 
 Setting the likelihood precision (as fixed)
 ```{r precprior}
@@ -165,17 +165,31 @@ ctrl.lik <- list(
 )
 ```
 
+Combine a 'fake' index column with `A.local'
+```{r fmodel}
+fmodel <- y ~ f(st, model = stmodel, A.local = Aproj)
+```
+
 Call the main `INLA` function:
 ```{r inla}
 fit <- inla(
-    formula = y ~ f(st, model = stmodel, A.local = Aproj),
+    formula = fmodel,
     data = dataf,
     control.family = ctrl.lik)
+```
+
+Posterior marginal summaries for fixed effect and 
+the model parameters that were not fixed.
+```{r pmdsummary}
 fit$summary.fixed
 fit$summary.hyperpar
 ```
 
 ## Using the **inlabru**
+
+```{r inlabru}
+library(inlabru)
+```
 
 Setting the observation (likelihood) model object
 ```{r obsmodel}
@@ -187,7 +201,7 @@ data_model <- bru_obs(
 ```
 
 Define the data model: the linear predictor terms
-```{r dmodel}
+```{r linpred}
 linpred <- ~ 1 +
     field(list(space = cbind(s1, s2), 
                time = time),

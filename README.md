@@ -67,7 +67,7 @@ remotes::install_github("eliaskrainski/INLAspacetime",  build_vignettes=TRUE)
 
 # A spacetime example
 
-Fit a spacetime model for some fake data.
+Simulate some fake data.
 
 ``` r
 set.seed(1)
@@ -85,12 +85,11 @@ str(dataf)
 #>  $ y   : num  -0.00577 2.40465 0.76359 -0.79901 -1.14766
 ```
 
-Loading the packages:
+Loading packages:
 
 ``` r
 library(fmesher)
 library(INLA)
-library(inlabru)
 library(INLAspacetime)
 ```
 
@@ -120,7 +119,7 @@ stmodel <- stModel.define(
     )
 ```
 
-## Fitting the model
+## Fit the model
 
 Define a projector matrix from the spatial and temporal meshes to the
 data
@@ -134,7 +133,7 @@ Aproj <- inla.spde.make.A(
 )
 ```
 
-Create a ‘fake’ column to be used as index in the `f()` term
+Create a ‘fake’ column to be used as index. in the `f()` term
 
 ``` r
 dataf$st <- NA
@@ -152,25 +151,41 @@ ctrl.lik <- list(
 )
 ```
 
+Combine a ‘fake’ index column with \`A.local’
+
+``` r
+fmodel <- y ~ f(st, model = stmodel, A.local = Aproj)
+```
+
 Call the main `INLA` function:
 
 ``` r
 fit <- inla(
-    formula = y ~ f(st, model = stmodel, A.local = Aproj),
+    formula = fmodel,
     data = dataf,
     control.family = ctrl.lik)
+```
+
+Posterior marginal summaries for fixed effect and the model parameters
+that were not fixed.
+
+``` r
 fit$summary.fixed
-#>                  mean       sd 0.025quant  0.5quant 0.975quant      mode
-#> (Intercept) 0.6933522 4.032592  -6.962278 0.5226956   9.417198 0.5550446
+#>                  mean       sd 0.025quant  0.5quant 0.975quant     mode
+#> (Intercept) 0.6933766 4.032586  -6.962245 0.5227216   9.417188 0.555068
 #>                      kld
-#> (Intercept) 7.408388e-05
+#> (Intercept) 7.411114e-05
 fit$summary.hyperpar
 #>                   mean        sd 0.025quant 0.5quant 0.975quant      mode
-#> Theta1 for st 1.199201 0.4918176  0.3654207 1.161521   2.277296 0.9749894
-#> Theta2 for st 1.435517 0.1710693  1.1031095 1.434032   1.776671 1.4277522
+#> Theta1 for st 1.199194 0.4918107   0.365412 1.161518   2.277266 0.9750084
+#> Theta2 for st 1.435519 0.1710698   1.103120 1.434030   1.776684 1.4277357
 ```
 
 ## Using the **inlabru**
+
+``` r
+library(inlabru)
+```
 
 Setting the observation (likelihood) model object
 
@@ -204,13 +219,13 @@ Summary of the model parameters
 ``` r
 result$summary.fixed
 #>                mean       sd 0.025quant  0.5quant 0.975quant      mode
-#> Intercept 0.6690843 3.969833  -6.886505 0.5095667   9.213137 0.5379982
+#> Intercept 0.6690379 3.969851  -6.886589 0.5095207   9.213142 0.5379552
 #>                    kld
-#> Intercept 5.714683e-05
+#> Intercept 5.713904e-05
 result$summary.hyperpar
 #>                      mean        sd 0.025quant 0.5quant 0.975quant      mode
-#> Theta1 for field 1.190350 0.4867801   0.362420 1.153749   2.255684 0.9726975
-#> Theta2 for field 1.435285 0.1709745   1.103496 1.433656   1.776683 1.4267499
+#> Theta1 for field 1.190355 0.4867797  0.3624472 1.153749   2.255702 0.9726699
+#> Theta2 for field 1.435283 0.1709777  1.1034676 1.433660   1.776667 1.4267841
 ```
 
 ## Vignettes
