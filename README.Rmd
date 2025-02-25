@@ -73,10 +73,9 @@ https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf
 2. the barrier model proposed in 
 https://doi.org/10.1016/j.spasta.2019.01.002
 
-# Example
+# A spacetime example
 
-This is a basic example which fit a spacetime model for some fake data.
-The model fitting using **inlabru** facilitates coding.
+Fit a spacetime model for some fake data.
 
 ```{r fakedata}
 set.seed(1)
@@ -91,18 +90,19 @@ str(dataf)
 
 Loading the packages:
 ```{r library}
+library(fmesher)
 library(INLA)
-library(INLAspacetime)
 library(inlabru)
+library(INLAspacetime)
 ```
 
 Define spatial and temporal discretization meshes
 ```{r meshes}
-smesh <- inla.mesh.2d(
+smesh <- fm_mesh_2d(
   loc = cbind(0,0), 
   max.edge = 5, 
   offset = 2)
-tmesh <- inla.mesh.1d(
+tmesh <- fm_mesh_1d(
   loc = 0:5)
 ```
 
@@ -120,6 +120,71 @@ stmodel <- stModel.define(
     )
 ```
 
+```{r stmodelloc, echo = FALSE}
+stmodel <- stModel.define(
+    smesh = smesh, ## spatial mesh
+    tmesh = tmesh, ## temporal mesh
+    model = '121', ## model, see the paper
+    control.priors = list(
+        prs = c(1, 0.1), ## P(spatial range < 1) = 0.1
+        prt = c(5, 0), ## temporal range fixed to 5
+        psigma = c(1, 0.1) ## P(sigma > 1) = 0.1
+        ),
+    useINLAprecomp = FALSE
+    )
+```
+
+## Fitting the model
+
+Define a projector matrix from the spatial 
+and temporal meshes to the data
+
+```{r Aproj}
+Aproj <- inla.spde.make.A(
+    mesh = smesh,
+    loc = cbind(dataf$s1, dataf$s2),
+    group = dataf$time,
+    group.mesh = tmesh
+)
+```
+
+Create a 'fake' column to be used as index
+in the `f()` term
+```{r st}
+dataf$st <- NA
+```
+
+Setting the likelihood precision (as fixed)
+```{r precprior}
+ctrl.lik <- list(
+  hyper = list(
+    prec = list(
+      initial = 10, 
+      fixed = TRUE)    
+  )
+)
+```
+
+Call the main `INLA` function:
+```{r inla}
+fit <- inla(
+    formula = y ~ f(st, model = stmodel, A.local = Aproj),
+    data = dataf,
+    control.family = ctrl.lik)
+fit$summary.fixed
+fit$summary.hyperpar
+```
+
+## Using the **inlabru**
+
+Setting the observation (likelihood) model object
+```{r obsmodel}
+data_model <- bru_obs(
+  formula = y ~ ., 
+  family = "gaussian",
+  control.family = ctrl.lik, 
+  data = dataf)
+```
 
 Define the data model: the linear predictor terms
 ```{r dmodel}
@@ -129,34 +194,11 @@ linpred <- ~ 1 +
           model = stmodel)
 ```
 
-Setting the likelihood 
-```{r precprior}
-ctrlf <- list(
-  hyper = list(
-    prec = list(
-      initial = 10, 
-      fixed = TRUE)    
-  )
-)
-datalike <- like(
-  formula = y ~ ., 
-  family = "gaussian",
-  control.family = ctrlf, 
-  data=dataf)
-```
-
 Fitting
 ```{r fitting}
-result <- 
-  bru(
-    components = linpred,
-    datalike,
-    options = list(
-      control.inla = list(
-        int.strategy = "eb"
-        ),
-      verbose = !TRUE)
-    )
+result <- bru(
+  components = linpred,
+  data_model)
 ```
 
 Summary of the model parameters
