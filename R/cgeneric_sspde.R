@@ -60,6 +60,7 @@ cgeneric_sspde <-
     }
     stopifnot(file.exists(libpath))
 
+    if(alpha!=2) stop("Only 'alpha = 2' is supported for now.")
     nu.s <- alpha - dimension / 2
 
     if (debug) {
