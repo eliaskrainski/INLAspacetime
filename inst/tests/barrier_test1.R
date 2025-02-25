@@ -100,8 +100,8 @@ bmodel <- barrierModel.define(
     barrier.triangles = tri.ids,
     prior.range = c(1, 0.1),
     prior.sigma = c(1, 0.5),
-    range.fraction = c(1, 1, 1), ## as stationary
-    useINLAprecomp = FALSE
+    range.fraction = c(1, 1, 1) ## as stationary
+    ##, useINLAprecomp = FALSE
 )
 
 ## model parameters
@@ -111,6 +111,7 @@ sigma <- runif(1, .3, 3)
 ## get the precision
 ifit <- inla(
     y ~ 0 + f(i, model = bmodel),
+    verbose = TRUE,
     data = data.frame(y = NA, i = 1:mesh$n),
     control.mode = list(
         theta = c(10, log(c(range, sigma))),
@@ -128,7 +129,7 @@ Qb <- inla.as.sparse(
     sparseMatrix(
         i = Qub@i + 1L, 
         j = Qub@j + 1L,
-        x = Qub@x,     useINLAprecomp = FALSE
+        x = Qub@x,
         symmetric = TRUE,
         repr = "T"
     )

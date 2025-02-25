@@ -36,6 +36,7 @@ barrierModel.define <-
            range.fraction = 0.1,
            constr = FALSE, debug = FALSE, verbose = FALSE,
            useINLAprecomp = TRUE, libpath = NULL) {
+
     stopifnot(all(c(
       length(prior.range),
       length(prior.sigma) > 1
@@ -46,6 +47,20 @@ barrierModel.define <-
     stopifnot(prior.sigma[2] >= 0)
     stopifnot(prior.sigma[2] < 1)
     stopifnot(prior.sigma[1] > 0)
+
+    if (is.null(libpath)) {
+      if (useINLAprecomp) {
+        libpath <- INLA::inla.external.lib("INLAspacetime")
+      } else {
+        libpath <- system.file("libs", package = "INLAspacetime")
+        if (Sys.info()["sysname"] == "Windows") {
+          libpath <- file.path(libpath, "INLAspacetime.dll")
+        } else {
+          libpath <- file.path(libpath, "INLAspacetime.so")
+        }
+      }
+    }
+    stopifnot(file.exists(libpath))
 
     bfem <- INLAspacetime::mesh2fem.barrier(mesh, barrier.triangles)
     n <- nrow(bfem$I)
@@ -80,28 +95,15 @@ barrierModel.define <-
     )
     stopifnot(n == nrow(lmats$graph))
 
-    if (is.null(libpath)) {
-      if (useINLAprecomp) {
-        libpath <- INLA::inla.external.lib("INLAspacetime")
-      } else {
-        libpath <- system.file("libs", package = "INLAspacetime")
-        if (Sys.info()["sysname"] == "Windows") {
-          libpath <- file.path(libpath, "INLAspacetime.dll")
-        } else {
-          libpath <- file.path(libpath, "INLAspacetime.so")
-        }
-      }
-    }
-
     the_model <- do.call(
       "inla.cgeneric.define",
       list(
         model = "inla_cgeneric_barrier",
         shlib = libpath,
-        n = n,
+        n = as.integer(n),
         debug = as.integer(debug),
         verbose = as.integer(verbose),
-        prs = prior.range, ## TO DO: name on current CRAN version, change to 'prange'
+        prange = prior.range, ## TO DO: name on current CRAN version, change to 'prange'
         psigma = prior.sigma,
         ii = lmats$graph@i,
         jj = lmats$graph@j,

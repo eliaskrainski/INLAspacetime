@@ -25,7 +25,7 @@
  *        Thuwal 23955-6900, Saudi Arabia
  */
 
-#include "cgeneric_defs.h"
+#include "INLAspacetime.h"
 
 // This function uses the padded matrices with zeroes
 
