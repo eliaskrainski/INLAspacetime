@@ -43,8 +43,9 @@ jobs:
             any::pkgdown
             local::.
             any::knitr
-            any::ggplot2
             any::data.table
+            any::ggplot2
+            ani::patchwork
             any::rnaturalearth
           needs: website
 
