@@ -44,14 +44,13 @@ jobs:
             local::.
             any::knitr
             any::ggplot2
-            any::parallel
             any::data.table
             any::rnaturalearth
           needs: website
 
       - name: Session info
         run: |
-          options(width = 75)
+          options(width = 100)
           pkgs <- installed.packages()[, "Package"]
           sessioninfo::session_info(pkgs, include_base = TRUE)
         shell: Rscript {0}

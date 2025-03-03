@@ -56,7 +56,8 @@ Lindgren et. al. (2024) are computed with the
 but parametrized in log scale.
 }
 \references{
-Lindgren et. al. (2024).
+Finn Lindgren, Haakon Bakka, David Bolin, Elias Krainski and Håvard Rue (2024).
 A diffusion-based spatio-temporal extension of Gaussian Matérn fields.
 \href{https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf}{SORT 48 (1), 3-66}
+<doi: 10.57645/20.8080.02.13>
 }
