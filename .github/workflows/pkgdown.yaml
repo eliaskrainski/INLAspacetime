@@ -42,18 +42,16 @@ jobs:
           extra-packages: |
             any::pkgdown
             local::.
-            any::RColorBrewer
+            any::knitr
             any::ggplot2
-            any::dplyr
-            any::lwgeom
-            any::tmaptools
-            any::patchwork
+            any::parallel
             any::data.table
+            any::rnaturalearth
           needs: website
 
       - name: Session info
         run: |
-          options(width = 100)
+          options(width = 75)
           pkgs <- installed.packages()[, "Package"]
           sessioninfo::session_info(pkgs, include_base = TRUE)
         shell: Rscript {0}
@@ -65,11 +63,6 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
         with:
           limit-access-to-actor: true
-
-#      - name: Mermaid update
-#        run: |
-#          source("vignettes/web/mermaid_updater.R")
-#        shell: Rscript {0}
 
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)

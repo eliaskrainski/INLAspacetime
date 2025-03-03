@@ -29,8 +29,8 @@
 #' [SORT 48 (1), 3-66](https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf)
 #' <doi: 10.57645/20.8080.02.13>
 #' @return objects to be used in the f() formula term in INLA.
-#' @export
 #' @importFrom fmesher fm_manifold
+#' @export
 cgeneric_sspde <-
   function(mesh,
            alpha,
@@ -47,6 +47,15 @@ cgeneric_sspde <-
     stopifnot(dimension > 0)
 
     if (is.null(libpath)) {
+      pkgs <- installed.packages()
+      iINLAi <- which(pkgs[, "Package"] == "INLA")
+      if(length(iINLAi)==0)
+        stop("You need to install `INLA`!")
+      INLAVersion <- pkgs[iINLAi, "Version"]
+      if(useINLAprecomp & (!(INLAVersion>"25.02.10"))) {
+        warning("Setting 'useINLAprecomp = FALSE' to use new code.")
+        useINLAprecomp <- FALSE
+      }
       if (useINLAprecomp) {
         libpath <- INLA::inla.external.lib("INLAspacetime")
       } else {
@@ -117,7 +126,7 @@ cgeneric_sspde <-
         prange = as.double(control.priors$prange),
         psigma = as.double(control.priors$psigma),
         xx = t(lmats$xx)
-      )
+        )
     )
     if (constr) {
       the_model$f$extraconstr <- list(

@@ -1,7 +1,7 @@
 
 /* cgeneric_defs.h
  *
- * Copyright (C) 2022-2023 Elias Krainski
+ * Copyright (C) 2022-2025 Elias Krainski
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ __BEGIN_DECLS
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
-#include "cgeneric.h"
+#include <cgeneric.h>
 
 #define Calloc(n_, type_)  (type_ *)calloc((n_), sizeof(type_))
 #define SQR(x) ((x)*(x))

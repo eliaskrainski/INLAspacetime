@@ -12,6 +12,10 @@
 #' @export
 INLAspacetime <- function() {
   print("Welcome to the INLAspacetime package!")
-  utils::browseVignettes("INLAspacetime")
-##  utils::browseURL("https://eliaskrainski.github.io/INLAspacetime")
+  utils::browseURL("https://eliaskrainski.github.io/INLAspacetime")
+}
+.onAttach <- function(...) {
+  packageStartupMessage(
+   "see more on https://eliaskrainski.github.io/INLAspacetime"
+  )
 }

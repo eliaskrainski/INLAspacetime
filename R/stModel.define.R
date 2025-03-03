@@ -25,9 +25,11 @@
 #' [stModel.matrices] and the parameters are as Eq (19-21),
 #' but parametrized in log scale.
 #' @return objects to be used in the f() formula term in INLA.
-#' @references Lindgren et. al. (2024).
+#' @references
+#' Finn Lindgren, Haakon Bakka, David Bolin, Elias Krainski and Håvard Rue (2024).
 #' A diffusion-based spatio-temporal extension of Gaussian Matérn fields.
 #' [SORT 48 (1), 3-66](https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf)
+#' <doi: 10.57645/20.8080.02.13>
 #' @export
 #' @importFrom fmesher fm_manifold
 stModel.define <-
@@ -43,6 +45,15 @@ stModel.define <-
     stopifnot(dimension > 0)
 
     if (is.null(libpath)) {
+      pkgs <- installed.packages()
+      iINLAi <- which(pkgs[, "Package"] == "INLA")
+      if(length(iINLAi)==0)
+        stop("You need to install `INLA`!")
+      INLAVersion <- pkgs[iINLAi, "Version"]
+      if(useINLAprecomp & (!(INLAVersion>"25.02.10"))) {
+        warning("Setting 'useINLAprecomp = FALSE' to use new code.")
+        useINLAprecomp <- FALSE
+      }
       if (useINLAprecomp) {
         libpath <- INLA::inla.external.lib("INLAspacetime")
       } else {

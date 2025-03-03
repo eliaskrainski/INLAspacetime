@@ -49,6 +49,15 @@ barrierModel.define <-
     stopifnot(prior.sigma[1] > 0)
 
     if (is.null(libpath)) {
+      pkgs <- installed.packages()
+      iINLAi <- which(pkgs[, "Package"] == "INLA")
+      if(length(iINLAi)==0)
+        stop("You need to install `INLA`!")
+      INLAVersion <- pkgs[iINLAi, "Version"]
+      if(useINLAprecomp & (!(INLAVersion>"25.02.10"))) {
+        warning("Setting 'useINLAprecomp = FALSE' to use new code.")
+        useINLAprecomp <- FALSE
+      }
       if (useINLAprecomp) {
         libpath <- INLA::inla.external.lib("INLAspacetime")
       } else {
@@ -102,7 +111,7 @@ barrierModel.define <-
         shlib = libpath,
         n = as.integer(n),
         debug = as.integer(debug),
-        prange = prior.range, ## TO DO: name on current CRAN version, change to 'prange'
+        prange = prior.range,
         psigma = prior.sigma,
         ii = lmats$graph@i,
         jj = lmats$graph@j,
