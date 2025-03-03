@@ -1,5 +1,5 @@
 
-/* cgeneric_defs.h
+/* INLAspacetime.h
  *
  * Copyright (C) 2022-2025 Elias Krainski
  *
@@ -46,7 +46,7 @@ __BEGIN_DECLS
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
-#include <cgeneric.h>
+#include "cgeneric.h"
 
 #define Calloc(n_, type_)  (type_ *)calloc((n_), sizeof(type_))
 #define SQR(x) ((x)*(x))
@@ -76,9 +76,7 @@ inla_cgeneric_func_tp inla_cgeneric_barrier;
 double pclogrange(double logrange, double lamda, int dim);
 double pclogsigma(double logsigma, double lamda);
 void CSphere_gamma_alpha(double *lnGamma2, double *dalpha, double *cska);
-void ar2cov(int *n, int *k,
-            double *a1, double *a2,
-            double *r);
+void ar2cov(int *n, int *k, double *a1, double *a2, double *r);
 
 __END_DECLS
 #endif
