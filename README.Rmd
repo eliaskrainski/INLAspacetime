@@ -36,14 +36,19 @@ INLA can use it internally.
 ## We have implemented 
 
 1. some of the models presented in 
-https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf
+*A diffusion-based spatio-temporal extension of Gaussian Matérn fields* (2024).
+_Finn Lindgren, Haakon Bakka, David Bolin, Elias Krainski
+and Håvard Rue_. 
+SORT 48 (1) January-June 2024, 3-66.
+(https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf)
 
-2. the barrier model proposed in 
+2. the barrier (and transparent barriers) 
+model proposed in 
 https://doi.org/10.1016/j.spasta.2019.01.002
 
 ## Vignettes
 
-Please chek [Tutorials](https://eliaskrainski.github.io/INLAspacetime/)
+Please check [here](https://eliaskrainski.github.io/INLAspacetime/articles/)
 
 ## Installation
 

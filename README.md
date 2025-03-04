@@ -23,15 +23,19 @@ that INLA can use it internally.
 
 ## We have implemented
 
-1.  some of the models presented in
-    <https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf>
+1.  some of the models presented in *A diffusion-based spatio-temporal
+    extension of Gaussian Matérn fields* (2024). *Finn Lindgren, Haakon
+    Bakka, David Bolin, Elias Krainski and Håvard Rue*. SORT 48 (1)
+    January-June 2024, 3-66.
+    (<https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf>)
 
-2.  the barrier model proposed in
+2.  the barrier (and transparent barriers) model proposed in
     <https://doi.org/10.1016/j.spasta.2019.01.002>
 
 ## Vignettes
 
-Please chek [Tutorials](https://eliaskrainski.github.io/INLAspacetime/)
+Please check
+[here](https://eliaskrainski.github.io/INLAspacetime/articles/)
 
 ## Installation
 
@@ -179,14 +183,14 @@ that were not fixed.
 
 ``` r
 fit$summary.fixed
-#>                  mean       sd 0.025quant  0.5quant 0.975quant      mode
-#> (Intercept) 0.6933324 4.032569  -6.962249 0.5226762    9.41714 0.5550268
+#>                 mean      sd 0.025quant  0.5quant 0.975quant      mode
+#> (Intercept) 0.693389 4.03265  -6.962331 0.5227188   9.417425 0.5550712
 #>                      kld
-#> (Intercept) 7.406766e-05
+#> (Intercept) 7.398472e-05
 fit$summary.hyperpar
-#>                   mean        sd 0.025quant 0.5quant 0.975quant      mode
-#> Theta1 for st 1.199203 0.4918228  0.3654245 1.161520   2.277317 0.9749729
-#> Theta2 for st 1.435517 0.1710692  1.1031070 1.434033   1.776668 1.4277562
+#>                   mean        sd 0.025quant 0.5quant 0.975quant     mode
+#> Theta1 for st 1.199222 0.4918533  0.3653818 1.161539   2.277396 0.974993
+#> Theta2 for st 1.435517 0.1710676  1.1031120 1.434032   1.776667 1.427752
 ```
 
 ## Using the **inlabru**
@@ -226,12 +230,12 @@ Summary of the model parameters
 
 ``` r
 result$summary.fixed
-#>                mean       sd 0.025quant  0.5quant 0.975quant      mode
-#> Intercept 0.6690271 3.969969  -6.886819 0.5094968   9.213453 0.5379369
+#>                mean       sd 0.025quant 0.5quant 0.975quant      mode
+#> Intercept 0.6690302 3.970182  -6.887199 0.509471   9.214066 0.5379221
 #>                    kld
-#> Intercept 5.704923e-05
+#> Intercept 5.683968e-05
 result$summary.hyperpar
 #>                      mean        sd 0.025quant 0.5quant 0.975quant      mode
-#> Theta1 for field 1.190382 0.4868132  0.3624377 1.153769   2.255815 0.9726504
-#> Theta2 for field 1.435278 0.1709827  1.1034207 1.433666   1.776640 1.4268366
+#> Theta1 for field 1.190438 0.4868951  0.3623876 1.153809   2.256071 0.9726162
+#> Theta2 for field 1.435268 0.1709839  1.1033563 1.433674   1.776580 1.4269195
 ```
