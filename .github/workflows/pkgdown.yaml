@@ -45,7 +45,7 @@ jobs:
             any::knitr
             any::data.table
             any::ggplot2
-            ani::patchwork
+            any::patchwork
             any::rnaturalearth
           needs: website
 
