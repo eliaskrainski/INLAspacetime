@@ -35,8 +35,8 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-tutorials" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Tutorials</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-tutorials">
-<li><a class="dropdown-item" href="articles/barrierExample.html">Spatial models for domains with barrier</a></li>
-    <li><a class="dropdown-item" href="articles/piemonte.html">Spatio-temporal examples</a></li>
+<li><a class="dropdown-item" href="articles/web/barrierExample.html">Spatial models for domains with barrier</a></li>
+    <li><a class="dropdown-item" href="articles/web/piemonte.html">Spatio-temporal examples</a></li>
   </ul>
 </li>
       </ul>
@@ -58,6 +58,19 @@
 <!-- badges: start -->
 
 <p>This is a R package to implement certain spatial and spatio-temporal models, including some of the spatio-temporal models proposed <a href="https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf" class="external-link">here</a>. It uses the <code>cgeneric</code> interface in the INLA package, to implement models by writing <code>C</code> code to build the precision matrix compiling it so that INLA can use it internally.</p>
+<div class="section level2">
+<h2 id="we-have-implemented">We have implemented<a class="anchor" aria-label="anchor" href="#we-have-implemented"></a>
+</h2>
+<ol style="list-style-type: decimal">
+<li><p>some of the models presented in <a href="https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf" class="external-link uri">https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf</a></p></li>
+<li><p>the barrier model proposed in <a href="https://doi.org/10.1016/j.spasta.2019.01.002" class="external-link uri">https://doi.org/10.1016/j.spasta.2019.01.002</a></p></li>
+</ol>
+</div>
+<div class="section level2">
+<h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
+</h2>
+<p>Please chek <a href="https://eliaskrainski.github.io/INLAspacetime/">Tutorials</a></p>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -83,14 +96,6 @@
 <!-- install.packages("INLAspacetime") -->
 <!-- ``` -->
 </div>
-<div class="section level2">
-<h2 id="we-have-implemented">We have implemented<a class="anchor" aria-label="anchor" href="#we-have-implemented"></a>
-</h2>
-<ol style="list-style-type: decimal">
-<li><p>some of the models presented in <a href="https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf" class="external-link uri">https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf</a></p></li>
-<li><p>the barrier model proposed in <a href="https://doi.org/10.1016/j.spasta.2019.01.002" class="external-link uri">https://doi.org/10.1016/j.spasta.2019.01.002</a></p></li>
-</ol>
-</div>
 </div>
 <div class="section level1">
 <h1 id="a-spacetime-example">A spacetime example<a class="anchor" aria-label="anchor" href="#a-spacetime-example"></a>
@@ -114,7 +119,8 @@
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://inlabru-org.github.io/fmesher/" class="external-link">fmesher</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">INLA</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eliaskrainski/INLAspacetime" class="external-link">INLAspacetime</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eliaskrainski/INLAspacetime" class="external-link">INLAspacetime</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; see more on https://eliaskrainski.github.io/INLAspacetime</span></span></code></pre></div>
 <p>Define spatial and temporal discretization meshes</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">smesh</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://inlabru-org.github.io/fmesher/reference/fm_mesh_2d.html" class="external-link">fm_mesh_2d</a></span><span class="op">(</span></span>
@@ -134,7 +140,10 @@
 <span>        prt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">0</span><span class="op">)</span>, <span class="co">## temporal range fixed to 5</span></span>
 <span>        psigma <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.1</span><span class="op">)</span> <span class="co">## P(sigma &gt; 1) = 0.1</span></span>
 <span>        <span class="op">)</span></span>
-<span>    <span class="op">)</span></span></code></pre></div>
+<span>    <span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in stModel.define(smesh = smesh, tmesh = tmesh, model = "121",</span></span>
+<span><span class="co">#&gt; control.priors = list(prs = c(1, : Setting 'useINLAprecomp = FALSE' to use new</span></span>
+<span><span class="co">#&gt; code.</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="fit-the-model">Fit the model<a class="anchor" aria-label="anchor" href="#fit-the-model"></a>
 </h2>
@@ -158,7 +167,7 @@
 <span>      fixed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>    </span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>Combine a ‘fake’ index column with `A.local’</p>
+<p>Combine a ‘fake’ index column with <code>A.local</code></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fmodel</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/pkg/INLA/man/f.html" class="external-link">f</a></span><span class="op">(</span><span class="va">st</span>, model <span class="op">=</span> <span class="va">stmodel</span>, A.local <span class="op">=</span> <span class="va">Aproj</span><span class="op">)</span></span></code></pre></div>
 <p>Call the main <code>INLA</code> function:</p>
@@ -170,14 +179,14 @@
 <p>Posterior marginal summaries for fixed effect and the model parameters that were not fixed.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span><span class="op">$</span><span class="va">summary.fixed</span></span>
-<span><span class="co">#&gt;                  mean       sd 0.025quant  0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; (Intercept) 0.6933766 4.032586  -6.962245 0.5227216   9.417188 0.555068</span></span>
+<span><span class="co">#&gt;                  mean       sd 0.025quant  0.5quant 0.975quant      mode</span></span>
+<span><span class="co">#&gt; (Intercept) 0.6933324 4.032569  -6.962249 0.5226762    9.41714 0.5550268</span></span>
 <span><span class="co">#&gt;                      kld</span></span>
-<span><span class="co">#&gt; (Intercept) 7.411114e-05</span></span>
+<span><span class="co">#&gt; (Intercept) 7.406766e-05</span></span>
 <span><span class="va">fit</span><span class="op">$</span><span class="va">summary.hyperpar</span></span>
 <span><span class="co">#&gt;                   mean        sd 0.025quant 0.5quant 0.975quant      mode</span></span>
-<span><span class="co">#&gt; Theta1 for st 1.199194 0.4918107   0.365412 1.161518   2.277266 0.9750084</span></span>
-<span><span class="co">#&gt; Theta2 for st 1.435519 0.1710698   1.103120 1.434030   1.776684 1.4277357</span></span></code></pre></div>
+<span><span class="co">#&gt; Theta1 for st 1.199203 0.4918228  0.3654245 1.161520   2.277317 0.9749729</span></span>
+<span><span class="co">#&gt; Theta2 for st 1.435517 0.1710692  1.1031070 1.434033   1.776668 1.4277562</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="using-the-inlabru">Using the <strong>inlabru</strong>
@@ -207,18 +216,13 @@
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">summary.fixed</span></span>
 <span><span class="co">#&gt;                mean       sd 0.025quant  0.5quant 0.975quant      mode</span></span>
-<span><span class="co">#&gt; Intercept 0.6690379 3.969851  -6.886589 0.5095207   9.213142 0.5379552</span></span>
+<span><span class="co">#&gt; Intercept 0.6690271 3.969969  -6.886819 0.5094968   9.213453 0.5379369</span></span>
 <span><span class="co">#&gt;                    kld</span></span>
-<span><span class="co">#&gt; Intercept 5.713904e-05</span></span>
+<span><span class="co">#&gt; Intercept 5.704923e-05</span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">summary.hyperpar</span></span>
 <span><span class="co">#&gt;                      mean        sd 0.025quant 0.5quant 0.975quant      mode</span></span>
-<span><span class="co">#&gt; Theta1 for field 1.190355 0.4867797  0.3624472 1.153749   2.255702 0.9726699</span></span>
-<span><span class="co">#&gt; Theta2 for field 1.435283 0.1709777  1.1034676 1.433660   1.776667 1.4267841</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
-</h2>
-<p>Please check it out at the <a href="https://eliaskrainski.github.io/INLAspacetime/">Tutorials</a></p>
+<span><span class="co">#&gt; Theta1 for field 1.190382 0.4868132  0.3624377 1.153769   2.255815 0.9726504</span></span>
+<span><span class="co">#&gt; Theta2 for field 1.435278 0.1709827  1.1034207 1.433666   1.776640 1.4268366</span></span></code></pre></div>
 </div>
 </div>
 

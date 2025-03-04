@@ -30,11 +30,11 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../../reference/index.html">Reference</a></li>
-<li class="nav-item dropdown">
+<li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-tutorials" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Tutorials</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-tutorials">
-<li><a class="dropdown-item" href="../../articles/barrierExample.html">Spatial models for domains with barrier</a></li>
-    <li><a class="dropdown-item" href="../../articles/piemonte.html">Spatio-temporal examples</a></li>
+<li><a class="dropdown-item" href="../../articles/web/barrierExample.html">Spatial models for domains with barrier</a></li>
+    <li><a class="dropdown-item" href="../../articles/web/piemonte.html">Spatio-temporal examples</a></li>
   </ul>
 </li>
       </ul>
@@ -430,9 +430,9 @@ the intercept with</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">summary.fix</span></span>
 <span><span class="co">#&gt;               mean        sd 0.025quant 0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; Intercept 10.11299 0.4109278    9.30471 10.10417   10.97139 10.10513</span></span>
-<span><span class="co">#&gt;                    kld</span></span>
-<span><span class="co">#&gt; Intercept 1.082279e-06</span></span></code></pre></div>
+<span><span class="co">#&gt; Intercept 10.11287 0.4108065   9.304867 10.10404   10.97112 10.10501</span></span>
+<span><span class="co">#&gt;                   kld</span></span>
+<span><span class="co">#&gt; Intercept 1.13123e-06</span></span></code></pre></div>
 <p>For the hyper-parameters the computations were performed in an
 internal scale. That is log of range and
 log(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>σ</mi><annotation encoding="application/x-tex">\sigma</annotation></semantics></math>),
@@ -468,8 +468,8 @@ data:</p>
 <span>             <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/INLA/man/marginal.html" class="external-link">inla.zmarginal</a></span><span class="op">(</span><span class="va">m</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;         sigma.e    range     sigma</span></span>
 <span><span class="co">#&gt; true 1.00000000 4.000000 1.0000000</span></span>
-<span><span class="co">#&gt; mean 1.04430133 4.049063 0.9013952</span></span>
-<span><span class="co">#&gt; sd   0.03812347 1.098424 0.1404986</span></span></code></pre></div>
+<span><span class="co">#&gt; mean 1.04423354 4.049269 0.9013917</span></span>
+<span><span class="co">#&gt; sd   0.03812934 1.100533 0.1404038</span></span></code></pre></div>
 <p>We can also visualize these these posterior marginal distributions
 with</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
