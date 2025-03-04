@@ -33,6 +33,18 @@ to implement models by writing `C`
 code to build the precision matrix compiling it so that 
 INLA can use it internally.
 
+## We have implemented 
+
+1. some of the models presented in 
+https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf
+
+2. the barrier model proposed in 
+https://doi.org/10.1016/j.spasta.2019.01.002
+
+## Vignettes
+
+Please chek [Tutorials](https://eliaskrainski.github.io/INLAspacetime/)
+
 ## Installation
 
 The 'INLA' package is a suggested one, but you will need it 
@@ -64,14 +76,6 @@ remotes::install_github("eliaskrainski/INLAspacetime",  build_vignettes=TRUE)
 <!-- ## Install it -->
 <!-- install.packages("INLAspacetime") -->
 <!-- ``` -->
-
-## We have implemented 
-
-1. some of the models presented in 
-https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf
-
-2. the barrier model proposed in 
-https://doi.org/10.1016/j.spasta.2019.01.002
 
 # A spacetime example
 
@@ -165,7 +169,7 @@ ctrl.lik <- list(
 )
 ```
 
-Combine a 'fake' index column with `A.local'
+Combine a 'fake' index column with `A.local`
 ```{r fmodel}
 fmodel <- y ~ f(st, model = stmodel, A.local = Aproj)
 ```
@@ -220,8 +224,3 @@ Summary of the model parameters
 result$summary.fixed
 result$summary.hyperpar
 ```
-
-## Vignettes
-
-Please check it out at the 
-[Tutorials](https://eliaskrainski.github.io/INLAspacetime/)

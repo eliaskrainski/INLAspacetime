@@ -9,6 +9,6 @@ navbar:
       text: Tutorials
       menu:
       - text: Spatial models for domains with barrier
-        href: articles/barrierExample.html
+        href: articles/web/barrierExample.html
       - text: Spatio-temporal examples
-        href: articles/piemonte.html
+        href: articles/web/piemonte.html
