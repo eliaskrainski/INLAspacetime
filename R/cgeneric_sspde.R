@@ -47,7 +47,7 @@ cgeneric_sspde <-
     stopifnot(dimension > 0)
 
     if (is.null(libpath)) {
-      pkgs <- installed.packages()
+      pkgs <- utils::installed.packages()
       iINLAi <- which(pkgs[, "Package"] == "INLA")
       if(length(iINLAi)==0)
         stop("You need to install `INLA`!")

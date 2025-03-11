@@ -42,9 +42,11 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 	N = data->ints[0]->ints[0];			       // this will always be the case
 	assert(N > 0);
 
+/*
 	assert(!strcasecmp(data->ints[1]->name, "debug"));     // this will always be the case
 	int debug = data->ints[1]->ints[0];		       // this will always be the case
 	assert(debug >= 0);				       // just to 'find an use for "debug"
+*/
 
 	assert(!strcasecmp(data->ints[2]->name, "ii"));
 	inla_cgeneric_vec_tp *ii = data->ints[2];
@@ -186,7 +188,7 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 		// PC-priors
 		ret[0] = 0.0;
 		ith = 0;
-		double lam, daux = 2 * 0.5;
+		double lam; //, daux = 2 * 0.5;
 		if (ifix[0] == 0) {
 			lam = -log(prange->doubles[1]) / prange->doubles[0];
 //			ret[0] += log(lam1 * daux) - daux * theta[ith] - lam1 * exp(-daux * theta[ith]) + log(daux);
