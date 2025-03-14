@@ -64,10 +64,8 @@ barrierModel.define <-
       if(is.na(INLAversion) & useINLAprecomp) {
         stop("Update INLA or try `useINLAprecomp = FALSE`!")
       }
-      if(INLAversion<="25.02.10") {
-        hasverbose <- TRUE ## to work with old C versions
-      }
       if (useINLAprecomp) {
+        hasverbose <- (INLAversion<="25.02.10") ## to work with old C versions
         libpath <- INLA::inla.external.lib("INLAspacetime")
       } else {
         hasverbose <- FALSE

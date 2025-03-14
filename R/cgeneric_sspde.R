@@ -65,18 +65,17 @@ cgeneric_sspde <-
     stopifnot(control.priors$prange[2]<1)
     stopifnot(control.priors$psigma[2]<1)
 
-
+    INLAversion <- check_package_version_and_load(
+      pkg = "INLA",
+      minimum_version = "25.03.11",
+      quietly = TRUE
+    )
     if (is.null(libpath)) {
       if(length(useINLAprecomp)>1) {
         warning("length(useINLAprecomp)>1, first taken!")
         useINLAprecomp <- useINLAprecomp[1]
       }
       stopifnot(is.logical(useINLAprecomp))
-      INLAversion <- check_package_version_and_load(
-        pkg = "INLA",
-        minimum_version = "25.03.11",
-        quietly = TRUE
-        )
       if(is.na(INLAversion) & useINLAprecomp) {
         stop("Update INLA or try `useINLAprecomp = FALSE`!")
       }

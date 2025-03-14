@@ -60,24 +60,22 @@ stModel.define <-
     stopifnot(control.priors$prs[2]<1)
     stopifnot(control.priors$psigma[2]<1)
 
+    INLAversion <- check_package_version_and_load(
+      pkg = "INLA",
+      minimum_version = "23.08.16",
+      quietly = TRUE
+    )
     if (is.null(libpath)) {
       if(length(useINLAprecomp)>1) {
         warning("length(useINLAprecomp)>1, first taken!")
         useINLAprecomp <- useINLAprecomp[1]
       }
       stopifnot(is.logical(useINLAprecomp))
-      INLAversion <- check_package_version_and_load(
-        pkg = "INLA",
-        minimum_version = "23.08.16",
-        quietly = TRUE
-      )
       if(is.na(INLAversion) & useINLAprecomp) {
         stop("Update INLA or try `useINLAprecomp = FALSE`!")
       }
-      if(INLAversion<="25.02.10") {
-        hasverbose <- TRUE ## to work with old C versions
-      }
       if (useINLAprecomp) {
+        hasverbose <- (INLAversion<="25.02.10") ## to work with old C versions
         libpath <- INLA::inla.external.lib("INLAspacetime")
       } else {
         hasverbose <- FALSE
