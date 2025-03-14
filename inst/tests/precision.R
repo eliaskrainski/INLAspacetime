@@ -19,8 +19,8 @@ domain <- cbind(
 smesh <- inla.mesh.2d(###fm_mesh_2d(
     loc.domain = domain,
     offset = r0 / c(5, 2), ##r0 / c(40, 3),
-    max.edge = r0 / c(5, 2), ##c(r0 / c(20, 5),
-    cutoff = r0 / 10)##r0 / 40)
+    max.edge = r0 / c(2, 1), ##c(r0 / c(20, 5),
+    cutoff = r0 / 7)##r0 / 40)
 smesh$n
 
 if(FALSE)
@@ -57,50 +57,34 @@ system.time(
             prt = c(1, 0.1),
             prs = c(1, 0.1),
             psigma = c(1, 0.1)
-        ),
-        verbose = TRUE,
-        debug = !TRUE,
-        useINLAprecomp = FALSE
+        )
     )
 )
 
-library(corGraphs)
-
 str(cmodel$f)
 
-system.time(
-    Qij <- cgeneric_get(cmodel, cmd = "graph", theta = log(params))
-)
+ires <- inla(
+    y ~ 0 + f(i, model = cmodel),
+    data = list(i = 1:cmodel$f$n,
+                y = rep(NA, cmodel$f$n)),
+    control.family = list(
+        hyper = list(prec = list(initial = 10, fixed = TRUE))
+    ),
+    control.mode = list(theta = log(params), fixed = TRUE),
+    control.compute = list(config = TRUE))
 
-system.time(
-    qq <- cgeneric_get(cmodel, theta = log(params), cmd = "Q")
-)
-
-str(Qij)
-str(qq)
-
-sapply(Qij, range)
-str(Qij)
-
-Q <- sparseMatrix(
-    i = Qij[[1]] + 1L,
-    j = Qij[[2]] + 1L,
-    x = qq
-)
-
-str(stPrecision)
-str(Q)
+iQ <- ires$misc$configs$config[[1]]$Q
 
 all.equal(stPrecision@x,
-          Q@x)
-
-plot(stPrecision@x,
-          Q@x)
+          iQ@x)
 
 n <- 100
 xyt <- cbind(runif(n, bb[1, 1], bb[1, 2]),
              runif(n, bb[2, 1], bb[2, 2]),
              sort(sample(1:nt, n, replace = TRUE)))
+
+plot(smesh)
+points(xyt[, 1:2], pch = 19)
 
 A <- inla.spde.make.A(
     mesh = smesh,

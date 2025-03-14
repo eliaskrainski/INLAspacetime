@@ -20,9 +20,9 @@ cgeneric_sspde(
 \item{alpha}{integer used to compute the smoothness parameter.}
 
 \item{control.priors}{named list with parameter priors.
-This shall contain prior.range and prior.sigma as length two
-vectors with (U, a) to define the PC-prior parameters such that
-P(range<U)=a and P(sigma>U)=a, respectively.
+This shall contain \code{prange} and \code{psigma} each one
+as a length two vector with (U, a) to define the PC-prior
+parameters such that P(range<U)=a and P(sigma>U)=a, respectively.
 See Fuglstad et. al. (2019) <DOI: 10.1080/01621459.2017.1415907>.
 If a=0 then U is taken to be the fixed value of the parameter.}
 

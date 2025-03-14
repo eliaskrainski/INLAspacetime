@@ -5,11 +5,11 @@
 #' @param model a three characters string to specify the
 #' smoothness alpha (each one as integer) parameters.
 #' Currently it considers the `102`, `121`, `202` and `220` models.
-#' @param control.priors a named list with parameter priors.
-#' E.g. prior.rs, prior.rt and prior.sigma
-#' as vectors with length two (U, a) to define the
-#' corresponding PC-prior such that
-#' P(r_s<U)=a, P(r_t<U)=a or P(sigma>U)=a.
+#' @param control.priors a named list with parameter priors,
+#' named as `prs`, `prt` and `psigma`, each one as a vector
+#' with length two containing (U, a) to define the
+#' corresponding PC-prior such that, respectively,
+#' P(range.spatial<U)=a, P(range.temporal<U)=a or P(sigma>U)=a.
 #' If a=0 then U is taken to be the fixed value of the parameter.
 #' @param constr logical to indicate if the integral of the field
 #' over the domain is to be constrained to zero. Default value is FALSE.
@@ -44,19 +44,43 @@ stModel.define <-
     dimension <- fm_manifold_dim(smesh)
     stopifnot(dimension > 0)
 
+    stopifnot(length(control.priors$prt)==2)
+    stopifnot(length(control.priors$prs)==2)
+    stopifnot(length(control.priors$psigma)==2)
+
+    stopifnot(control.priors$prt[1]>0)
+    stopifnot(control.priors$prs[1]>0)
+    stopifnot(control.priors$psigma[1]>0)
+
+    stopifnot(control.priors$prt[2]>=0)
+    stopifnot(control.priors$prs[2]>=0)
+    stopifnot(control.priors$psigma[2]>=0)
+
+    stopifnot(control.priors$prt[2]<1)
+    stopifnot(control.priors$prs[2]<1)
+    stopifnot(control.priors$psigma[2]<1)
+
     if (is.null(libpath)) {
-      pkgs <- utils::installed.packages()
-      iINLAi <- which(pkgs[, "Package"] == "INLA")
-      if(length(iINLAi)==0)
-        stop("You need to install `INLA`!")
-      INLAVersion <- pkgs[iINLAi, "Version"]
-      if(useINLAprecomp & (!(INLAVersion>"25.02.10"))) {
-        warning("Setting 'useINLAprecomp = FALSE' to use new code.")
-        useINLAprecomp <- FALSE
+      if(length(useINLAprecomp)>1) {
+        warning("length(useINLAprecomp)>1, first taken!")
+        useINLAprecomp <- useINLAprecomp[1]
+      }
+      stopifnot(is.logical(useINLAprecomp))
+      INLAversion <- check_package_version_and_load(
+        pkg = "INLA",
+        minimum_version = "23.08.16",
+        quietly = TRUE
+      )
+      if(is.na(INLAversion) & useINLAprecomp) {
+        stop("Update INLA or try `useINLAprecomp = FALSE`!")
+      }
+      if(INLAversion<="25.02.10") {
+        hasverbose <- TRUE ## to work with old C versions
       }
       if (useINLAprecomp) {
         libpath <- INLA::inla.external.lib("INLAspacetime")
       } else {
+        hasverbose <- FALSE
         libpath <- system.file("libs", package = "INLAspacetime")
         if (Sys.info()["sysname"] == "Windows") {
           libpath <- file.path(libpath, "INLAspacetime.dll")
@@ -112,13 +136,20 @@ stModel.define <-
     lmats <- upperPadding(mm[jmm], relative = FALSE)
     stopifnot(n == nrow(lmats$graph))
 
+    args0 <- list(
+      model = "inla_cgeneric_sstspde",
+      shlib = libpath,
+      n = as.integer(n),
+      debug = as.integer(debug)
+      )
+    if(hasverbose) { ## to work with old C versions
+      args0$verbose <- as.integer(0)
+    }
+
     the_model <- do.call(
       "inla.cgeneric.define",
-      list(
-        model = "inla_cgeneric_sstspde",
-        shlib = libpath,
-        n = n,
-        debug = as.integer(debug),
+      c(args0,
+        list(
         Rmanifold = as.integer(Rmanifold),
         dimension = as.integer(dimension),
         aaa = as.integer(alphas),
@@ -132,7 +163,7 @@ stModel.define <-
         jj = lmats$graph@j,
         tt = t(mm$TT),
         xx = t(lmats$xx)
-      )
+      ))
     )
     if (constr) {
       the_model$f$extraconstr <- mm$extraconstr

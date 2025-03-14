@@ -64,8 +64,8 @@ csspde <- cgeneric_sspde(
     mesh = mesh,
     alpha = 2,
     control.priors = list(
-        prange = c(param0[1], NA),
-        psigma = c(param0[2], NA)
+        prange = c(param0[1], 0.5),
+        psigma = c(param0[2], 0.5)
     ), useINLAprecomp=FALSE
 )
 

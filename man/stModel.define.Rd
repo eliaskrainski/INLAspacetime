@@ -24,11 +24,11 @@ stModel.define(
 smoothness alpha (each one as integer) parameters.
 Currently it considers the \code{102}, \code{121}, \code{202} and \code{220} models.}
 
-\item{control.priors}{a named list with parameter priors.
-E.g. prior.rs, prior.rt and prior.sigma
-as vectors with length two (U, a) to define the
-corresponding PC-prior such that
-P(r_s<U)=a, P(r_t<U)=a or P(sigma>U)=a.
+\item{control.priors}{a named list with parameter priors,
+named as \code{prs}, \code{prt} and \code{psigma}, each one as a vector
+with length two containing (U, a) to define the
+corresponding PC-prior such that, respectively,
+P(range.spatial<U)=a, P(range.temporal<U)=a or P(sigma>U)=a.
 If a=0 then U is taken to be the fixed value of the parameter.}
 
 \item{constr}{logical to indicate if the integral of the field

@@ -2,9 +2,9 @@
 #' @param mesh triangulation mesh to discretize the model.
 #' @param alpha integer used to compute the smoothness parameter.
 #' @param control.priors named list with parameter priors.
-#' This shall contain prior.range and prior.sigma as length two
-#' vectors with (U, a) to define the PC-prior parameters such that
-#' P(range<U)=a and P(sigma>U)=a, respectively.
+#' This shall contain `prange` and `psigma` each one
+#' as a length two vector with (U, a) to define the PC-prior
+#' parameters such that P(range<U)=a and P(sigma>U)=a, respectively.
 #' See Fuglstad et. al. (2019) <DOI: 10.1080/01621459.2017.1415907>.
 #' If a=0 then U is taken to be the fixed value of the parameter.
 #' @param constr logical to indicate if the integral of the field
@@ -46,15 +46,39 @@ cgeneric_sspde <-
     dimension <- fm_manifold_dim(mesh)
     stopifnot(dimension > 0)
 
+    stopifnot(length(control.priors$prange)==2)
+    stopifnot(length(control.priors$psigma)==2)
+
+    if(is.na(control.priors$prange[2])) {
+      control.priors$prange[2] <- 0
+    }
+    if(is.na(control.priors$psigma[2])) {
+      control.priors$psigma[2] <- 0
+    }
+
+    stopifnot(control.priors$prange[1]>0)
+    stopifnot(control.priors$psigma[1]>0)
+
+    stopifnot(control.priors$prange[2]>=0)
+    stopifnot(control.priors$psigma[2]>=0)
+
+    stopifnot(control.priors$prange[2]<1)
+    stopifnot(control.priors$psigma[2]<1)
+
+
     if (is.null(libpath)) {
-      pkgs <- utils::installed.packages()
-      iINLAi <- which(pkgs[, "Package"] == "INLA")
-      if(length(iINLAi)==0)
-        stop("You need to install `INLA`!")
-      INLAVersion <- pkgs[iINLAi, "Version"]
-      if(useINLAprecomp & (!(INLAVersion>"25.02.10"))) {
-        warning("Setting 'useINLAprecomp = FALSE' to use new code.")
-        useINLAprecomp <- FALSE
+      if(length(useINLAprecomp)>1) {
+        warning("length(useINLAprecomp)>1, first taken!")
+        useINLAprecomp <- useINLAprecomp[1]
+      }
+      stopifnot(is.logical(useINLAprecomp))
+      INLAversion <- check_package_version_and_load(
+        pkg = "INLA",
+        minimum_version = "25.03.11",
+        quietly = TRUE
+        )
+      if(is.na(INLAversion) & useINLAprecomp) {
+        stop("Update INLA or try `useINLAprecomp = FALSE`!")
       }
       if (useINLAprecomp) {
         libpath <- INLA::inla.external.lib("INLAspacetime")

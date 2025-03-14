@@ -12,7 +12,6 @@ barrierModel.define(
   range.fraction = 0.1,
   constr = FALSE,
   debug = FALSE,
-  verbose = FALSE,
   useINLAprecomp = TRUE,
   libpath = NULL
 )
@@ -44,8 +43,6 @@ prevent numerical issues.}
 over the domain is to be constrained to zero. Default value is FALSE.}
 
 \item{debug}{logical indicating if to run in debug mode.}
-
-\item{verbose}{logical indicating if to print parameter values.}
 
 \item{useINLAprecomp}{logical indicating if is to be used
 shared object pre-compiled by INLA.
