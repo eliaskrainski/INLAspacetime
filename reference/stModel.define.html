@@ -74,11 +74,11 @@ Currently it considers the <code>102</code>, <code>121</code>, <code>202</code> 
 
 
 <dt id="arg-control-priors">control.priors<a class="anchor" aria-label="anchor" href="#arg-control-priors"></a></dt>
-<dd><p>a named list with parameter priors.
-E.g. prior.rs, prior.rt and prior.sigma
-as vectors with length two (U, a) to define the
-corresponding PC-prior such that
-P(r_s&lt;U)=a, P(r_t&lt;U)=a or P(sigma&gt;U)=a.
+<dd><p>a named list with parameter priors,
+named as <code>prs</code>, <code>prt</code> and <code>psigma</code>, each one as a vector
+with length two containing (U, a) to define the
+corresponding PC-prior such that, respectively,
+P(range.spatial&lt;U)=a, P(range.temporal&lt;U)=a or P(sigma&gt;U)=a.
 If a=0 then U is taken to be the fixed value of the parameter.</p></dd>
 
 

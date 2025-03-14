@@ -68,9 +68,9 @@
 
 <dt id="arg-control-priors">control.priors<a class="anchor" aria-label="anchor" href="#arg-control-priors"></a></dt>
 <dd><p>named list with parameter priors.
-This shall contain prior.range and prior.sigma as length two
-vectors with (U, a) to define the PC-prior parameters such that
-P(range&lt;U)=a and P(sigma&gt;U)=a, respectively.
+This shall contain <code>prange</code> and <code>psigma</code> each one
+as a length two vector with (U, a) to define the PC-prior
+parameters such that P(range&lt;U)=a and P(sigma&gt;U)=a, respectively.
 See Fuglstad et. al. (2019) &lt;DOI: 10.1080/01621459.2017.1415907&gt;.
 If a=0 then U is taken to be the fixed value of the parameter.</p></dd>
 
