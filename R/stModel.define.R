@@ -88,6 +88,8 @@ stModel.define <-
           libpath <- file.path(libpath, "INLAspacetime.so")
         }
       }
+    } else {
+      hasverbose <- FALSE ## assumed...
     }
     stopifnot(file.exists(libpath))
 
