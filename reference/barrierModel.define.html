@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">INLAspacetime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.12.001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,14 +74,14 @@ or a list with integer vector if more than one.</p></dd>
 <dd><p>numeric vector containing U and a
 to define the probability statements P(range &lt; U) = a
 used to setup the PC-prior for range.
-If a = 0 then U is taken to be the fixed value for the range.</p></dd>
+If a = 0 or a = NA, then U is taken to be the fixed value for the range.</p></dd>
 
 
 <dt id="arg-prior-sigma">prior.sigma<a class="anchor" aria-label="anchor" href="#arg-prior-sigma"></a></dt>
 <dd><p>numeric vector containing U and a
 to define the probability statements P(range &gt; U) = a
 used to setup the PC-prior for sigma.
-If a = 0 then U is taken to be the fixed value for sigma.</p></dd>
+If a = 0 or a = NA, then U is taken to be the fixed value for sigma.</p></dd>
 
 
 <dt id="arg-range-fraction">range.fraction<a class="anchor" aria-label="anchor" href="#arg-range-fraction"></a></dt>
@@ -93,23 +93,23 @@ prevent numerical issues.</p></dd>
 
 
 <dt id="arg-constr">constr<a class="anchor" aria-label="anchor" href="#arg-constr"></a></dt>
-<dd><p>logical to indicate if the integral of the field
-over the domain is to be constrained to zero. Default value is FALSE.</p></dd>
+<dd><p>logical, default is FALSE, to indicate if the
+integral of the field over the domain is to be constrained to zero.</p></dd>
 
 
 <dt id="arg-debug">debug<a class="anchor" aria-label="anchor" href="#arg-debug"></a></dt>
-<dd><p>logical indicating if to run in debug mode.</p></dd>
+<dd><p>integer, default is zero, indicating the verbose level.
+Will be used as logical by INLA.</p></dd>
 
 
 <dt id="arg-useinlaprecomp">useINLAprecomp<a class="anchor" aria-label="anchor" href="#arg-useinlaprecomp"></a></dt>
-<dd><p>logical indicating if is to be used
-shared object pre-compiled by INLA.
-This will not be considered if the argument
-<code>libpath</code> is provided.</p></dd>
+<dd><p>logical, default is TRUE, indicating if it is to
+be used the shared object pre-compiled by INLA.
+This is not considered if 'libpath' is provided.</p></dd>
 
 
 <dt id="arg-libpath">libpath<a class="anchor" aria-label="anchor" href="#arg-libpath"></a></dt>
-<dd><p>string to the shared object. Default is NULL.</p></dd>
+<dd><p>string, default is NULL, with the path to the shared object.</p></dd>
 
 </dl></div>
     <div class="section level2">

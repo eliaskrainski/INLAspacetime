@@ -11,8 +11,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Spatial and Spatio-Temporal Models using INLA">
-<meta name="description" content="Prepare objects to implement models over spatial and spacetime domains with the INLA package (&lt;https://www.r-inla.org&gt;). These objects contain data to for the cgeneric interface in INLA, enabling fast parallel computations. We implemented the spatial barrier model, see Bakka et. al. (2019) &lt;doi:10.1016/j.spasta.2019.01.002&gt;, and some of the spatio-temporal models proposed in Lindgren et. al. (2023) &lt;https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf&gt;. Details are provided in the available vignettes and from the URL bellow.">
-<meta property="og:description" content="Prepare objects to implement models over spatial and spacetime domains with the INLA package (&lt;https://www.r-inla.org&gt;). These objects contain data to for the cgeneric interface in INLA, enabling fast parallel computations. We implemented the spatial barrier model, see Bakka et. al. (2019) &lt;doi:10.1016/j.spasta.2019.01.002&gt;, and some of the spatio-temporal models proposed in Lindgren et. al. (2023) &lt;https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf&gt;. Details are provided in the available vignettes and from the URL bellow.">
+<meta name="description" content="Prepare objects to implement models over spatial and spacetime domains with the INLA package (&lt;https://www.r-inla.org&gt;). These objects contain data to for the cgeneric interface in INLA, enabling fast parallel computations. We implemented the spatial barrier model, see Bakka et. al. (2019) &lt;doi:10.1016/j.spasta.2019.01.002&gt;, and some of the spatio-temporal models proposed in Lindgren et. al. (2023) &lt;https://raco.cat/index.php/SORT/article/view/428665&gt;. Details are provided in the available vignettes and from the URL bellow.">
+<meta property="og:description" content="Prepare objects to implement models over spatial and spacetime domains with the INLA package (&lt;https://www.r-inla.org&gt;). These objects contain data to for the cgeneric interface in INLA, enabling fast parallel computations. We implemented the spatial barrier model, see Bakka et. al. (2019) &lt;doi:10.1016/j.spasta.2019.01.002&gt;, and some of the spatio-temporal models proposed in Lindgren et. al. (2023) &lt;https://raco.cat/index.php/SORT/article/view/428665&gt;. Details are provided in the available vignettes and from the URL bellow.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">INLAspacetime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.12.001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,12 +57,12 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>This is a R package to implement certain spatial and spatio-temporal models, including some of the spatio-temporal models proposed <a href="https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf" class="external-link">here</a>. It uses the <code>cgeneric</code> interface in the INLA package, to implement models by writing <code>C</code> code to build the precision matrix compiling it so that INLA can use it internally.</p>
+<p>This is a R package to implement certain spatial and spatio-temporal models, including some of the spatio-temporal models proposed in <a href="https://raco.cat/index.php/SORT/article/view/428665" class="external-link">SORT vol. 48, no. 1, pp. 3-66</a>. It uses the <code>cgeneric</code> interface in the INLA package, to implement models by writing <code>C</code> code to build the precision matrix compiling it so that INLA can use it internally.</p>
 <div class="section level2">
 <h2 id="we-have-implemented">We have implemented<a class="anchor" aria-label="anchor" href="#we-have-implemented"></a>
 </h2>
 <ol style="list-style-type: decimal">
-<li><p>some of the models presented in <em>A diffusion-based spatio-temporal extension of Gaussian Matérn fields</em> (2024). <em>Finn Lindgren, Haakon Bakka, David Bolin, Elias Krainski and Håvard Rue</em>. SORT 48 (1) January-June 2024, 3-66. (<a href="https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf" class="external-link uri">https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf</a>)</p></li>
+<li><p>some of the models presented in <em>A diffusion-based spatio-temporal extension of Gaussian Matérn fields</em> (2024). <em>Finn Lindgren, Haakon Bakka, David Bolin, Elias Krainski and Håvard Rue</em>. SORT vol. 48, no. 1, pp. 3-66. (<a href="https://raco.cat/index.php/SORT/article/view/428665" class="external-link uri">https://raco.cat/index.php/SORT/article/view/428665</a>)</p></li>
 <li><p>the barrier (and transparent barriers) model proposed in <a href="https://doi.org/10.1016/j.spasta.2019.01.002" class="external-link uri">https://doi.org/10.1016/j.spasta.2019.01.002</a></p></li>
 </ol>
 </div>
@@ -140,10 +140,7 @@
 <span>        prt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">0</span><span class="op">)</span>, <span class="co">## temporal range fixed to 5</span></span>
 <span>        psigma <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0.1</span><span class="op">)</span> <span class="co">## P(sigma &gt; 1) = 0.1</span></span>
 <span>        <span class="op">)</span></span>
-<span>    <span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in stModel.define(smesh = smesh, tmesh = tmesh, model = "121",</span></span>
-<span><span class="co">#&gt; control.priors = list(prs = c(1, : Setting 'useINLAprecomp = FALSE' to use new</span></span>
-<span><span class="co">#&gt; code.</span></span></code></pre></div>
+<span>    <span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="fit-the-model">Fit the model<a class="anchor" aria-label="anchor" href="#fit-the-model"></a>
 </h2>
@@ -179,14 +176,14 @@
 <p>Posterior marginal summaries for fixed effect and the model parameters that were not fixed.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span><span class="op">$</span><span class="va">summary.fixed</span></span>
-<span><span class="co">#&gt;                 mean      sd 0.025quant  0.5quant 0.975quant      mode</span></span>
-<span><span class="co">#&gt; (Intercept) 0.693389 4.03265  -6.962331 0.5227188   9.417425 0.5550712</span></span>
+<span><span class="co">#&gt;                  mean       sd 0.025quant  0.5quant 0.975quant      mode</span></span>
+<span><span class="co">#&gt; (Intercept) 0.6933668 4.032632  -6.962326 0.5227007   9.417351 0.5550529</span></span>
 <span><span class="co">#&gt;                      kld</span></span>
-<span><span class="co">#&gt; (Intercept) 7.398472e-05</span></span>
+<span><span class="co">#&gt; (Intercept) 7.400751e-05</span></span>
 <span><span class="va">fit</span><span class="op">$</span><span class="va">summary.hyperpar</span></span>
-<span><span class="co">#&gt;                   mean        sd 0.025quant 0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; Theta1 for st 1.199222 0.4918533  0.3653818 1.161539   2.277396 0.974993</span></span>
-<span><span class="co">#&gt; Theta2 for st 1.435517 0.1710676  1.1031120 1.434032   1.776667 1.427752</span></span></code></pre></div>
+<span><span class="co">#&gt;                   mean        sd 0.025quant 0.5quant 0.975quant      mode</span></span>
+<span><span class="co">#&gt; Theta1 for st 1.199217 0.4918440  0.3653973 1.161533   2.277373 0.9749839</span></span>
+<span><span class="co">#&gt; Theta2 for st 1.435516 0.1710677  1.1031073 1.434032   1.776663 1.4277583</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="using-the-inlabru">Using the <strong>inlabru</strong>
@@ -215,14 +212,14 @@
 <p>Summary of the model parameters</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">summary.fixed</span></span>
-<span><span class="co">#&gt;                mean       sd 0.025quant 0.5quant 0.975quant      mode</span></span>
-<span><span class="co">#&gt; Intercept 0.6690302 3.970182  -6.887199 0.509471   9.214066 0.5379221</span></span>
+<span><span class="co">#&gt;               mean       sd 0.025quant  0.5quant 0.975quant      mode</span></span>
+<span><span class="co">#&gt; Intercept 0.669205 3.969787  -6.886287 0.5096847   9.213137 0.5381091</span></span>
 <span><span class="co">#&gt;                    kld</span></span>
-<span><span class="co">#&gt; Intercept 5.683968e-05</span></span>
+<span><span class="co">#&gt; Intercept 5.715402e-05</span></span>
 <span><span class="va">result</span><span class="op">$</span><span class="va">summary.hyperpar</span></span>
 <span><span class="co">#&gt;                      mean        sd 0.025quant 0.5quant 0.975quant      mode</span></span>
-<span><span class="co">#&gt; Theta1 for field 1.190438 0.4868951  0.3623876 1.153809   2.256071 0.9726162</span></span>
-<span><span class="co">#&gt; Theta2 for field 1.435268 0.1709839  1.1033563 1.433674   1.776580 1.4269195</span></span></code></pre></div>
+<span><span class="co">#&gt; Theta1 for field 1.190339 0.4867863  0.3623461 1.153751   2.255653 0.9727664</span></span>
+<span><span class="co">#&gt; Theta2 for field 1.435290 0.1709632  1.1035761 1.433643   1.776718 1.4266617</span></span></code></pre></div>
 </div>
 </div>
 
