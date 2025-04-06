@@ -26,8 +26,8 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 This is a R package to implement certain spatial and spatio-temporal models,
-including some of the spatio-temporal models proposed 
-[here](https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf). 
+including some of the spatio-temporal models proposed in
+[SORT vol. 48, no. 1, pp. 3-66](https://raco.cat/index.php/SORT/article/view/428665). 
 It uses the `cgeneric` interface in the INLA package, 
 to implement models by writing `C`
 code to build the precision matrix compiling it so that 
@@ -39,8 +39,8 @@ INLA can use it internally.
 *A diffusion-based spatio-temporal extension of Gaussian Matérn fields* (2024).
 _Finn Lindgren, Haakon Bakka, David Bolin, Elias Krainski
 and Håvard Rue_. 
-SORT 48 (1) January-June 2024, 3-66.
-(https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf)
+SORT vol.  48, no. 1, pp. 3-66.
+(https://raco.cat/index.php/SORT/article/view/428665)
 
 2. the barrier (and transparent barriers) 
 model proposed in 

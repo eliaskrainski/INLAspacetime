@@ -25,8 +25,8 @@ M <- ~ -1 + Intercept(1) +
 stmodel <- stModel.define(
     smesh, tmesh, '121', 
     control.priors=list(
-        prs=c(1, 0.0),
-        prt=c(5, 0.0),
+        prs=c(1, NA), ## fix spatial range to 1
+        prt=c(5, 0.0),## fix temporal range to 5
         psigma=c(1, 0.5)))
 
 ### print number of non-zeros in Q_u

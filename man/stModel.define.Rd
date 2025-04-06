@@ -29,19 +29,20 @@ named as \code{prs}, \code{prt} and \code{psigma}, each one as a vector
 with length two containing (U, a) to define the
 corresponding PC-prior such that, respectively,
 P(range.spatial<U)=a, P(range.temporal<U)=a or P(sigma>U)=a.
-If a=0 then U is taken to be the fixed value of the parameter.}
+If a=0 or a=NA, then U is taken to be the fixed
+value of the parameter.}
 
-\item{constr}{logical to indicate if the integral of the field
-over the domain is to be constrained to zero. Default value is FALSE.}
+\item{constr}{logical, default is FALSE, to indicate if the
+integral of the field over the domain is to be constrained to zero.}
 
-\item{debug}{integer indicating the verbose level.
+\item{debug}{integer, default is zero, indicating the verbose level.
 Will be used as logical by INLA.}
 
-\item{useINLAprecomp}{logical indicating if is to be used
-shared object pre-compiled by INLA. Not considered if
-libpath is provided.}
+\item{useINLAprecomp}{logical, default is TRUE, indicating if it is to
+be used the shared object pre-compiled by INLA.
+This is not considered if 'libpath' is provided.}
 
-\item{libpath}{string to the shared object. Default is NULL.}
+\item{libpath}{string, default is NULL, with the path to the shared object.}
 }
 \value{
 objects to be used in the f() formula term in INLA.
@@ -50,14 +51,15 @@ objects to be used in the f() formula term in INLA.
 Define a spacetime model object for the \code{f()} call.
 }
 \details{
-The matrices of the kronecker product in Theorem 4.1 of
-Lindgren et. al. (2024) are computed with the
-\link{stModel.matrices} and the parameters are as Eq (19-21),
-but parametrized in log scale.
+This function compute the matrices for computing the precision matrix.
+These are each one of the Kronecker products in Theorem 4.1 of
+Lindgren et. al. (2024) computed with the
+\link{stModel.matrices} and the parameters are as in Eq (19-21).
+We use the log of these parameters internally.
 }
 \references{
 Finn Lindgren, Haakon Bakka, David Bolin, Elias Krainski and Håvard Rue (2024).
 A diffusion-based spatio-temporal extension of Gaussian Matérn fields.
-\href{https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf}{SORT 48 (1), 3-66}
+\href{https://raco.cat/index.php/SORT/article/view/428665}{SORT vol.  48, no. 1, pp. 3-66}
 <doi: 10.57645/20.8080.02.13>
 }

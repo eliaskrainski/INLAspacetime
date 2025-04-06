@@ -10,25 +10,27 @@
 #' with length two containing (U, a) to define the
 #' corresponding PC-prior such that, respectively,
 #' P(range.spatial<U)=a, P(range.temporal<U)=a or P(sigma>U)=a.
-#' If a=0 then U is taken to be the fixed value of the parameter.
-#' @param constr logical to indicate if the integral of the field
-#' over the domain is to be constrained to zero. Default value is FALSE.
-#' @param debug integer indicating the verbose level.
+#' If a=0 or a=NA, then U is taken to be the fixed
+#' value of the parameter.
+#' @param constr logical, default is FALSE, to indicate if the
+#' integral of the field over the domain is to be constrained to zero.
+#' @param debug integer, default is zero, indicating the verbose level.
 #' Will be used as logical by INLA.
-#' @param useINLAprecomp logical indicating if is to be used
-#' shared object pre-compiled by INLA. Not considered if
-#' libpath is provided.
-#' @param libpath string to the shared object. Default is NULL.
+#' @param useINLAprecomp logical, default is TRUE, indicating if it is to
+#' be used the shared object pre-compiled by INLA.
+#' This is not considered if 'libpath' is provided.
+#' @param libpath string, default is NULL, with the path to the shared object.
 #' @details
-#' The matrices of the kronecker product in Theorem 4.1 of
-#' Lindgren et. al. (2024) are computed with the
-#' [stModel.matrices] and the parameters are as Eq (19-21),
-#' but parametrized in log scale.
+#' This function compute the matrices for computing the precision matrix.
+#' These are each one of the Kronecker products in Theorem 4.1 of
+#' Lindgren et. al. (2024) computed with the
+#' [stModel.matrices] and the parameters are as in Eq (19-21).
+#' We use the log of these parameters internally.
 #' @return objects to be used in the f() formula term in INLA.
 #' @references
 #' Finn Lindgren, Haakon Bakka, David Bolin, Elias Krainski and Håvard Rue (2024).
 #' A diffusion-based spatio-temporal extension of Gaussian Matérn fields.
-#' [SORT 48 (1), 3-66](https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf)
+#' [SORT vol.  48, no. 1, pp. 3-66](https://raco.cat/index.php/SORT/article/view/428665)
 #' <doi: 10.57645/20.8080.02.13>
 #' @export
 #' @importFrom fmesher fm_manifold
@@ -47,6 +49,16 @@ stModel.define <-
     stopifnot(length(control.priors$prt)==2)
     stopifnot(length(control.priors$prs)==2)
     stopifnot(length(control.priors$psigma)==2)
+
+    if(is.na(control.priors$prt[2])) {
+      control.priors$prt[2] <- 0
+    }
+    if(is.na(control.priors$prs[2])) {
+      control.priors$prs[2] <- 0
+    }
+    if(is.na(control.priors$psigma[2])) {
+      control.priors$psigma[2] <- 0
+    }
 
     stopifnot(control.priors$prt[1]>0)
     stopifnot(control.priors$prs[1]>0)

@@ -9,9 +9,9 @@ if(Sys.info()["user"]=="eliask") {
     inla.setOption(
         inla.call = "remote",
         num.threads = "8:1", 
-        pardiso.license = "~/.pardiso.lic",
-        safe = FALSE,
-        inla.call = "remote")
+##        pardiso.license = "~/.pardiso.lic",
+        safe = FALSE
+        )
 }
 
 rxy <- c(10, 5) ## size of spatial domain

@@ -7,24 +7,24 @@
 #' @param prior.range numeric vector containing U and a
 #' to define the probability statements P(range < U) = a
 #' used to setup the PC-prior for range.
-#' If a = 0 then U is taken to be the fixed value for the range.
+#' If a = 0 or a = NA, then U is taken to be the fixed value for the range.
 #' @param prior.sigma numeric vector containing U and a
 #' to define the probability statements P(range > U) = a
 #' used to setup the PC-prior for sigma.
-#' If a = 0 then U is taken to be the fixed value for sigma.
+#' If a = 0 or a = NA, then U is taken to be the fixed value for sigma.
 #' @param range.fraction numeric to specify the fraction of the range
 #' for the barrier domain. Default value is 0.1.
 #' This has to be specified with care in order to have it small enough
 #' to make it act as barrier but not too small in order to
 #' prevent numerical issues.
-#' @param constr logical to indicate if the integral of the field
-#' over the domain is to be constrained to zero. Default value is FALSE.
-#' @param debug logical indicating if to run in debug mode.
-#' @param useINLAprecomp logical indicating if is to be used
-#' shared object pre-compiled by INLA.
-#' This will not be considered if the argument
-#' `libpath` is provided.
-#' @param libpath string to the shared object. Default is NULL.
+#' @param constr logical, default is FALSE, to indicate if the
+#' integral of the field over the domain is to be constrained to zero.
+#' @param debug integer, default is zero, indicating the verbose level.
+#' Will be used as logical by INLA.
+#' @param useINLAprecomp logical, default is TRUE, indicating if it is to
+#' be used the shared object pre-compiled by INLA.
+#' This is not considered if 'libpath' is provided.
+#' @param libpath string, default is NULL, with the path to the shared object.
 #' @details
 #' See the paper.
 #' @return objects to be used in the f() formula term in INLA.

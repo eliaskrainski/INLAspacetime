@@ -15,19 +15,20 @@ no-suggestions](https://github.com/eliaskrainski/INLAspacetime/workflows/R-CMD-c
 <!-- badges: end -->
 
 This is a R package to implement certain spatial and spatio-temporal
-models, including some of the spatio-temporal models proposed
-[here](https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf).
-It uses the `cgeneric` interface in the INLA package, to implement
-models by writing `C` code to build the precision matrix compiling it so
-that INLA can use it internally.
+models, including some of the spatio-temporal models proposed in [SORT
+vol. 48, no. 1,
+pp. 3-66](https://raco.cat/index.php/SORT/article/view/428665). It uses
+the `cgeneric` interface in the INLA package, to implement models by
+writing `C` code to build the precision matrix compiling it so that INLA
+can use it internally.
 
 ## We have implemented
 
 1.  some of the models presented in *A diffusion-based spatio-temporal
     extension of Gaussian Matérn fields* (2024). *Finn Lindgren, Haakon
-    Bakka, David Bolin, Elias Krainski and Håvard Rue*. SORT 48 (1)
-    January-June 2024, 3-66.
-    (<https://www.idescat.cat/sort/sort481/48.1.1.Lindgren-etal.pdf>)
+    Bakka, David Bolin, Elias Krainski and Håvard Rue*. SORT vol. 48,
+    no. 1, pp. 3-66.
+    (<https://raco.cat/index.php/SORT/article/view/428665>)
 
 2.  the barrier (and transparent barriers) model proposed in
     <https://doi.org/10.1016/j.spasta.2019.01.002>
@@ -126,9 +127,6 @@ stmodel <- stModel.define(
         psigma = c(1, 0.1) ## P(sigma > 1) = 0.1
         )
     )
-#> Warning in stModel.define(smesh = smesh, tmesh = tmesh, model = "121",
-#> control.priors = list(prs = c(1, : Setting 'useINLAprecomp = FALSE' to use new
-#> code.
 ```
 
 ## Fit the model
@@ -183,14 +181,14 @@ that were not fixed.
 
 ``` r
 fit$summary.fixed
-#>                 mean      sd 0.025quant  0.5quant 0.975quant      mode
-#> (Intercept) 0.693389 4.03265  -6.962331 0.5227188   9.417425 0.5550712
+#>                  mean       sd 0.025quant  0.5quant 0.975quant      mode
+#> (Intercept) 0.6933668 4.032632  -6.962326 0.5227007   9.417351 0.5550529
 #>                      kld
-#> (Intercept) 7.398472e-05
+#> (Intercept) 7.400751e-05
 fit$summary.hyperpar
-#>                   mean        sd 0.025quant 0.5quant 0.975quant     mode
-#> Theta1 for st 1.199222 0.4918533  0.3653818 1.161539   2.277396 0.974993
-#> Theta2 for st 1.435517 0.1710676  1.1031120 1.434032   1.776667 1.427752
+#>                   mean        sd 0.025quant 0.5quant 0.975quant      mode
+#> Theta1 for st 1.199217 0.4918440  0.3653973 1.161533   2.277373 0.9749839
+#> Theta2 for st 1.435516 0.1710677  1.1031073 1.434032   1.776663 1.4277583
 ```
 
 ## Using the **inlabru**
@@ -230,12 +228,12 @@ Summary of the model parameters
 
 ``` r
 result$summary.fixed
-#>                mean       sd 0.025quant 0.5quant 0.975quant      mode
-#> Intercept 0.6690302 3.970182  -6.887199 0.509471   9.214066 0.5379221
+#>               mean       sd 0.025quant  0.5quant 0.975quant      mode
+#> Intercept 0.669205 3.969787  -6.886287 0.5096847   9.213137 0.5381091
 #>                    kld
-#> Intercept 5.683968e-05
+#> Intercept 5.715402e-05
 result$summary.hyperpar
 #>                      mean        sd 0.025quant 0.5quant 0.975quant      mode
-#> Theta1 for field 1.190438 0.4868951  0.3623876 1.153809   2.256071 0.9726162
-#> Theta2 for field 1.435268 0.1709839  1.1033563 1.433674   1.776580 1.4269195
+#> Theta1 for field 1.190339 0.4867863  0.3623461 1.153751   2.255653 0.9727664
+#> Theta2 for field 1.435290 0.1709632  1.1035761 1.433643   1.776718 1.4266617
 ```
