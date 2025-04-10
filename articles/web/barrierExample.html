@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../../index.html">INLAspacetime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.12.001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.12.002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,7 +61,7 @@
 Krainski</h4>
             
             <h4 data-toc-skip class="date">Created in March, 2023. Last
-update: Sun 06 Apr, 2025</h4>
+update: Thu 10 Apr, 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/eliaskrainski/INLAspacetime/blob/master/vignettes/web/barrierExample.Rmd" class="external-link"><code>vignettes/web/barrierExample.Rmd</code></a></small>
       <div class="d-none name"><code>barrierExample.Rmd</code></div>
@@ -158,7 +158,7 @@ tutorial.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">INLA</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: Matrix</span></span>
-<span><span class="co">#&gt; This is INLA_25.03.24 built 2025-03-24 16:12:01 UTC.</span></span>
+<span><span class="co">#&gt; This is INLA_25.04.09 built 2025-04-09 18:21:55 UTC.</span></span>
 <span><span class="co">#&gt;  - See www.r-inla.org/contact-us for how to get help.</span></span>
 <span><span class="co">#&gt;  - List available models/likelihoods/etc with inla.list.models()</span></span>
 <span><span class="co">#&gt;  - Use inla.doc(&lt;NAME&gt;) to access documentation</span></span>
@@ -166,7 +166,8 @@ tutorial.</p>
 <span><span class="co">#&gt; Loading required package: fmesher</span></span>
 <span><span class="co">#&gt; see more on https://eliaskrainski.github.io/INLAspacetime</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.inlabru.org" class="external-link">inlabru</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://inlabru-org.github.io/fmesher/" class="external-link">fmesher</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="model-definition-and-discretization">Model definition and discretization<a class="anchor" aria-label="anchor" href="#model-definition-and-discretization"></a>
@@ -184,7 +185,7 @@ triangulation.</p>
 simplest one is using triangles. Therefore we start with the following
 mesh made up of small triangles in the domain and bigger around it.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mesh</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/INLA/man/inla.mesh.2d.html" class="external-link">inla.mesh.2d</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">mesh</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://inlabru-org.github.io/fmesher/reference/fm_mesh_2d.html" class="external-link">fm_mesh_2d</a></span><span class="op">(</span></span>
 <span>    loc.domain <span class="op">=</span> <span class="va">domain.xy</span>, </span>
 <span>    max.edge <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.03</span>, <span class="fl">0.1</span><span class="op">)</span> <span class="op">*</span> <span class="va">r</span>,</span>
 <span>    offset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.3</span><span class="op">)</span> <span class="op">*</span> <span class="va">r</span>,</span>
@@ -196,7 +197,7 @@ identified. For each triangle center we check if it is inside or not of
 the barrier domain and and create a vector to identify to which domain
 is each triangle center inside</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">triBarrier</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu">fmesher</span><span class="fu">::</span><span class="fu"><a href="https://inlabru-org.github.io/fmesher/reference/fm_contains.html" class="external-link">fm_contains</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">triBarrier</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://inlabru-org.github.io/fmesher/reference/fm_contains.html" class="external-link">fm_contains</a></span><span class="op">(</span></span>
 <span>  x <span class="op">=</span> <span class="va">barriers</span>, </span>
 <span>  y <span class="op">=</span> <span class="va">mesh</span>, </span>
 <span>  type <span class="op">=</span> <span class="st">"centroid"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -275,12 +276,16 @@ these correlation from the location to “everywhere”. Let us build a
 projector to project any vector from the mesh nodes to a fine grid and
 projected with</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pgrid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/INLA/man/inla.mesh.project.html" class="external-link">inla.mesh.projector</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">pgrid</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://inlabru-org.github.io/fmesher/reference/fm_evaluate.html" class="external-link">fm_evaluator</a></span><span class="op">(</span></span>
+<span>  <span class="va">mesh</span>,</span>
+<span>  lattice <span class="op">=</span> <span class="fu"><a href="https://inlabru-org.github.io/fmesher/reference/fm_evaluate.html" class="external-link">fm_evaluator_lattice</a></span><span class="op">(</span></span>
 <span>    <span class="va">mesh</span>,</span>
 <span>    xlim <span class="op">=</span> <span class="va">bb</span><span class="op">[</span><span class="fl">1</span>, <span class="op">]</span>,</span>
 <span>    ylim <span class="op">=</span> <span class="va">bb</span><span class="op">[</span><span class="fl">2</span>, <span class="op">]</span>,</span>
-<span>    dims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">500</span> <span class="op">*</span> <span class="va">rxy</span><span class="op">/</span><span class="va">r</span><span class="op">)</span><span class="op">)</span> </span>
-<span><span class="va">gcorrels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/INLA/man/inla.mesh.project.html" class="external-link">inla.mesh.project</a></span><span class="op">(</span></span>
+<span>    dims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">500</span> <span class="op">*</span> <span class="va">rxy</span><span class="op">/</span><span class="va">r</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">gcorrels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://inlabru-org.github.io/fmesher/reference/fm_evaluate.html" class="external-link">fm_evaluate</a></span><span class="op">(</span></span>
 <span>  <span class="va">pgrid</span>, field <span class="op">=</span> <span class="va">mcorrels</span></span>
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>We can now create a <code>data.frame</code> with the expanded
@@ -336,7 +341,7 @@ defined precision matrix to draw a sample at the mesh nodes with</p>
 <p>These values sampled at the mesh nodes can be projected to a set of
 small pixels for visualization purpose with</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ugrid.sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/INLA/man/inla.mesh.project.html" class="external-link">inla.mesh.project</a></span><span class="op">(</span><span class="va">pgrid</span>, field <span class="op">=</span> <span class="va">u</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">ugrid.sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://inlabru-org.github.io/fmesher/reference/fm_evaluate.html" class="external-link">fm_evaluate</a></span><span class="op">(</span><span class="va">pgrid</span>, field <span class="op">=</span> <span class="va">u</span><span class="op">)</span></span></code></pre></div>
 <p>We can now visualize the projected simulated values at the small
 pixels, inclusive those values in the barriers.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
@@ -383,7 +388,7 @@ an intercept and some random noise</p>
 <code class="sourceCode R"><span><span class="va">sigma.e</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
 <span><span class="va">dataset</span><span class="op">$</span><span class="va">outcome</span> <span class="op">&lt;-</span> </span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/drop.html" class="external-link">drop</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/INLA/man/inla.mesh.project.html" class="external-link">inla.mesh.project</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/drop.html" class="external-link">drop</a></span><span class="op">(</span><span class="fu"><a href="https://inlabru-org.github.io/fmesher/reference/fm_evaluate.html" class="external-link">fm_evaluate</a></span><span class="op">(</span></span>
 <span>        <span class="va">mesh</span>,</span>
 <span>        loc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">dataset</span><span class="op">$</span><span class="va">x</span>, <span class="va">dataset</span><span class="op">$</span><span class="va">y</span><span class="op">)</span>,</span>
 <span>        field <span class="op">=</span> <span class="va">u</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -428,9 +433,9 @@ the intercept with</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">summary.fix</span></span>
 <span><span class="co">#&gt;               mean        sd 0.025quant 0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; Intercept 10.11304 0.4109557   9.304699 10.10423   10.97149 10.10518</span></span>
+<span><span class="co">#&gt; Intercept 10.11303 0.4110741   9.304439 10.10421   10.97172 10.10516</span></span>
 <span><span class="co">#&gt;                    kld</span></span>
-<span><span class="co">#&gt; Intercept 1.090602e-06</span></span></code></pre></div>
+<span><span class="co">#&gt; Intercept 1.087167e-06</span></span></code></pre></div>
 <p>For the hyper-parameters the computations were performed in an
 internal scale. That is log of range and
 log(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>σ</mi><annotation encoding="application/x-tex">\sigma</annotation></semantics></math>),
@@ -466,8 +471,8 @@ data:</p>
 <span>             <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/INLA/man/marginal.html" class="external-link">inla.zmarginal</a></span><span class="op">(</span><span class="va">m</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;         sigma.e    range     sigma</span></span>
 <span><span class="co">#&gt; true 1.00000000 4.000000 1.0000000</span></span>
-<span><span class="co">#&gt; mean 1.04434841 4.050427 0.9014123</span></span>
-<span><span class="co">#&gt; sd   0.03812788 1.099638 0.1406950</span></span></code></pre></div>
+<span><span class="co">#&gt; mean 1.04431154 4.049347 0.9015014</span></span>
+<span><span class="co">#&gt; sd   0.03812684 1.098919 0.1406090</span></span></code></pre></div>
 <p>We can also visualize these these posterior marginal distributions
 with</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
@@ -484,11 +489,11 @@ and the standard deviation can be projected into small pixels and added
 to the raster data with</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">grid.df</span><span class="op">$</span><span class="va">u.mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/INLA/man/inla.mesh.project.html" class="external-link">inla.mesh.project</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://inlabru-org.github.io/fmesher/reference/fm_evaluate.html" class="external-link">fm_evaluate</a></span><span class="op">(</span></span>
 <span>    <span class="va">pgrid</span>,</span>
 <span>    <span class="va">result</span><span class="op">$</span><span class="va">summary.random</span><span class="op">$</span><span class="va">field</span><span class="op">$</span><span class="va">mean</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">grid.df</span><span class="op">$</span><span class="va">u.sd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/INLA/man/inla.mesh.project.html" class="external-link">inla.mesh.project</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://inlabru-org.github.io/fmesher/reference/fm_evaluate.html" class="external-link">fm_evaluate</a></span><span class="op">(</span></span>
 <span>    <span class="va">pgrid</span>,</span>
 <span>    <span class="va">result</span><span class="op">$</span><span class="va">summary.random</span><span class="op">$</span><span class="va">field</span><span class="op">$</span><span class="va">sd</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>To help the visualization, we will filter the grid pixels considering
