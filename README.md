@@ -143,6 +143,18 @@ Aproj <- inla.spde.make.A(
 )
 ```
 
+or, equivalently, with `fmesher` methods for tensor product spaces:
+
+``` r
+Aproj <- fm_basis(
+  fm_tensor(list(space = smesh, time = tmesh)),
+  loc = list(
+    space = cbind(dataf$s1, dataf$s2),
+    time = dataf$time
+  )
+)
+```
+
 Create a ‘fake’ column to be used as index. in the `f()` term
 
 ``` r
@@ -182,13 +194,13 @@ that were not fixed.
 ``` r
 fit$summary.fixed
 #>                  mean       sd 0.025quant  0.5quant 0.975quant      mode
-#> (Intercept) 0.6933668 4.032632  -6.962326 0.5227007   9.417351 0.5550529
+#> (Intercept) 0.6934075 4.032682  -6.962392 0.5227421   9.417461 0.5550903
 #>                      kld
-#> (Intercept) 7.400751e-05
+#> (Intercept) 7.405581e-05
 fit$summary.hyperpar
 #>                   mean        sd 0.025quant 0.5quant 0.975quant      mode
-#> Theta1 for st 1.199217 0.4918440  0.3653973 1.161533   2.277373 0.9749839
-#> Theta2 for st 1.435516 0.1710677  1.1031073 1.434032   1.776663 1.4277583
+#> Theta1 for st 1.199208 0.4918283  0.3653922 1.161532   2.277316 0.9750207
+#> Theta2 for st 1.435517 0.1710709  1.1031068 1.434032   1.776675 1.4277508
 ```
 
 ## Using the **inlabru**
@@ -228,12 +240,16 @@ Summary of the model parameters
 
 ``` r
 result$summary.fixed
-#>               mean       sd 0.025quant  0.5quant 0.975quant      mode
-#> Intercept 0.669205 3.969787  -6.886287 0.5096847   9.213137 0.5381091
+#>                mean       sd 0.025quant  0.5quant 0.975quant      mode
+#> Intercept 0.6690758 3.969868  -6.886579 0.5095548   9.213222 0.5379881
 #>                    kld
-#> Intercept 5.715402e-05
+#> Intercept 5.712418e-05
 result$summary.hyperpar
 #>                      mean        sd 0.025quant 0.5quant 0.975quant      mode
-#> Theta1 for field 1.190339 0.4867863  0.3623461 1.153751   2.255653 0.9727664
-#> Theta2 for field 1.435290 0.1709632  1.1035761 1.433643   1.776718 1.4266617
+#> Theta1 for field 1.190358 0.4867880   0.362423 1.153755   2.255714 0.9726899
+#> Theta2 for field 1.435283 0.1709765   1.103480 1.433658   1.776675 1.4267684
 ```
+
+Note: The default prior for the intercept in inlabru has smaller
+variance than the default for INLA, which explains the slight difference
+in the results.

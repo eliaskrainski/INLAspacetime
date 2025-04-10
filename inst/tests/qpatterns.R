@@ -11,6 +11,7 @@
 
 library(INLA)
 library(INLAspacetime)
+library(fmesher)
 
 sresol <- 50
 nt <- 10
@@ -34,18 +35,18 @@ sigma.e <- 0.1
 
 theta.s <- log(c(srange, ssigma))
 thetau.fix <- log(c(srange.u, trange.u, sigma.u))
-theta.fix <- c(-2 * log(sigma.e), theta.s, thetau.fix)    
+theta.fix <- c(-2 * log(sigma.e), theta.s, thetau.fix)
 
 ##for(sresol in c(50, 100, 200, 500, c(1,2,4,8,16)*1000)) {
 if(sphere) {
   bb <- rbind(c(0, 2), c(0, 2)) * srange.u
-  locs <- inla.mesh.map(
-    loc = cbind(runif(nlocs, -180, 180), 
+  locs <- fm_mesh_2d_map(
+    loc = cbind(runif(nlocs, -180, 180),
                 runif(nlocs, -90, 90)),
-    projection = "longlat", 
+    projection = "longlat",
     inverse = TRUE
   )
-  smesh <- inla.mesh.create(globe = round(0.32 * sqrt(sresol))) 
+  smesh <- fm_rcdt_2d_inla(globe = round(0.32 * sqrt(sresol)))
 } else {
   bb <- rbind(c(0, 2), c(0, 2)) * srange.u
   pol <- matrix(bb[c(1,3,3,1,1, 2,2,3,3,2)], ncol = 2)
@@ -53,8 +54,8 @@ if(sphere) {
     x = runif(nlocs, bb[1, 1], bb[1, 2]),
     y = runif(nlocs, bb[2, 1], bb[2, 2]))
   sr <- 7 * srange.u / (sresol^0.625)
-  smesh <- inla.mesh.2d(
-    loc.domain = locs, 
+  smesh <- fm_mesh_2d(
+    loc.domain = locs,
     cutoff = 1 * sr,
     offset = c(3, 7) * sr,
     max.edge = c(2, 5) * sr
@@ -99,7 +100,7 @@ A.s <- inla.spde.make.A(
 
 ssim <- drop(as.matrix(A.s %*% s0))
 
-tmesh <- inla.mesh.1d(
+tmesh <- fm_mesh_1d(
   loc = 1:nt)
 
 A.st <- inla.spde.make.A(
@@ -117,7 +118,7 @@ imodels <- c('102', '121', '202', '220')
 QQ <- vector('list', length(imodels))
 
 for(i in 1:length(imodels)) {
-    
+
     model.id <- imodels[i]
     cat('Computing for model', model.id, '\n')
 
@@ -131,23 +132,23 @@ for(i in 1:length(imodels)) {
             psigma = c(3 * sigma.u, 0.01)
         )
     )
-    
+
     Qu <- stModel.precision(
         smesh = smesh,
         tmesh = tmesh,
         model = model.id,
         theta = thetau.fix
     )
-    
+
     u0 <- inla.qsample(
         n = 1,
         Q = Qu)[, 1]
-    
+
     usim <- drop(as.matrix(A.st %*% u0))
 
-    ysim <- drop(B %*% beta) + ssim + usim + 
+    ysim <- drop(B %*% beta) + ssim + usim +
         rnorm(ndata, mean = 0, sd = sigma.e)
-    
+
     sdata <- inla.stack(
         data = list(y = ysim),
         effects = list(
@@ -156,7 +157,7 @@ for(i in 1:length(imodels)) {
             field = 1:stmodel$f$n),
         A = list(1, A.s, A.st)
     )
-    
+
     imodal <- inla(
         y ~ 0 + b0 + b1 + b2 + b3 + b4 +
             f(field, model = stmodel) + f(spatial, model = smodel),

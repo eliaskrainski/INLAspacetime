@@ -155,6 +155,16 @@ Aproj <- inla.spde.make.A(
     group.mesh = tmesh
 )
 ```
+or, equivalently, with `fmesher` methods for tensor product spaces:
+```{r Aproj-fmesher,eval=FALSE}
+Aproj <- fm_basis(
+  fm_tensor(list(space = smesh, time = tmesh)),
+  loc = list(
+    space = cbind(dataf$s1, dataf$s2),
+    time = dataf$time
+  )
+)
+```
 
 Create a 'fake' column to be used as index. 
 in the `f()` term
@@ -229,3 +239,5 @@ Summary of the model parameters
 result$summary.fixed
 result$summary.hyperpar
 ```
+Note: The default prior for the intercept in inlabru has smaller variance than
+the default for INLA, which explains the slight difference in the results.

@@ -10,8 +10,9 @@
 #' @param offset the length of the outer extension.
 #' @param SP logical indicating if the output will include the SpatialPolygons.
 #' @section Warning:
-#'  This is just for illustration purpose and one should consider the
-#'  efficient function available a the INLA package.
+#'  This is just for illustration purposes and one should consider the
+#'  efficient function [fmesher::fm_mesh_2d()] (and other related functions)
+#'  available a the fmesher package.
 #' @return a mesh object.
 #' @export
 mesh2d <-
@@ -154,6 +155,7 @@ mesh2d <-
     ))
     triang$segm$bnd$grp <- matrix(0, nrow(triang$segm$bnd$idx), 1)
     triang$segm$bnd$is.bnd <- TRUE
+    # NOTE: outdated class name, may be unsupported
     attr(triang$segm$bnd, "class") <- "inla.mesh.segment"
     if (SP) {
       triang$SP <- sp::SpatialPolygons(
@@ -166,6 +168,7 @@ mesh2d <-
       triang$centroids <- sp::coordinates(triang$SP)
     }
     triang$loc <- cbind(triang$loc, 0)
+    # NOTE: outdated class name, may be unsupported
     attr(triang, "class") <- "inla.mesh"
     return(triang)
   }

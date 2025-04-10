@@ -9,8 +9,8 @@
 #' @param dims the number of subdivisions over each boundary limits.
 #' @section Warning:
 #'  This is just for illustration purpose and one should consider the
-#'  efficient functions available in the INLA and inlabru packages,
-#'  e.g. `inlabru::fm_evaluator`.
+#'  efficient functions available in the fmesher package,
+#'  e.g. [fmesher::fm_evaluator()] and [fmesher::fm_basis()].
 #' @return the projector matrix as a list with sparse matrix object at `x$proj$A`..
 #' @export
 mesh2projector <- function(mesh, loc = NULL, lattice = NULL,
@@ -62,8 +62,10 @@ mesh2projector <- function(mesh, loc = NULL, lattice = NULL,
       grp = matrix(as.integer(1), ns, 1),
       is.bnd = TRUE, crs = NULL
     )
+    # NOTE: outdated class name, may be unsupported
     attr(res$lattice$segm, "class") <- "inla.mesh.segment"
     res$crs <- NULL
+    # NOTE: outdated class name, may be unsupported
     attr(res$lattice, "class") <- "inla.mesh.lattice"
     res$loc <- NULL
     m <- prod(dims)

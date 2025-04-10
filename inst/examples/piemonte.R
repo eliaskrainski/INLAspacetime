@@ -1,4 +1,4 @@
-### fit one of the spacetime models (Lindgren et. al. 2022) 
+### fit one of the spacetime models (Lindgren et. al. 2022)
 ### for the piemonte dataset (Cameleti et. al. 2012)
 
 ### packages
@@ -9,7 +9,7 @@ library(inlabru)
 ### overall INLA setup
 inla.setOption(
     inla.mode='compact',
-    smtp='pardiso', 
+    smtp='pardiso',
     pardiso.license='~/.pardiso.lic')
 
 ctri <- list(
@@ -30,41 +30,41 @@ datafl <- 'Piemonte_data_byday.csv'
 bordersfl <- 'Piemonte_borders.csv'
 
 ### get the domain borders
-if(!file.exists(bordersfl)) 
+if(!file.exists(bordersfl))
     download.file(paste0(u0, bordersfl), bordersfl)
 dim(pborders <- read.csv(bordersfl))
 
 ### get the coordinates
-if(!file.exists(coofl)) 
+if(!file.exists(coofl))
     download.file(paste0(u0, coofl), coofl)
 dim(locs <- read.csv(coofl))
 
 ### get the dataset
-if(!file.exists(datafl)) 
+if(!file.exists(datafl))
     download.file(paste0(u0, datafl), datafl)
 dim(pdata <- read.csv(datafl))
 
 head(pdata)
 
-### prepare and select time 
+### prepare and select time
 range(pdata$Date <- as.Date(pdata$Date, '%d/%m/%y'))
 pdata$time <- as.integer(difftime(
     pdata$Date, min(pdata$Date), units='days'))+1
 
 ### define a temporal mesh
 nt <- max(pdata$time)
-tmesh <- inla.mesh.1d(1:nt, degree=1)
-tmesh$n
+tmesh <- fm_mesh_1d(1:nt, degree=1)
+fm_dof(tmesh)
 
 ### mesh as in Cameleti et. al. 2012
-smesh <- inla.mesh.2d(
+smesh <- fm_mesh_2d(
     cbind(locs[,2], locs[,3]),
-    loc.domain=pborders, 
-    max.edge=c(50, 300), 
-    offset=c(10, 140), 
-    cutoff=5, 
+    loc.domain=pborders,
+    max.edge=c(50, 300),
+    offset=c(10, 140),
+    cutoff=5,
     min.angle=c(26, 21))
-smesh$n
+fm_dof(smesh)
 
 ### visualize
 par(mfrow=c(1,1), mar=c(0,0,1,0))
@@ -98,7 +98,7 @@ lhood <- like(
 
 
 ### define the data Model
-M <- ~ -1 + Intercept(1) + A + WS + TEMP + HMIX + PREC + EMI + 
+M <- ~ -1 + Intercept(1) + A + WS + TEMP + HMIX + PREC + EMI +
     field(list(space = cbind(UTMX, UTMY), time=time),
           model=stmodel)
 
@@ -107,30 +107,30 @@ theta.ini <- list('102'=c(4, 5.5, 5, 0),
                   '121'=c(4, 7.5, 12, 2))
 theta.ini
 
-### fit two first order in time models (separable and non-separable) 
+### fit two first order in time models (separable and non-separable)
 models <- c('102', '121')
 results <- vector('list', 2)
 names(results) <- models
 
 for(m in 1:2) {
-    
+
 ### define the spacetime model
     stmodel <- stModel.define(
-        smesh, tmesh, models[m], 
+        smesh, tmesh, models[m],
         control.priors=list(
             prs=c(70, 0.5),
             prt=c(50, 0.5),
             psigma=c(20, 0.5)),
         constr = TRUE) ## no need but helps
 
-### fit 
-    results[[m]] <- 
-        bru(M, 
+### fit
+    results[[m]] <-
+        bru(M,
             lhood,
             options = list(
-                verbose=TRUE, 
+                verbose=TRUE,
                 control.mode=list(
-                    theta=theta.ini[[m]], 
+                    theta=theta.ini[[m]],
                     restart=TRUE),
                 control.inla=ctri,
                 control.compute=ctrc))

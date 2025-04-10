@@ -7,7 +7,7 @@ sphere <- !FALSE
 outer(1:2, c(3,1,0.3), function(a,b) sqrt(8*a)/b)
 
 lpars0 <- list(
-    srange = log(c(1, 3, 10)), 
+    srange = log(c(1, 3, 10)),
     trange = log(c(5,20)),
     sigma = seq(-3, 3, 1))
 
@@ -20,13 +20,13 @@ sapply(lpars0, function(b) range(exp(b)))
 str(upars <- expand.grid(lpars0))
 
 nt <- 20
-tmesh <- inla.mesh.1d(1:nt)
+tmesh <- fm_mesh_1d(1:nt)
 
 if(sphere){
-    smesh <- inla.mesh.create(globe = 10)
+    smesh <- fm_rcdt_2d_inla(globe = 10)
 } else {
-    smesh <- inla.mesh.2d(
-        loc.domain = c(0,0), 
+    smesh <- fm_mesh_2d(
+        loc.domain = c(0,0),
         offset = 2,
         max.edge = 0.2,
         n = 4

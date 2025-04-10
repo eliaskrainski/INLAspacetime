@@ -86,8 +86,8 @@ stModel.precision <-
 #' @importFrom fmesher fm_fem
 stModel.matrices <-
   function(smesh, tmesh, model, constr = FALSE) {
-    stopifnot(inherits(smesh, "inla.mesh"))
-    stopifnot(inherits(tmesh, "inla.mesh.1d"))
+    stopifnot(inherits(smesh, "fm_mesh_2d"))
+    stopifnot(inherits(tmesh, "fm_mesh_1d"))
     stopifnot(nchar(model) == 3)
     stopifnot(model %in% c("102", "121", "202", "220"))
 
