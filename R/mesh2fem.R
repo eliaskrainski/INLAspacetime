@@ -116,7 +116,7 @@ mesh2fem.barrier <- function(mesh, barrier.triangles = NULL) {
 
   if(TRUE) {
     ### safe to use from triangle area from:
-    hh <- INLA::inla.mesh.fem(mesh, order = 1)$ta
+    hh <- fm_fem(mesh, order = 1)$ta
   } else {
     if(Rmanifold==0) {
       R.i <- sqrt(rowSums(mesh$loc^2))

@@ -8,7 +8,7 @@ library(sf)
 if(Sys.info()["user"]=="eliask") {
     inla.setOption(
         inla.call = "remote",
-        num.threads = "8:1", 
+        num.threads = "8:1",
 ##        pardiso.license = "~/.pardiso.lic",
         safe = FALSE
         )
@@ -27,7 +27,7 @@ domain <- cbind(
     y = bb[c(2, 2, 4, 4, 2)])
 
 ## spatial mesh
-smesh <- inla.mesh.2d(
+smesh <- fm_mesh_2d(
     loc.domain = domain,
     offset = r0 / c(40, 3),
     max.edge = r0 / c(20, 5),
@@ -38,7 +38,7 @@ if(FALSE)
     plot(smesh)
 
 ## temporal mesh
-tmesh <- inla.mesh.1d(
+tmesh <- fm_mesh_1d(
     loc = 1:nt)
 
 ## model parameters
@@ -77,7 +77,7 @@ rm(.gammas, .b, .tt, .dxx, .d)
 if(FALSE)
     image(qq)
 
-## sample 
+## sample
 xx <- inla.qsample(n = 1, Q = qq)
 
 ns <- 1000 ## number locations in space

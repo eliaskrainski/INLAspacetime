@@ -5,8 +5,8 @@ library(inlabru)
 ### We need a plain test-example...
 inla.setOption(smtp='taucs', inla.mode='compact')
 
-smesh <- inla.mesh.2d(cbind(0,0), max.edge=5, offset=2)
-tmesh <- inla.mesh.1d(0:5)
+smesh <- fm_mesh_2d(cbind(0,0), max.edge=5, offset=2)
+tmesh <- fm_mesh_1d(0:5)
 
 n <- 5
 dataf <- data.frame(
@@ -23,7 +23,7 @@ M <- ~ -1 + Intercept(1) +
 
 ### define the spacetime model
 stmodel <- stModel.define(
-    smesh, tmesh, '121', 
+    smesh, tmesh, '121',
     control.priors=list(
         prs=c(1, NA), ## fix spatial range to 1
         prt=c(5, 0.0),## fix temporal range to 5
@@ -37,12 +37,12 @@ cat("Number of non-zeros in Q_u:",
 lkprec <- list(prec=list(initial=10, fixed=TRUE))
 
 ### fit
-result <- 
-    bru(M, 
-        like(formula = y ~ ., 
+result <-
+    bru(M,
+        like(formula = y ~ .,
              family="gaussian",
              control.family = list(
-                 hyper = lkprec), 
+                 hyper = lkprec),
              data=dataf),
         options = list(
             verbose=TRUE)

@@ -5,8 +5,8 @@ library(inlabru)
 ### We need a plain test-example...
 inla.setOption(smtp='taucs', inla.mode='compact')
 
-smesh <- inla.mesh.2d(cbind(0,0), max.edge=5, offset=2)
-tmesh <- inla.mesh.1d(0:5)
+smesh <- fm_mesh_2d(cbind(0,0), max.edge=5, offset=2)
+tmesh <- fm_mesh_1d(0:5)
 
 n <- 5
 dataf <- data.frame(
@@ -39,12 +39,12 @@ cat("Number of non-zeros in Q_u:",
 lkprec <- list(prec=list(initial=10, fixed=FALSE))
 
 ### fit
-result <- 
-    bru(M, 
-        like(formula = y ~ ., 
+result <-
+    bru(M,
+        like(formula = y ~ .,
              family="gaussian",
              control.family = list(
-                 hyper = lkprec), 
+                 hyper = lkprec),
              data=dataf),
         options = list(
             num.threads = "2:1")

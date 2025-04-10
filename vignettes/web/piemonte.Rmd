@@ -47,6 +47,7 @@ library(patchwork)
 library(INLA)
 library(INLAspacetime)
 library(inlabru)
+library(fmesher)
 ```
 
 We will ask it to return the WAIC, DIC and CPO 
@@ -144,7 +145,7 @@ where `h = 1` means one per day.
 ```{r tmesh}
 nt <- max(pdata$time)
 h <- 1
-tmesh <- inla.mesh.1d(
+tmesh <- fm_mesh_1d(
   loc = seq(1, nt + h/2, h), 
   degree = 1)
 tmesh$n
@@ -152,7 +153,7 @@ tmesh$n
 
 Define a spatial mesh, the same used in @cameletti2013.
 ```{r smesh}
-smesh <- inla.mesh.2d(
+smesh <- fm_mesh_2d(
     cbind(locs[,2], locs[,3]),
     loc.domain = pborders,
     max.edge = c(50, 300),

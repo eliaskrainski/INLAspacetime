@@ -16,7 +16,7 @@ domain <- cbind(
     y = bb[c(2, 2, 4, 4, 2)])
 
 ## spatial mesh
-smesh <- inla.mesh.2d(###fm_mesh_2d(
+smesh <- fm_mesh_2d(
     loc.domain = domain,
     offset = r0 / c(5, 2), ##r0 / c(40, 3),
     max.edge = r0 / c(2, 1), ##c(r0 / c(20, 5),
@@ -27,8 +27,7 @@ if(FALSE)
     plot(smesh)
 
 ## temporal mesh
-tmesh <- inla.mesh.1d(
-    loc = 1:nt)
+tmesh <- fm_mesh_1d(loc = 1:nt)
 
 ## model parameters
 params <- c(

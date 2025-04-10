@@ -25,14 +25,14 @@ ggplot() + theme_minimal() +
     geom_sf(data = bar, fill = "blue")
 
 for(r in sqrt(c(30,20,15,10, 7, 5, 3:1))) {
-    mesh <- inla.mesh.2d(
+    mesh <- fm_mesh_2d(
         loc.domain = pl,
         offset = c(1, 5),
         max.edge = c(r/3, r),
         cutoff = r/6)
     cat("n(mesh) =", mesh$n, "\n")
     print(mark(
-        inla.mesh.fem(mesh),
+        fm_fem(mesh),
         mesh2fem.barrier(mesh, unlist(fm_contains(bar, mesh))),
         check = FALSE
     ))

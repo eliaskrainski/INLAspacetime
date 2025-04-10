@@ -27,7 +27,8 @@ use the \pkg{fmesher} package.
 }
 \section{Warning}{
 
-This is just for illustration purpose and one should consider the
-efficient function available a the INLA package.
+This is just for illustration purposes and one should consider the
+efficient function \code{\link[fmesher:fm_mesh_2d]{fmesher::fm_mesh_2d()}} (and other related functions)
+available a the fmesher package.
 }
 

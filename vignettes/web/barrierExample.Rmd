@@ -124,6 +124,7 @@ library(INLA)
 library(INLAspacetime)
 library(inlabru)
 library(patchwork)
+library(fmesher)
 ```
 
 
@@ -145,7 +146,7 @@ the simplest one is using triangles.
 Therefore we start with the following mesh made up of small triangles 
 in the domain and bigger around it.
 ```{r mesh}
-mesh <- inla.mesh.2d(
+mesh <- fm_mesh_2d(
     loc.domain = domain.xy, 
     max.edge = c(0.03, 0.1) * r,
     offset = c(0.1, 0.3) * r,
@@ -157,7 +158,7 @@ The solution needs the triangles inside the barrier domain to be identified.
 For each triangle center we check if it is inside or not of the barrier domain
 and and create a vector to identify to which domain is each triangle center inside
 ```{r ibarrier}
-triBarrier <- unlist(fmesher::fm_contains(
+triBarrier <- unlist(fm_contains(
   x = barriers, 
   y = mesh, 
   type = "centroid"))
@@ -242,12 +243,16 @@ from the location to "everywhere".
 Let us build a projector to project any vector from the mesh nodes to a fine grid
 and projected with
 ```{r pgrid}
-pgrid <- inla.mesh.projector(
+pgrid <- fm_evaluator(
+  mesh,
+  lattice = fm_evaluator_lattice(
     mesh,
     xlim = bb[1, ],
     ylim = bb[2, ],
-    dims = round(500 * rxy/r)) 
-gcorrels <- as.matrix(inla.mesh.project(
+    dims = round(500 * rxy/r)
+  )
+)
+gcorrels <- as.matrix(fm_evaluate(
   pgrid, field = mcorrels
 ))
 ```
@@ -312,7 +317,7 @@ u <- inla.qsample(1, Q, seed = 1)[,1]
 These values sampled at the mesh nodes can be projected to a set of small pixels 
 for visualization purpose with
 ```{r usimgrid}
-ugrid.sim <- inla.mesh.project(pgrid, field = u)
+ugrid.sim <- fm_evaluate(pgrid, field = u)
 ```
 
 We can now visualize the projected simulated values at the small pixels, 
@@ -366,7 +371,7 @@ add an intercept and some random noise
 sigma.e <- 1
 set.seed(3)
 dataset$outcome <- 
-    drop(inla.mesh.project(
+    drop(fm_evaluate(
         mesh,
         loc = cbind(dataset$x, dataset$y),
         field = u)) + 
@@ -479,11 +484,11 @@ The posterior mean and the standard deviation can be projected into small pixels
 and added to the raster data with
 ```{r umean}
 grid.df$u.mean <- as.vector(
-  inla.mesh.project(
+  fm_evaluate(
     pgrid,
     result$summary.random$field$mean))
 grid.df$u.sd <- as.vector(
-  inla.mesh.project(
+  fm_evaluate(
     pgrid,
     result$summary.random$field$sd))
 ``` 

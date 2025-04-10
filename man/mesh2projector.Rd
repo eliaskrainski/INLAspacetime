@@ -33,7 +33,7 @@ Creates a projector matrix object.
 \section{Warning}{
 
 This is just for illustration purpose and one should consider the
-efficient functions available in the INLA and inlabru packages,
-e.g. \code{inlabru::fm_evaluator}.
+efficient functions available in the fmesher package,
+e.g. \code{\link[fmesher:fm_evaluate]{fmesher::fm_evaluator()}} and \code{\link[fmesher:fm_basis]{fmesher::fm_basis()}}.
 }
 
