@@ -65,6 +65,3 @@ double pclogrange(double logrange, double lamda, int dim);
 double pclogsigma(double logsigma, double lamda);
 void CSphere_gamma_alpha(double *lnGamma2, double *dalpha, double *cska);
 void ar2cov(int *n, int *k, double *a1, double *a2, double *r);
-
-__END_DECLS
-#endif
