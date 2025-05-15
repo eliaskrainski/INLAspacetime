@@ -29,8 +29,9 @@ knitr::opts_chunk$set(
 
 # Abstract
 
-In this vignette we illustrate how to fit some of the spacetime models in @lindgren2023, 
-for the dataset analysed in @cameletti2013.
+In this vignette we illustrate how to fit some of the spacetime models in @lindgren2024,
+see [[SORT vol. 48, no. 1, pp. 3-66](https://raco.cat/index.php/SORT/article/view/428665)] and the related code,
+for the data analysed in @cameletti2013.
 To perform this we will use the Bayesian paradigm with the**INLA** package, 
 using the features provided by the **inlabru** package to facilitate the coding. 
 
@@ -138,7 +139,7 @@ $\mathbf{A}$ the projector matrix from the discretized domain to the data.
 The spatio-temporal random effect $\mathbf{u}$ is defined in a continuous 
 spacetime domain being discretized considering meshes over time and space. 
 The difference from @cameletti2013 is that we now use the models in 
-@lindgren2023 for $\mathbf{u}$. 
+@lindgren2024 for $\mathbf{u}$. 
 
 Define a temporal mesh, with each knot spaced by `h`, 
 where `h = 1` means one per day.
@@ -216,7 +217,7 @@ in order to avoid possible mismatches.
 In order to use it, we have to define the matrices and vectors needed, 
 including the prior parameter definitions.
 
-The class of models in @lindgren2023 have the spatial range, 
+The class of models in @lindgren2024 have the spatial range, 
 temporal range and marginal standard deviation as parameters. 
 We consider the PC-prior, as in @fuglstad2015pcmatern, 
 for these parameters defined from the probability statements: 
@@ -226,7 +227,7 @@ P($\sigma<U_{\sigma}$)=$\alpha_{\sigma}$.
 We consider $U_{r_s}=100$, $U_{r_t}=5$ and $U_{\sigma}=2$.
 $\alpha_{r_s}=\alpha_{r_t}=\alpha_{\sigma}=0.05$
 
-The selection of one of the models in @lindgren2023 is by chosing the 
+The selection of one of the models in @lindgren2024 is by chosing the 
 $\alpha_t$, $\alpha_s$ and $\alpha_e$ as integer numbers. 
 We will start considering the model $\alpha_t=1$, $\alpha_s=0$ and $\alpha_t=2$, 
 which is a model with separable spatio-temporal covariance, 
@@ -405,7 +406,7 @@ ggplot(posts.df) +
 
 The comparison of the model parameters of $\mathbf{u}$ 
 for different models have to be done in light with the 
-covariance functions as illustrated in @lindgren2023. 
+covariance functions as illustrated in @lindgren2024. 
 The fitted $\sigma_e$ by the different models are comparable
 and we can see that when considering model $121$ for $\mathbf{u}$, 
 its posterior marginal are concentrated in values lower than 
