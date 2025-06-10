@@ -40,12 +40,18 @@ barrierModel.define <-
 
     stopifnot(length(prior.range)==2)
     prior.range <- as.numeric(prior.range)
+    if(is.na(prior.range[2])) {
+      prior.range[2] <- 0
+    }
     stopifnot(prior.range[1] > 0)
     stopifnot(prior.range[2] >= 0)
     stopifnot(prior.range[2] < 1)
 
     stopifnot(length(prior.sigma)==2)
     prior.sigma <- as.numeric(prior.sigma)
+    if(is.na(prior.sigma[2])) {
+      prior.sigma[2] <- 0
+    }
     stopifnot(prior.sigma[1] > 0)
     stopifnot(prior.sigma[2] >= 0)
     stopifnot(prior.sigma[2] < 1)
