@@ -12,7 +12,7 @@
 #' \eqn{log(gamma_s, gamma_t, gamma_e)}.
 #' @param verbose logical to print intermediate objects.
 #' @return a (sparse) precision matrix,
-#' as in Lindgren et. al. (2023)
+#' as in Lindgren et. al. (2024)
 #' @export
 stModel.precision <-
   function(smesh, tmesh, model, theta, verbose = FALSE) {
@@ -65,10 +65,10 @@ stModel.precision <-
 #'
 #' This function computes all the matrices needed to build
 #' the precision matrix for spatio-temporal model,
-#' as in Lindgren et. al. (2023)
+#' as in Lindgren et. al. (2024)
 #'
-#' @param tmesh a mesh object over the time domain.
 #' @param smesh a mesh object over the spatial domain.
+#' @param tmesh a mesh object over the time domain.
 #' @param model a string identifying the model.
 #' So far we have the following models:
 #' '102', '121', '202' and '220' models.
@@ -270,7 +270,7 @@ stModel.matrices <-
 #' for the supplied mesh.
 #' @details
 #' Temporal GMRF representation with stationary boundary conditions
-#' as in Appendix E of the paper.
+#' as in Appendix E in Lindgren et. al. (2024).
 #' @export
 Jmatrices <- function(tmesh) {
   tfe <- fmesher::fm_fem(tmesh, order = 2L)

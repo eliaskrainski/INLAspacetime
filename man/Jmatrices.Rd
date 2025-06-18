@@ -18,5 +18,5 @@ The 2nd order temporal matrices with boundary correction
 }
 \details{
 Temporal GMRF representation with stationary boundary conditions
-as in Appendix E of the paper.
+as in Appendix E in Lindgren et. al. (2024).
 }

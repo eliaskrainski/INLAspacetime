@@ -22,7 +22,7 @@ So far we have the following models:
 }
 \value{
 a (sparse) precision matrix,
-as in Lindgren et. al. (2023)
+as in Lindgren et. al. (2024)
 }
 \description{
 To build the the precision matrix for a spacetime model

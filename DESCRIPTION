@@ -1,7 +1,7 @@
 Package: INLAspacetime
 Type: Package
 Title: Spatial and Spatio-Temporal Models using 'INLA'
-Version: 0.1.12.002
+Version: 0.1.12.003
 Authors@R: c(
   person("Elias Teixeira", "Krainski", email = "eliaskrainski@gmail.com",
          role = c("cre", "aut", "cph"), 
@@ -19,7 +19,7 @@ Description: Prepare objects to implement models over spatial and
   'INLA', enabling fast parallel computations.
   We implemented the spatial barrier model, see Bakka et. al. (2019) 
   <doi:10.1016/j.spasta.2019.01.002>, and some of the spatio-temporal 
-  models proposed in Lindgren et. al. (2023) 
+  models proposed in Lindgren et. al. (2024) 
   <https://raco.cat/index.php/SORT/article/view/428665>. 
   Details are provided in the available vignettes and from the URL bellow.
 URL: https://github.com/eliaskrainski/INLAspacetime

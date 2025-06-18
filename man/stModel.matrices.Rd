@@ -31,7 +31,7 @@ a list containing needed objects for model definition.
 \description{
 This function computes all the matrices needed to build
 the precision matrix for spatio-temporal model,
-as in Lindgren et. al. (2023)
+as in Lindgren et. al. (2024)
 }
 \details{
 See the paper for details.
