@@ -1,7 +1,7 @@
 Package: INLAspacetime
 Type: Package
 Title: Spatial and Spatio-Temporal Models using 'INLA'
-Version: 0.1.12.003
+Version: 0.1.12.004
 Authors@R: c(
   person("Elias Teixeira", "Krainski", email = "eliaskrainski@gmail.com",
          role = c("cre", "aut", "cph"), 
@@ -33,7 +33,8 @@ Roxygen: list(markdown = TRUE)
 Depends:
     R (>= 4.3),
     Matrix,
-    fmesher
+    fmesher,
+    INLAtools (>= 0.0.4)
 Imports:
     graphics,
     grDevices,

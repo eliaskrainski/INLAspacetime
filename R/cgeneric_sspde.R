@@ -66,7 +66,7 @@ cgeneric_sspde <-
     stopifnot(control.priors$prange[2]<1)
     stopifnot(control.priors$psigma[2]<1)
 
-    INLAversion <- check_package_version_and_load(
+    INLAversion <- INLAtools::checkPackage(
       pkg = "INLA",
       minimum_version = "25.03.11",
       quietly = TRUE
@@ -128,7 +128,7 @@ cgeneric_sspde <-
 
     fem <- fmesher::fm_fem(mesh, order = 2)
     stopifnot((n <- nrow(fem$g1))>0)
-    lmats <- upperPadding(
+    lmats <- INLAtools::upperPadding(
       fem[c("c0", "g1", "g2")],
       relative = FALSE)
     stopifnot(n == nrow(lmats$graph))

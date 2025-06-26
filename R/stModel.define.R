@@ -72,7 +72,7 @@ stModel.define <-
     stopifnot(control.priors$prs[2]<1)
     stopifnot(control.priors$psigma[2]<1)
 
-    INLAversion <- check_package_version_and_load(
+    INLAversion <- INLAtools::checkPackage(
       pkg = "INLA",
       minimum_version = "23.08.16",
       quietly = TRUE
@@ -145,7 +145,8 @@ stModel.define <-
     jmm <- pmatch(paste0("M", 1:nm), names(mm))
     stopifnot(length(jmm[complete.cases(jmm)]) == nm)
 
-    lmats <- upperPadding(mm[jmm], relative = FALSE)
+    lmats <- INLAtools::upperPadding(
+      mm[jmm], relative = FALSE)
     stopifnot(n == nrow(lmats$graph))
 
     args0 <- list(

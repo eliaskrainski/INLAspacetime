@@ -1,19 +1,20 @@
-#' Precision matrix for an AR2 model.
+#' Precision matrix for a stationary AR2 model.
 #'
 #' Creates a precision matrix as a sparse matrix object
 #' considering the specification stated in Details.
 #'
-#' @param n the size of the model.
-#' @param a a length three vector with the coefficients.
-#' See details.
-#' @section Details:
+#' @param n integer with the size of the precision matrix.
+#' @param a numeric vector with length three with the coefficients.
+#' @details
 #' Let the second order auto-regression model be defined as
 #'
-#' \deqn{a_0 x_t + a_1 x_{t-1} + a_2 x_{t-2} = w_t, w_t ~ N(0, 1).}
+#' \deqn{a_0 x_t + a_1 x_{t-1} + a_2 x_{t-2} = w_t, w_t \~ N(0, 1).}
 #'
-#' The n times n symmetric precision matrix Q
-#' for x_1, x_2, ..., x_n
-#' has the following non-zero elements:
+#' The stationary assumption is to consider the variance of
+#' \eqn{x_t} to be the same for all \eqn{t=1,\ldots,n}.
+#' This assumption gives the \eqn{n \times n} symmetric
+#' precision matrix \eqn{Q} as a sparse matrix with the
+#' following non-zero elements:
 #'
 #'  \eqn{Q_{1,1} = Q_{n,n} = a_0^2}
 #'
@@ -27,7 +28,7 @@
 #'
 #'  \eqn{Q_{t,t-2} = Q_{t-2,t} = q_2 = a_2 a_0, t = 3, 4, ..., n}
 #'
-#' @return the precision matrix as a sparse matrix object with edge correction.
+#' @returns sparse matrix.
 #' @seealso [ar2cov]
 #' @export
 #' @examples
@@ -54,20 +55,22 @@ ar2precision <- function(n, a) {
     ))
   }
   if (n > 3) {
-    return(Matrix::sparseMatrix(
-      i = c(1:n, 1:(n - 1), 1:(n - 2)),
-      j = c(1:n, 2:n, 3:n),
-      x = c(
-        a[1]^2, a[1]^2 + a[2]^2,
-        rep(sum(a^2), max(0, n - 4)),
-        a[1]^2 + a[2]^2, a[1]^2,
-        a[1] * a[2],
-        rep(a[2] * (a[1] + a[3]), n - 3),
-        a[1] * a[2],
-        rep(a[1] * a[3], n - 2)
-      ),
-      symmetric = TRUE,
-      repr = "T"
-    ))
+    return(
+      INLAtools::Sparse(
+        Matrix::sparseMatrix(
+          i = c(1:n, 1:(n - 1), 1:(n - 2)),
+          j = c(1:n, 2:n, 3:n),
+          x = c(
+            a[1]^2, a[1]^2 + a[2]^2,
+            rep(sum(a^2), max(0, n - 4)),
+            a[1]^2 + a[2]^2, a[1]^2,
+            a[1] * a[2],
+            rep(a[2] * (a[1] + a[3]), n - 3),
+            a[1] * a[2],
+            rep(a[1] * a[3], n - 2)
+          ),
+          symmetric = TRUE,
+          repr = "T"
+    )))
   }
 }

@@ -84,21 +84,13 @@ stModel.precision <-
 #' 5. the model matrices `M_1`, ..., `M_m`
 #' @export
 #' @importFrom fmesher fm_fem
+#' @importFrom INLAtools upperPadding
 stModel.matrices <-
   function(smesh, tmesh, model, constr = FALSE) {
     stopifnot(inherits(smesh, "fm_mesh_2d"))
     stopifnot(inherits(tmesh, "fm_mesh_1d"))
     stopifnot(nchar(model) == 3)
     stopifnot(model %in% c("102", "121", "202", "220"))
-
-    uM <- function(m) { ### extract the upper
-      m <- INLA::inla.as.dgTMatrix(m)
-      i.u <- which(m@i <= m@j)
-      m@i <- m@i[i.u]
-      m@j <- m@j[i.u]
-      m@x <- m@x[i.u]
-      return(m)
-    }
 
     val <- list()
 
@@ -166,82 +158,82 @@ stModel.matrices <-
       }
       J2 <- tfe$g1
 
-      val$M1 <- uM(kronecker(J0, sfe$c0))
-      val$M2 <- uM(kronecker(J0, sfe$g1))
-      val$M3 <- uM(kronecker(J0, sfe$g2))
+      val$M1 <- upperPadding(kronecker(J0, sfe$c0))
+      val$M2 <- upperPadding(kronecker(J0, sfe$g1))
+      val$M3 <- upperPadding(kronecker(J0, sfe$g2))
 
       if (model == "102") {
         if (!tmesh$cyclic) {
-          val$M4 <- uM(kronecker(J1, sfe$c0))
-          val$M5 <- uM(kronecker(J1, sfe$g1))
-          val$M6 <- uM(kronecker(J1, sfe$g2))
+          val$M4 <- upperPadding(kronecker(J1, sfe$c0))
+          val$M5 <- upperPadding(kronecker(J1, sfe$g1))
+          val$M6 <- upperPadding(kronecker(J1, sfe$g2))
         }
 
-        val$M7 <- uM(kronecker(J2, sfe$c0))
-        val$M8 <- uM(kronecker(J2, sfe$g1))
-        val$M9 <- uM(kronecker(J2, sfe$g2))
+        val$M7 <- upperPadding(kronecker(J2, sfe$c0))
+        val$M8 <- upperPadding(kronecker(J2, sfe$g1))
+        val$M9 <- upperPadding(kronecker(J2, sfe$g2))
       } else {
-        val$M4 <- uM(kronecker(J0, sfe$g3))
+        val$M4 <- upperPadding(kronecker(J0, sfe$g3))
 
         if (!tmesh$cyclic) {
-          val$M5 <- uM(kronecker(J1, sfe$c0))
-          val$M6 <- uM(kronecker(J1, sfe$g1))
-          val$M7 <- uM(kronecker(J1, sfe$g2))
+          val$M5 <- upperPadding(kronecker(J1, sfe$c0))
+          val$M6 <- upperPadding(kronecker(J1, sfe$g1))
+          val$M7 <- upperPadding(kronecker(J1, sfe$g2))
         }
 
-        val$M8 <- uM(kronecker(J2, sfe$c0))
-        val$M9 <- uM(kronecker(J2, sfe$g1))
+        val$M8 <- upperPadding(kronecker(J2, sfe$c0))
+        val$M9 <- upperPadding(kronecker(J2, sfe$g1))
       }
     }
 
     if (model %in% c("202", "220")) {
       Jm <- Jmatrices(tmesh)
 
-      val$M1 <- uM(kronecker(Jm$J0, sfe$c0))
-      val$M2 <- uM(kronecker(Jm$J0, sfe$g1))
-      val$M3 <- uM(kronecker(Jm$J0, sfe$g2))
+      val$M1 <- upperPadding(kronecker(Jm$J0, sfe$c0))
+      val$M2 <- upperPadding(kronecker(Jm$J0, sfe$g1))
+      val$M3 <- upperPadding(kronecker(Jm$J0, sfe$g2))
 
       if (model == "202") {
         if (!tmesh$cyclic) {
-          val$M4 <- uM(kronecker(Jm$J1, sfe$c0))
-          val$M5 <- uM(kronecker(Jm$J1, sfe$g1))
-          val$M6 <- uM(kronecker(Jm$J1, sfe$g2))
+          val$M4 <- upperPadding(kronecker(Jm$J1, sfe$c0))
+          val$M5 <- upperPadding(kronecker(Jm$J1, sfe$g1))
+          val$M6 <- upperPadding(kronecker(Jm$J1, sfe$g2))
         }
 
-        val$M7 <- uM(kronecker(Jm$J2, sfe$c0))
-        val$M8 <- uM(kronecker(Jm$J2, sfe$g1))
-        val$M9 <- uM(kronecker(Jm$J2, sfe$g2))
+        val$M7 <- upperPadding(kronecker(Jm$J2, sfe$c0))
+        val$M8 <- upperPadding(kronecker(Jm$J2, sfe$g1))
+        val$M9 <- upperPadding(kronecker(Jm$J2, sfe$g2))
 
         if (!tmesh$cyclic) {
-          val$M10 <- uM(kronecker(Jm$J3, sfe$c0))
-          val$M11 <- uM(kronecker(Jm$J3, sfe$g1))
-          val$M12 <- uM(kronecker(Jm$J3, sfe$g2))
+          val$M10 <- upperPadding(kronecker(Jm$J3, sfe$c0))
+          val$M11 <- upperPadding(kronecker(Jm$J3, sfe$g1))
+          val$M12 <- upperPadding(kronecker(Jm$J3, sfe$g2))
         }
 
-        val$M13 <- uM(kronecker(Jm$J4, sfe$c0))
-        val$M14 <- uM(kronecker(Jm$J4, sfe$g1))
-        val$M15 <- uM(kronecker(Jm$J4, sfe$g2))
+        val$M13 <- upperPadding(kronecker(Jm$J4, sfe$c0))
+        val$M14 <- upperPadding(kronecker(Jm$J4, sfe$g1))
+        val$M15 <- upperPadding(kronecker(Jm$J4, sfe$g2))
       } else {
-        val$M4 <- uM(kronecker(Jm$J0, sfe$g3))
-        val$M5 <- uM(kronecker(Jm$J0, sfe$g4))
+        val$M4 <- upperPadding(kronecker(Jm$J0, sfe$g3))
+        val$M5 <- upperPadding(kronecker(Jm$J0, sfe$g4))
 
         if (!tmesh$cyclic) {
-          val$M6 <- uM(kronecker(Jm$J1, sfe$c0))
-          val$M7 <- uM(kronecker(Jm$J1, sfe$g1))
-          val$M8 <- uM(kronecker(Jm$J1, sfe$g2))
-          val$M9 <- uM(kronecker(Jm$J1, sfe$g3))
+          val$M6 <- upperPadding(kronecker(Jm$J1, sfe$c0))
+          val$M7 <- upperPadding(kronecker(Jm$J1, sfe$g1))
+          val$M8 <- upperPadding(kronecker(Jm$J1, sfe$g2))
+          val$M9 <- upperPadding(kronecker(Jm$J1, sfe$g3))
         }
 
-        val$M10 <- uM(kronecker(Jm$J2, sfe$c0))
-        val$M11 <- uM(kronecker(Jm$J2, sfe$g1))
-        val$M12 <- uM(kronecker(Jm$J2, sfe$g2))
+        val$M10 <- upperPadding(kronecker(Jm$J2, sfe$c0))
+        val$M11 <- upperPadding(kronecker(Jm$J2, sfe$g1))
+        val$M12 <- upperPadding(kronecker(Jm$J2, sfe$g2))
 
         if (!tmesh$cyclic) {
-          val$M13 <- uM(kronecker(Jm$J3, sfe$c0))
-          val$M14 <- uM(kronecker(Jm$J3, sfe$g1))
+          val$M13 <- upperPadding(kronecker(Jm$J3, sfe$c0))
+          val$M14 <- upperPadding(kronecker(Jm$J3, sfe$g1))
         }
 
-        val$M15 <- uM(kronecker(Jm$J4, sfe$c0))
+        val$M15 <- upperPadding(kronecker(Jm$J4, sfe$c0))
       }
     }
 

@@ -56,7 +56,7 @@ barrierModel.define <-
     stopifnot(prior.sigma[2] >= 0)
     stopifnot(prior.sigma[2] < 1)
 
-    INLAversion <- check_package_version_and_load(
+    INLAversion <- INLAtools::checkPackage(
       pkg = "INLA",
       minimum_version = "24.10.07",
       quietly = TRUE
@@ -109,7 +109,7 @@ barrierModel.define <-
     }
     iC <- Diagonal(n, 1 / CC)
 
-    lmats <- upperPadding(
+    lmats <- INLAtools::upperPadding(
       list(
         ici = t(Imat) %*% iC %*% Imat,
         icd = t(Imat) %*% iC %*% Dmat,
