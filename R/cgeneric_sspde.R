@@ -67,7 +67,7 @@ cgeneric_sspde <-
     stopifnot(control.priors$psigma[2]<1)
 
     INLAversion <- INLAtools::packageCheck(
-      pkg = "INLA",
+      name = "INLA",
       minimum_version = "25.03.11",
       quietly = TRUE
     )
@@ -159,10 +159,15 @@ cgeneric_sspde <-
     the_model$"mesh" <- mesh
     the_model$"fem" <- fem
 
+    the_model$mapper <- NULL
     if(requireNamespace("inlabru")) {
-      the_model$mapper <- inlabru::bru_mapper(mesh)
-    } else {
-      the_model$mapper <- NULL
+      if(!is.na(INLAtools::packageCheck(
+        name = "inlabru",
+        minimum_version = "2.12.0.9021",
+        quietly = TRUE
+      ))) {
+        the_model$mapper <- inlabru::bru_mapper(mesh)
+      }
     }
 
     return(the_model)

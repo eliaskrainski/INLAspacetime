@@ -57,7 +57,7 @@ barrierModel.define <-
     stopifnot(prior.sigma[2] < 1)
 
     INLAversion <- INLAtools::packageCheck(
-      pkg = "INLA",
+      name = "INLA",
       minimum_version = "24.10.07",
       quietly = TRUE
     )
@@ -159,10 +159,15 @@ barrierModel.define <-
     the_model[["mesh"]] <- mesh
 
 
+    the_model$mapper <- NULL
     if(requireNamespace("inlabru")) {
-      the_model$mapper <- inlabru::bru_mapper(mesh)
-    } else {
-      the_model$mapper <- NULL
+      if(!is.na(INLAtools::packageCheck(
+        name = "inlabru",
+        minimum_version = "2.12.0.9021",
+        quietly = TRUE
+      ))) {
+        the_model$mapper <- inlabru::bru_mapper(mesh)
+      }
     }
 
     return(the_model)
