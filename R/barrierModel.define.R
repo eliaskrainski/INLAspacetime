@@ -56,7 +56,7 @@ barrierModel.define <-
     stopifnot(prior.sigma[2] >= 0)
     stopifnot(prior.sigma[2] < 1)
 
-    INLAversion <- INLAtools::checkPackage(
+    INLAversion <- INLAtools::packageCheck(
       pkg = "INLA",
       minimum_version = "24.10.07",
       quietly = TRUE
@@ -158,5 +158,12 @@ barrierModel.define <-
     # require loading inlabru even when it's not going to be used)
     the_model[["mesh"]] <- mesh
 
-    the_model
+
+    if(requireNamespace("inlabru")) {
+      the_model$mapper <- inlabru::bru_mapper(mesh)
+    } else {
+      the_model$mapper <- NULL
+    }
+
+    return(the_model)
   }

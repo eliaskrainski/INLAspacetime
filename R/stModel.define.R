@@ -72,7 +72,7 @@ stModel.define <-
     stopifnot(control.priors$prs[2]<1)
     stopifnot(control.priors$psigma[2]<1)
 
-    INLAversion <- INLAtools::checkPackage(
+    INLAversion <- INLAtools::packageCheck(
       pkg = "INLA",
       minimum_version = "23.08.16",
       quietly = TRUE
@@ -183,11 +183,20 @@ stModel.define <-
     }
     # Prepend specialised model class identifier, for bru_mapper use:
     class(the_model) <- c("stModel_cgeneric", class(the_model))
+
+    if(requireNamespace("inlabru")) {
+      ## (construct the mapper already here, but that would
+      ## require loading inlabru even when it's not going to be used)
+      the_model$mapper <- inlabru::bm_multi(
+        list(space = inlabru::bru_mapper(smesh),
+             time = inlabru::bru_mapper(tmesh))
+      )
+    } else {
+      the_model$mapper <- NULL
+    }
     # Add objects needed by bru_get_mapper.stModel_cgeneric:
-    # (alternatively, construct the mapper already here, but that would
-    # require loading inlabru even when it's not going to be used)
     the_model[["smesh"]] <- smesh
     the_model[["tmesh"]] <- tmesh
 
-    the_model
+    return(the_model)
   }
