@@ -29,7 +29,7 @@
 #include <R_ext/Rdynload.h>
 
 static const R_CMethodDef CEntries[] = {
-	{"ar2cov", (DL_FUNC) &ar2cov, 5},
+	{"ar2covk", (DL_FUNC) &ar2covk, 5},
 	{NULL, NULL, 0}
 };
 

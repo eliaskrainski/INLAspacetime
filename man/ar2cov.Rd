@@ -17,7 +17,8 @@ ar2cov(a1, a2, k = 30, useC = FALSE)
 \item{useC}{just a test (to use C code).}
 }
 \value{
-the autocorrelation as a vector or matrix, whenever \code{a1} or \code{a2} are
+the autocorrelation as a vector or matrix,
+whenever \code{a1} or \code{a2} are
 scalar or vector.
 }
 \description{

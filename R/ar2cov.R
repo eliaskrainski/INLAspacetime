@@ -11,7 +11,8 @@
 #'  Let the second order auto-regression model defined as
 #'   `x_t + a_1 x_{t-1} + a_2 x_{t-2} = w_t`
 #' where `w_t ~ N(0, 1)`.
-#' @return the autocorrelation as a vector or matrix, whenever `a1` or `a2` are
+#' @return the autocorrelation as a vector or matrix,
+#' whenever `a1` or `a2` are
 #' scalar or vector.
 #' @seealso [ar2precision]
 #' @export
@@ -29,7 +30,7 @@ ar2cov <- function(a1, a2, k = 30, useC = FALSE) {
     if (k > 1) {
       r[2, ] <- (a[, 1]^2 + a[, 2] - a[, 2]^2) / (1 - a[, 2])
       if(k>2) {
-        r <- .C("ar2cov", n, k, a[,1], a[,2],
+        r <- .C("ar2covk", n, k, a[,1], a[,2],
                 r = r,
                 PACKAGE = "INLAspacetime")$r
       }

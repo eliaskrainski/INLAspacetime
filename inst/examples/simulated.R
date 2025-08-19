@@ -4,18 +4,8 @@ library(INLAspacetime)
 library(inlabru)
 library(sf)
 
-## some INLA setup
-if(Sys.info()["user"]=="eliask") {
-    inla.setOption(
-        inla.call = "remote",
-        num.threads = "8:1",
-##        pardiso.license = "~/.pardiso.lic",
-        safe = FALSE
-        )
-}
-
-rxy <- c(10, 5) ## size of spatial domain
-nt <- 30 ## number of time points
+rxy <- c(7, 5) ## size of spatial domain
+nt <- 10 ## number of time points
 (r0 <- mean(rxy))
 
 ## setup rectangle for spatial domain
@@ -29,9 +19,9 @@ domain <- cbind(
 ## spatial mesh
 smesh <- fm_mesh_2d(
     loc.domain = domain,
-    offset = r0 / c(40, 3),
+    offset = r0 / c(50, 3),
     max.edge = r0 / c(20, 5),
-    cutoff = r0 / 40)
+    cutoff = r0 / 20)
 smesh$n
 
 if(FALSE)
@@ -44,7 +34,7 @@ tmesh <- fm_mesh_1d(
 ## model parameters
 params <- c(
     rs = r0 / 3, ## spatial range
-    rt = nt / 3, ## temporal range
+    rt = nt / 2, ## temporal range
     sigma.u = 1) ## standard deviation
 params
 
@@ -124,11 +114,13 @@ result <- bru(
     mcomps,
     mlike,
     options = list(
+        num.threads = '5',
 ##        control.mode = list(
   ##          theta = log(c(2 / sigma.e^2, params / 2)),
     ##        restart = TRUE),
         verbose = TRUE)
 )
+result$cpu.used
 
 ## compare with truth
 cbind(true = c(1 / sigma.e^2, log(params)),

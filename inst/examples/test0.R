@@ -3,7 +3,7 @@ library(INLAspacetime)
 library(inlabru)
 
 ### We need a plain test-example...
-inla.setOption(smtp='taucs', inla.mode='compact')
+inla.setOption(smtp='taucs')
 
 smesh <- fm_mesh_2d(cbind(0,0), max.edge=5, offset=2)
 tmesh <- fm_mesh_1d(0:5)

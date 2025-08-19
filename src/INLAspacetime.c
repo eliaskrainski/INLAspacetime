@@ -69,9 +69,9 @@ void CSphere_gamma_alpha(double *lnGamma2, double *dalpha, double *cska) {
   cska[0] = out;
 }
 
-void ar2cov(int *n, int *k,
-            double *a1, double *a2,
-            double *r) {
+void ar2covk(int *n, int *k,
+             double *a1, double *a2,
+             double *r) {
   // function to compute the autocovariance for
   // the second order autoregression model - AR2
   int i, j, l0=2, l1=1, l2=0;

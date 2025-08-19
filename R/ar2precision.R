@@ -8,7 +8,7 @@
 #' @details
 #' Let the second order auto-regression model be defined as
 #'
-#' \deqn{a_0 x_t + a_1 x_{t-1} + a_2 x_{t-2} = w_t, w_t \~ N(0, 1).}
+#' \deqn{a_0 x_t + a_1 x_{t-1} + a_2 x_{t-2} = w_t, w_t ~ N(0, 1).}
 #'
 #' The stationary assumption is to consider the variance of
 #' \eqn{x_t} to be the same for all \eqn{t=1,\ldots,n}.
