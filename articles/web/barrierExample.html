@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../../index.html">INLAspacetime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.12.006</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.12.007</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,7 +61,7 @@
 Krainski</h4>
             
             <h4 data-toc-skip class="date">Created in March, 2023. Last
-update: Mon 18 Aug, 2025</h4>
+update: Tue 19 Aug, 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/eliaskrainski/INLAspacetime/blob/master/vignettes/web/barrierExample.Rmd" class="external-link"><code>vignettes/web/barrierExample.Rmd</code></a></small>
       <div class="d-none name"><code>barrierExample.Rmd</code></div>
@@ -165,8 +165,6 @@ tutorial.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eliaskrainski/INLAspacetime" class="external-link">INLAspacetime</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: fmesher</span></span>
 <span><span class="co">#&gt; Loading required package: INLAtools</span></span>
-<span><span class="co">#&gt; Warning: failed to assign RegisteredNativeSymbol for ar2cov to ar2cov since</span></span>
-<span><span class="co">#&gt; ar2cov is already defined in the 'INLAspacetime' namespace</span></span>
 <span><span class="co">#&gt; see more on https://eliaskrainski.github.io/INLAspacetime</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.inlabru.org" class="external-link">inlabru</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span>
@@ -435,8 +433,8 @@ the model formula, the data and the family, as follows</p>
 the intercept with</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">summary.fix</span></span>
-<span><span class="co">#&gt;               mean        sd 0.025quant 0.5quant 0.975quant     mode      kld</span></span>
-<span><span class="co">#&gt; Intercept 10.11303 0.4108845   9.304833 10.10422   10.97132 10.10517 178.0393</span></span></code></pre></div>
+<span><span class="co">#&gt;               mean       sd 0.025quant 0.5quant 0.975quant     mode      kld</span></span>
+<span><span class="co">#&gt; Intercept 10.11291 0.411209   9.304066 10.10408   10.97197 10.10504 177.7939</span></span></code></pre></div>
 <p>For the hyper-parameters the computations were performed in an
 internal scale. That is log of range and
 log(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>σ</mi><annotation encoding="application/x-tex">\sigma</annotation></semantics></math>),
@@ -472,8 +470,8 @@ data:</p>
 <span>             <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/INLA/man/marginal.html" class="external-link">inla.zmarginal</a></span><span class="op">(</span><span class="va">m</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;         sigma.e    range     sigma</span></span>
 <span><span class="co">#&gt; true 1.00000000 4.000000 1.0000000</span></span>
-<span><span class="co">#&gt; mean 1.04433922 4.049700 0.9013391</span></span>
-<span><span class="co">#&gt; sd   0.03812479 1.098508 0.1405655</span></span></code></pre></div>
+<span><span class="co">#&gt; mean 1.04421513 4.048376 0.9015963</span></span>
+<span><span class="co">#&gt; sd   0.03813544 1.100520 0.1404245</span></span></code></pre></div>
 <p>We can also visualize these these posterior marginal distributions
 with</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
