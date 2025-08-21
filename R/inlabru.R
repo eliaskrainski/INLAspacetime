@@ -18,6 +18,9 @@
 #' @rawNamespace S3method(inlabru::bru_get_mapper, stModel_cgeneric)
 bru_get_mapper.stModel_cgeneric <- function(model, ...) {
   stopifnot(requireNamespace("inlabru"))
+  if (!is.null(model[["mapper"]])) {
+    return(model[["mapper"]])
+  }
   inlabru::bru_mapper_multi(list(
     space = inlabru::bru_mapper(model[["smesh"]]),
     time = inlabru::bru_mapper(model[["tmesh"]], indexed = TRUE)
@@ -27,5 +30,8 @@ bru_get_mapper.stModel_cgeneric <- function(model, ...) {
 #' @rawNamespace S3method(inlabru::bru_get_mapper, barrierModel_cgeneric)
 bru_get_mapper.barrierModel_cgeneric <- function(model, ...) {
   stopifnot(requireNamespace("inlabru"))
+  if (!is.null(model[["mapper"]])) {
+    return(model[["mapper"]])
+  }
   inlabru::bru_mapper(model[["mesh"]])
 }
