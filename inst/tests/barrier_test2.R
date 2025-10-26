@@ -16,8 +16,12 @@ mesh$n
 
 plot(mesh)
 
-## Stationary FEM
-system.time(sfem <- fm_fem(mesh))
+## stationary model
+smodel <- inla.spde2.pcmatern(
+    mesh = mesh,
+    prior.range = c(1, 0.1),
+    prior.sigma = c(1, 0.5)
+)
 
 ## Non-stationary model
 
@@ -82,18 +86,6 @@ for(i in 1:length(tri.ids)) {
     points(ce.tri[tri.ids[[i]], ], pch = 19, col = i)
 }
 
-### barrier FEM
-system.time(bfem <- mesh2fem.barrier(mesh, tri.ids))
-
-## check the structure matrices
-all.equal(sfem$g1,
-          Reduce("+", bfem$D))
-
-all.equal(sfem$c1, bfem$I)
-
-all.equal(sfem$c0@x,
-          Reduce("+", bfem$C))
-
 ### define the cgeneric barrier model
 bmodel <- barrierModel.define(
     mesh = mesh,
@@ -104,54 +96,67 @@ bmodel <- barrierModel.define(
     ##, useINLAprecomp = FALSE
 )
 
-## model parameters
-range <- runif(1, 3, 10)
-sigma <- runif(1, .3, 3)
-
-## get the precision
-ifit <- inla(
-    y ~ 0 + f(i, model = bmodel),
-    verbose = !TRUE,
+## model fit with no data (posterior = prior)
+sfit0 <- inla(
+    y ~ 0 + f(i, model = smodel),
     data = data.frame(y = NA, i = 1:mesh$n),
-    control.mode = list(
-        theta = c(10, log(c(range, sigma))),
-        fixed = TRUE),
-    control.compute = list(config = TRUE)
+    control.family = list(hyper = list(prec = list(initial = 10, fixed = TRUE)))
+)
+bfit0 <- inla(
+    y ~ 0 + f(i, model = bmodel),
+    data = data.frame(y = NA, i = 1:mesh$n),
+    control.family = list(hyper = list(prec = list(initial = 10, fixed = TRUE)))
 )
 
-## the upper part of the prior
-Qub <- inla.as.sparse(
-    ifit$misc$configs$config[[1]]$Qprior
+rbind(sfit0$mode$theta,
+      bfit0$mode$theta)
+
+spmargs0 <- lapply(sfit0$internal.marginals.hyperpar, function(m)
+    inla.tmarginal(exp, m))
+bpmargs0 <- lapply(bfit0$internal.marginals.hyperpar, function(m)
+    inla.tmarginal(exp, m))
+
+## visualize
+par(mfrow = c(1, 2), mar = c(4,4,1,1), mgp = c(3,1,0), las = 1)
+for(i in 1:2) {
+    plot(spmargs0[[i]], type = "l",
+         xlab = c("range", "sigma")[i], ylab = "Density")
+    lines(bpmargs0[[i]], lty = 2)
+}
+
+## simulate data and fit
+## set parameter values
+range <- 5
+sigma <- 2
+
+Qs <- inla.spde2.precision(smodel, theta = log(c(range, sigma)))
+xx <- inla.qsample(n = 1, Q = Qs)
+
+## model fit
+sfit <- inla(
+    y ~ 0 + f(i, model = smodel),
+    data = data.frame(y = xx[,1], i = 1:mesh$n),
+    control.family = list(hyper = list(prec = list(initial = 10, fixed = TRUE)))
+)
+bfit <- inla(
+    y ~ 0 + f(i, model = bmodel),
+    data = data.frame(y = xx[,1], i = 1:mesh$n),
+    control.family = list(hyper = list(prec = list(initial = 10, fixed = TRUE)))
 )
 
-## the non-stationary precision matrix
-Qb <- inla.as.sparse(
-    sparseMatrix(
-        i = Qub@i + 1L, 
-        j = Qub@j + 1L,
-        x = Qub@x,
-        symmetric = TRUE,
-        repr = "T"
-    )
-)
-Vb <- inla.qinv(Qb)
+rbind(sfit$mode$theta,
+      bfit$mode$theta)
 
-## The stationary precision matrix
-range2 <- range^2
-sigma2 <- sigma^2
-k2 <- 8/(range2)
-t2 <- 1/(4*pi*k2*sigma2)
-Qs <- inla.as.sparse(
-    t2 * ((k2^2)*sfem$c1 + ## C1: closer comparison with Hakkon's choice
-          2*k2*sfem$g1 + sfem$g2))
-Vs <- inla.qinv(Qs)
+spmargs <- lapply(sfit$internal.marginals.hyperpar, function(m)
+                 inla.tmarginal(exp, m))
+bpmargs <- lapply(bfit$internal.marginals.hyperpar, function(m)
+                 inla.tmarginal(exp, m))
 
-## compare
-summary(diag(Vs))
-summary(diag(Vb))
-
-summary(Qs@x)
-summary(Qb@x)
-
-sum(diag(Vb)) / sum(diag(Vs))
+## visualize
+par(mfrow = c(1, 2), mar = c(4,4,1,1), mgp = c(3,1,0), las = 1)
+for(i in 1:2) {
+    plot(spmargs[[i]], type = "l",
+         xlab = c("range", "sigma")[i], ylab = "Density")
+    lines(bpmargs[[i]], lty = 2)
+}
 
