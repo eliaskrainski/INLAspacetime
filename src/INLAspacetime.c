@@ -7,14 +7,14 @@ double pclogrange(double lrange, double lam, int dim) {
   // See Lindgren and Rue (2015) for this parametrization
   // See Fuglstad et. al. (2018) for this prior definition
   double dh = 0.5 * ((double)dim);
-  return log(lam) -dh * lrange - lam * exp(-dh * lrange) + log(dh);
+  return log(lam * dh) - dh * lrange - lam * exp(-dh * lrange);
 }
 
 double pclogsigma(double lsigma, double lam) {
   // return log of the PC-prior density for the log of the
   // standard deviation parameter.
   // See Simpson et. al. (2017) for this prior definition
-  return log(lam) + lsigma - lam * exp(lsigma);
+  return log(lam) - lam * exp(lsigma) + lsigma;
 }
 
 void CSphere_gamma_alpha(double *lnGamma2, double *dalpha, double *cska) {
@@ -69,9 +69,9 @@ void CSphere_gamma_alpha(double *lnGamma2, double *dalpha, double *cska) {
   cska[0] = out;
 }
 
-void ar2cov(int *n, int *k,
-            double *a1, double *a2,
-            double *r) {
+void ar2covk(int *n, int *k,
+             double *a1, double *a2,
+             double *r) {
   // function to compute the autocovariance for
   // the second order autoregression model - AR2
   int i, j, l0=2, l1=1, l2=0;

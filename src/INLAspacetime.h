@@ -64,4 +64,4 @@ inla_cgeneric_func_tp inla_cgeneric_barrier;
 double pclogrange(double logrange, double lamda, int dim);
 double pclogsigma(double logsigma, double lamda);
 void CSphere_gamma_alpha(double *lnGamma2, double *dalpha, double *cska);
-void ar2cov(int *n, int *k, double *a1, double *a2, double *r);
+void ar2covk(int *n, int *k, double *a1, double *a2, double *r);
