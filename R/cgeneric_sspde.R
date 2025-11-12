@@ -10,12 +10,11 @@
 #' value of the parameter.
 #' @param constr logical, default is FALSE, to indicate if the
 #' integral of the field over the domain is to be constrained to zero.
-#' @param debug integer, default is zero, indicating the verbose level.
-#' Will be used as logical by INLA.
-#' @param useINLAprecomp logical, default is TRUE, indicating if it is to
+#' @param ... additional arguments that will be passed on to
+#' [INLAtools::cgenericBuilder()], such as:
+#'  `debug` : logical/integer, default is FALSE/0.
+#'  `useINLAprecomp` logical, default is TRUE, indicating if it is to
 #' be used the shared object pre-compiled by INLA.
-#' This is not considered if 'libpath' is provided.
-#' @param libpath string, default is NULL, with the path to the shared object.
 #' @note
 #' This is the stationary case of [INLA::inla.spde2.pcmatern()]
 #' with slight change on the marginal variance when the domain is
@@ -37,9 +36,12 @@ cgeneric_sspde <-
            alpha,
            control.priors,
            constr = FALSE,
-           debug = FALSE,
-           useINLAprecomp = TRUE,
-           libpath = NULL) {
+           ...) {
+
+    dotArgs <- list(...)
+    if(!any(names(dotArgs)=="debug")) {
+      dotArgs$debug <- FALSE
+    }
 
     stopifnot(fm_manifold(mesh, c("S", "R")))
     Rmanifold <- fm_manifold(mesh, "R") + 0L
@@ -71,32 +73,26 @@ cgeneric_sspde <-
       minimum_version = "25.03.11",
       quietly = TRUE
     )
-    if (is.null(libpath)) {
-      if(length(useINLAprecomp)>1) {
-        warning("length(useINLAprecomp)>1, first taken!")
-        useINLAprecomp <- useINLAprecomp[1]
-      }
-      stopifnot(is.logical(useINLAprecomp))
-      if(is.na(INLAversion) & useINLAprecomp) {
-        stop("Update INLA or try `useINLAprecomp = FALSE`!")
-      }
-      if (useINLAprecomp) {
-        libpath <- INLA::inla.external.lib("INLAspacetime")
-      } else {
-        libpath <- system.file("libs", package = "INLAspacetime")
-        if (Sys.info()["sysname"] == "Windows") {
-          libpath <- file.path(libpath, "INLAspacetime.dll")
-        } else {
-          libpath <- file.path(libpath, "INLAspacetime.so")
-        }
-      }
+    if(!any(names(dotArgs)=="useINLAprecomp")) {
+      dotArgs$useINLAprecomp <- TRUE
     }
+    if(length(dotArgs$useINLAprecomp)>1) {
+      warning("length(useINLAprecomp)>1, first taken!")
+      dotArgs$useINLAprecomp <- dotArgs$useINLAprecomp[1]
+    }
+    stopifnot(is.logical(dotArgs$useINLAprecomp))
+    libpath <- INLAtools::cgeneric_shlib(
+      package = "INLAspacetime",
+      useINLAprecomp = dotArgs$useINLAprecomp
+    )
     stopifnot(file.exists(libpath))
 
-    if(alpha!=2) stop("Only 'alpha = 2' is supported for now.")
+    if(alpha!=2) {
+      stop("Only 'alpha = 2' is supported for now.")
+    }
     nu.s <- alpha - dimension / 2
 
-    if (debug) {
+    if (dotArgs$debug) {
       print(c(alpha = alpha, nu.s = nu.s))
     }
 
@@ -112,17 +108,17 @@ cgeneric_sspde <-
     if (Rmanifold) {
       cc[2] <- lgamma(alpha - (dimension * 0.5)) -
         lgamma(alpha) -(dimension * 0.5) * log(4 * pi)
-      if (debug) {
+      if (dotArgs$debug) {
         cat("R manifold, cc[2] = ", cc[2], "\n")
       }
     } else {
       ## c2 part depending on gamma to be completed in C
       cc[2] <- -log(4 * pi) ## (S1???)
-      if (debug) {
+      if (dotArgs$debug) {
         cat("S manifold, cc[2] = ", cc[2], "\n")
       }
     }
-    if (debug) {
+    if (dotArgs$debug) {
       print(c(cc = cc))
     }
 
@@ -130,16 +126,19 @@ cgeneric_sspde <-
     stopifnot((n <- nrow(fem$g1))>0)
     lmats <- INLAtools::upperPadding(
       fem[c("c0", "g1", "g2")],
-      relative = FALSE)
+      relative = FALSE,
+      unique = TRUE,
+      na.rm = TRUE,
+      zeros.rm = TRUE)
     stopifnot(n == nrow(lmats$graph))
 
     the_model <- do.call(
-      "inla.cgeneric.define",
-      list(
+      what = INLAtools::cgenericBuilder,
+      args = list(
         model = "inla_cgeneric_sspde",
         shlib = libpath,
         n = as.integer(n),
-        debug = as.integer(debug),
+        debug = as.integer(dotArgs$debug),
         Rmanifold = as.integer(Rmanifold),
         dimension = as.integer(dimension),
         alpha = as.integer(alpha),

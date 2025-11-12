@@ -18,16 +18,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # The transparent barrier model
 
-This model considers an SPDE over a domain 
+The transparent barrier model consider a domain
 $\Omega$ which is partitioned into $k$
-subdomains $\Omega_d$, $d\in\{1,\ldots,k\}$, 
+sub-domains, $\Omega_d$ for $d\in\{1,\ldots,k\}$, 
 where $\cup_{d=1}^k\Omega_d=\Omega$.
-A common marginal variance is assumed
-but the range can be particular to each $\Omega_d$, $r_d$.
+The SPDE model assumes a common marginal variance
+and a particular to each $\Omega_d$, $r_d$.
 
 From @bakka2019barrier, the precision matrix is 
 \[
-\mathbf{Q} = \frac{1}{\sigma^2}\mathbf{R}\mathbf{\tilde{C}}^{-1}\mathbf{R}
+\mathbf{Q} = \frac{1}{\sigma^2}\mathbf{R}_r\mathbf{\tilde{C}}^{-1}\mathbf{R}_r
 \textrm{ for } 
  \mathbf{R}_r = \mathbf{C} +
  \frac{1}{8}\sum_{d=1}^kr_d^2\mathbf{G}_d ,
@@ -63,8 +63,7 @@ when using $\tilde{\mathbf{C}}$ in place of $\mathbf{C}$.
 
 # Implementation
 
-In practice we define $r_d$ as $r_d = p_d r$, 
-for known $p_1,\ldots,p_k$ constants. 
+We assume $r_d = p_d r$ for known $p_1,\ldots,p_k$ constants. 
 This gives
 \[ \mathbf{\tilde{C}}_r = 
 \frac{\pi r^2}{2}\sum_{d=1}^kp_d^2\mathbf{\tilde{C}}_d =
@@ -75,7 +74,8 @@ This gives
 \frac{r^2}{8}\mathbf{\tilde{G}}_{p_1,\ldots,p_k}
 \]
 where $\mathbf{\tilde{C}}_{p_1,\ldots,p_k}$
-and $\mathbf{\tilde{G}}_{p_1,\ldots,p_k}$ are pre-computed.
+and $\mathbf{\tilde{G}}_{p_1,\ldots,p_k}$ 
+are pre-computed matrices.
 
 
 # References

@@ -48,21 +48,8 @@ stmodel <- stModel.define(
         prt = c(nt / 10, 0.05),
         psigma = c(2, 0.05)))
 
-## collect params from the defined model
-.gammas <- params2gammas(log(params), 1, 2, 1)
-.b <- stmodel$f$cgeneric$data$doubles$bb
-.tt <- matrix(stmodel$f$cgeneric$data$matrices$tt[-(1:2)], 2)
-.dxx <- stmodel$f$cgeneric$data$matrices$xx
-.d <- .b * exp(2 * (.gammas[1] * .tt[1, ] + .gammas[2] * .tt[2, ]))
-
-## build precision
-qq <- sparseMatrix(
-    i = stmodel$f$cgeneric$data$ints$ii + 1L,
-    j = stmodel$f$cgeneric$data$ints$jj + 1L,
-    x = drop(t(matrix(.dxx[-c(1,2)], .dxx[1], byrow = TRUE)) %*%
-             .d) * exp(2 * .gammas[3]),
-    symmetric = TRUE)
-rm(.gammas, .b, .tt, .dxx, .d)
+## build the precision matrix
+qq <- stModel.precision(smesh, tmesh, '121', log(params))
 
 if(FALSE)
     image(qq)

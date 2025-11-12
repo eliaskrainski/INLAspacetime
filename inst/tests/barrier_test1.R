@@ -5,11 +5,18 @@ library(INLA)
 library(INLAspacetime)
 stopifnot(packageVersion("INLAspacetime")>'0.1.9.2')
 
+s <- 10
+bnd <- st_sfc(list(st_polygon(
+    list(cbind(c(-1, 1, 1, -1, -1),
+               c(-1, -1, 1, 1, -1)) * s
+         ))))
+
 mesh <- fm_mesh_2d(
-    loc = cbind(0, 0),
-    offset = c(7,3),
-    max.edge = c(5, 10)/10,
-    n = 4
+    loc = fm_hexagon_lattice(
+        st_buffer(bnd, s/10),
+        edge_len = s/20),
+    offset = s/3, 
+    max.edge = s/5
 )
 
 mesh$n
@@ -29,12 +36,12 @@ ce.tri <- cbind(
 
 ## barriers
 barrs <- list(
-    cbind(c(0, 10, 10, 0, 0),
-          c(-1, -1, 1, 1, -1)),
-    cbind(c(-2, 0, 0, -8, -11, -2),
-          c(0, 0, 1, 10, 10, 0)),
-    cbind(c(0, 0, -2, -11, -8, 0),
-          c(-1, 0, 0, -10, -10, -1))
+    cbind(c(0, 2, 2, 0, 0) * s,
+          c(-1, -1, 1, 1, -1) * s/10),
+    cbind(c(0, 0, -s/5, -1.8*s, -1.5*s, 0),
+          c(-s/10, 0, 0, -1.5*s, -1.5*s, -s/10)),
+    cbind(c(-s/5, 0, 0, -1.5*s, -1.8*s, -s/5),
+          c(0, 0, s/10, 1.5*s, 1.5*s, 0))
     )
 
 barrier1 <- st_sfc(
@@ -98,15 +105,14 @@ all.equal(sfem$c0@x,
 bmodel <- barrierModel.define(
     mesh = mesh,
     barrier.triangles = tri.ids,
-    prior.range = c(1, 0.1),
+    prior.range = c(s/5, 0.1),
     prior.sigma = c(1, 0.5),
-    range.fraction = c(1, 1, 1) ## as stationary
-    ##, useINLAprecomp = FALSE
+    range.fraction = c(1, 1, 1)
 )
 
 ## model parameters
-range <- runif(1, 3, 10)
-sigma <- runif(1, .3, 3)
+range <- s
+sigma <- 2
 
 ## get the precision
 ifit <- inla(

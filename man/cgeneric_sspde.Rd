@@ -4,15 +4,7 @@
 \alias{cgeneric_sspde}
 \title{Define the stationary SPDE cgeneric model for INLA.}
 \usage{
-cgeneric_sspde(
-  mesh,
-  alpha,
-  control.priors,
-  constr = FALSE,
-  debug = FALSE,
-  useINLAprecomp = TRUE,
-  libpath = NULL
-)
+cgeneric_sspde(mesh, alpha, control.priors, constr = FALSE, ...)
 }
 \arguments{
 \item{mesh}{triangulation mesh to discretize the model.}
@@ -30,14 +22,11 @@ value of the parameter.}
 \item{constr}{logical, default is FALSE, to indicate if the
 integral of the field over the domain is to be constrained to zero.}
 
-\item{debug}{integer, default is zero, indicating the verbose level.
-Will be used as logical by INLA.}
-
-\item{useINLAprecomp}{logical, default is TRUE, indicating if it is to
-be used the shared object pre-compiled by INLA.
-This is not considered if 'libpath' is provided.}
-
-\item{libpath}{string, default is NULL, with the path to the shared object.}
+\item{...}{additional arguments that will be passed on to
+\code{\link[INLAtools:cgeneric-class]{INLAtools::cgenericBuilder()}}, such as:
+\code{debug} : logical/integer, default is FALSE/0.
+\code{useINLAprecomp} logical, default is TRUE, indicating if it is to
+be used the shared object pre-compiled by INLA.}
 }
 \value{
 objects to be used in the f() formula term in INLA.

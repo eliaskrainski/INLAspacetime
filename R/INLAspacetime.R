@@ -16,6 +16,6 @@ INLAspacetime <- function() {
 }
 .onAttach <- function(...) {
   packageStartupMessage(
-   "see more on https://eliaskrainski.github.io/INLAspacetime"
+   "see more at https://eliaskrainski.github.io/INLAspacetime"
   )
 }

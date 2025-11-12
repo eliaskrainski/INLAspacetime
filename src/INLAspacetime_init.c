@@ -30,6 +30,7 @@
 
 static const R_CMethodDef CEntries[] = {
 	{"ar2covk", (DL_FUNC) &ar2covk, 5},
+	{"CSphere_gamma_alpha", (DL_FUNC) &CSphere_gamma_alpha, 3},
 	{NULL, NULL, 0}
 };
 

@@ -7,14 +7,14 @@ double pclogrange(double lrange, double lam, int dim) {
   // See Lindgren and Rue (2015) for this parametrization
   // See Fuglstad et. al. (2018) for this prior definition
   double dh = 0.5 * ((double)dim);
-  return log(lam) -dh * lrange - lam * exp(-dh * lrange) + log(dh);
+  return log(lam * dh) - dh * lrange - lam * exp(-dh * lrange);
 }
 
 double pclogsigma(double lsigma, double lam) {
   // return log of the PC-prior density for the log of the
   // standard deviation parameter.
   // See Simpson et. al. (2017) for this prior definition
-  return log(lam) + lsigma - lam * exp(lsigma);
+  return log(lam) - lam * exp(lsigma) + lsigma;
 }
 
 void CSphere_gamma_alpha(double *lnGamma2, double *dalpha, double *cska) {
