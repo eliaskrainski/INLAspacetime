@@ -32,7 +32,7 @@ void CSphere_gamma_alpha(double *lnGamma2, double *dalpha, double *cska) {
     if((*lnGamma2) > 1.4) {
       out = -log((*dalpha)-1.0) -((*dalpha)-1.0)*(*lnGamma2);
     } else {
-      double g2 = exp(*lnGamma2);			       // gamma^2
+      double den, g2 = exp(*lnGamma2);	// gamma^2
       int ialpha = ((int)(*dalpha));
       int isalphaInt = fabs(((double)ialpha) - (*dalpha)) < 0.0001;
       if (ialpha > 4L)
@@ -40,27 +40,32 @@ void CSphere_gamma_alpha(double *lnGamma2, double *dalpha, double *cska) {
       if (isalphaInt) {
         if (ialpha == 1L) {
           for (int k = 0; k < 50; k++) {
-            out += (1 + 2*((double)k)) / (g2 + ((double)((k*(k+1)))));
+            den = (g2 + ((double)((k*(k+1)))));
+            out += (1 + 2*((double)k)) / den;
           }
         }
         if (ialpha == 2L) {
           for (int k = 0; k < 50; k++) {
-            out += (1 + 2*((double)k)) / pow2(g2 + ((double)((k*(k+1)))));
+            den = pow2(g2 + ((double)((k*(k+1)))));
+            out += (1 + 2*((double)k)) / den;
           }
         }
         if (ialpha == 3L) {
           for (int k = 0; k < 50; k++) {
-            out += (1 + 2*((double)k)) / pow3(g2 + ((double)((k*(k+1)))));
+            den = pow3(g2 + ((double)((k*(k+1)))));
+            out += (1 + 2*((double)k)) / den;
           }
         }
         if (ialpha == 4L) {
           for (int k = 0; k < 50; k++) {
-            out += (1 + 2*((double)k)) / pow4(g2 + ((double)((k*(k+1)))));
+            den = pow4(g2 + ((double)((k*(k+1)))));
+            out += (1 + 2*((double)k)) / den;
           }
         }
       } else {
         for (int k = 0; k < 50; k++) {
-          out += (1 + 2*((double)k)) / pow(g2 + ((double)((k*(k+1)))), (*dalpha));
+          den = pow(g2 + ((double)((k*(k+1)))), (*dalpha));
+          out += (1 + 2*((double)k)) / den;
         }
       }
       out = log(out);

@@ -58,8 +58,9 @@ void dgemv_(char *trans, int *M, int *N, double *alpha, double *A, int *LDA, dou
 double ddot_(int *N, double *DX, int *INCX, double *DY, int *INCY);
 
 inla_cgeneric_func_tp inla_cgeneric_ar2ss_model;
-inla_cgeneric_func_tp inla_cgeneric_sstspde;
+inla_cgeneric_func_tp inla_cgeneric_sspde;
 inla_cgeneric_func_tp inla_cgeneric_barrier;
+inla_cgeneric_func_tp inla_cgeneric_sstspde;
 
 double pclogrange(double logrange, double lamda, int dim);
 double pclogsigma(double logsigma, double lamda);

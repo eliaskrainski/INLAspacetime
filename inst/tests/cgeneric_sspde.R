@@ -111,6 +111,14 @@ lines(inla.tmarginal(exp, fit2b$marginals.hyperpar[[1]]),
 ## test 3: sphere (constant in cgeneric_sspde accounts for sphere)
 
 if(FALSE){ ## check the constant for shere
+
+    Fab <- function(gs2,a,b,alpha=1) {
+        res <- 0.0
+        for(k in a:b) {
+            res <- res + (2*k+1)/((gs2 + k*(k+1))^alpha)
+        }
+    }
+    IaInf <- 
     
     k = 0:50
     par(mfrow = c(1, 1), mar = c(4,4,1,1))
