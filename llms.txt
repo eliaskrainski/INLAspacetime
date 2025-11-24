@@ -1,0 +1,351 @@
+# INLAspacetime
+
+This is a R package to implement certain spatial and spatio-temporal
+models, including some of the spatio-temporal models proposed in [SORT
+vol. 48, no. 1,
+pp. 3-66](https://raco.cat/index.php/SORT/article/view/428665). It uses
+the `cgeneric` interface in the INLA package, to implement models by
+writing `C` code to build the precision matrix compiling it so that INLA
+can use it internally.
+
+## We have implemented
+
+1.  some of the models presented in *A diffusion-based spatio-temporal
+    extension of Gaussian Matérn fields* (2024). *Finn Lindgren, Haakon
+    Bakka, David Bolin, Elias Krainski and Håvard Rue*. SORT vol. 48,
+    no. 1, pp. 3-66.
+    (<https://raco.cat/index.php/SORT/article/view/428665>)
+
+2.  the barrier (and transparent barriers) model proposed in
+    <https://doi.org/10.1016/j.spasta.2019.01.002>
+
+## Vignettes
+
+Please check
+[here](https://eliaskrainski.github.io/INLAspacetime/articles/)
+
+## Installation
+
+The ‘INLA’ package is a suggested one, but you will need it for actually
+fitting a model. You can install it with
+
+``` r
+install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/testing"), dep=TRUE) 
+```
+
+You can install the current [CRAN](https://CRAN.R-project.org) version
+of INLAspacetime:
+
+``` r
+install.packages("INLAspacetime")
+```
+
+You can install the latest version of INLAspacetime from
+[GitHub](https://github.com/eliaskrainski/INLAspacetime) with
+
+``` r
+## install.packages("remotes")
+remotes::install_github("eliaskrainski/INLAspacetime",  build_vignettes=TRUE)
+```
+
+# A spacetime example
+
+Simulate some fake data.
+
+``` r
+set.seed(1)
+n <- 5
+dataf <- data.frame(
+    s1   = runif(n, -1, 1),
+    s2   = runif(n, -1, 1),
+    time = runif(n, 1, 4),
+    y    = rnorm(n, 0, 1))
+str(dataf)
+#> 'data.frame':    5 obs. of  4 variables:
+#>  $ s1  : num  -0.469 -0.256 0.146 0.816 -0.597
+#>  $ s2  : num  0.797 0.889 0.322 0.258 -0.876
+#>  $ time: num  1.62 1.53 3.06 2.15 3.31
+#>  $ y   : num  -0.00577 2.40465 0.76359 -0.79901 -1.14766
+```
+
+Loading packages:
+
+``` r
+library(fmesher)
+library(INLA)
+library(INLAspacetime)
+#> see more on https://eliaskrainski.github.io/INLAspacetime
+```
+
+Define spatial and temporal discretization meshes
+
+``` r
+smesh <- fm_mesh_2d(
+  loc = cbind(0,0), 
+  max.edge = 5, 
+  offset = 2)
+tmesh <- fm_mesh_1d(
+  loc = 0:5)
+```
+
+Define the spacetime model object to be used
+
+``` r
+stmodel <- stModel.define(
+    smesh = smesh, ## spatial mesh
+    tmesh = tmesh, ## temporal mesh
+    model = '121', ## model, see the paper
+    control.priors = list(
+        prs = c(1, 0.1), ## P(spatial range < 1) = 0.1
+        prt = c(5, 0), ## temporal range fixed to 5
+        psigma = c(1, 0.1) ## P(sigma > 1) = 0.1
+        )
+    )
+```
+
+## Fit the model
+
+Define a projector matrix from the spatial and temporal meshes to the
+data
+
+``` r
+Aproj <- inla.spde.make.A(
+    mesh = smesh,
+    loc = cbind(dataf$s1, dataf$s2),
+    group = dataf$time,
+    group.mesh = tmesh
+)
+```
+
+or, equivalently, with `fmesher` methods for tensor product spaces:
+
+``` r
+Aproj <- fm_basis(
+  fm_tensor(list(space = smesh, time = tmesh)),
+  loc = list(
+    space = cbind(dataf$s1, dataf$s2),
+    time = dataf$time
+  )
+)
+```
+
+Create a ‘fake’ column to be used as index. in the
+[`f()`](https://rdrr.io/pkg/INLA/man/f.html) term
+
+``` r
+dataf$st <- NA
+```
+
+Setting the likelihood precision (as fixed)
+
+``` r
+ctrl.lik <- list(
+  hyper = list(
+    prec = list(
+      initial = 10, 
+      fixed = TRUE)    
+  )
+)
+```
+
+Combine a ‘fake’ index column with `A.local`
+
+``` r
+fmodel <- y ~ f(st, model = stmodel, A.local = Aproj)
+```
+
+Call the main `INLA` function:
+
+``` r
+fit <- inla(
+    formula = fmodel,
+    data = dataf,
+    control.family = ctrl.lik)
+```
+
+Posterior marginal summaries for fixed effect and the model parameters
+that were not fixed.
+
+``` r
+fit$summary.fixed
+#>                  mean       sd 0.025quant  0.5quant 0.975quant      mode
+#> (Intercept) 0.6934075 4.032682  -6.962392 0.5227421   9.417461 0.5550903
+#>                      kld
+#> (Intercept) 7.405581e-05
+fit$summary.hyperpar
+#>                   mean        sd 0.025quant 0.5quant 0.975quant      mode
+#> Theta1 for st 1.199208 0.4918283  0.3653922 1.161532   2.277316 0.9750207
+#> Theta2 for st 1.435517 0.1710709  1.1031068 1.434032   1.776675 1.4277508
+```
+
+## Using the **inlabru**
+
+``` r
+library(inlabru)
+```
+
+Setting the observation (likelihood) model object
+
+``` r
+data_model <- bru_obs(
+  formula = y ~ ., 
+  family = "gaussian",
+  control.family = ctrl.lik, 
+  data = dataf)
+```
+
+Define the data model: the linear predictor terms
+
+``` r
+linpred <- ~ 1 +
+    field(list(space = cbind(s1, s2), 
+               time = time),
+          model = stmodel)
+```
+
+Fitting
+
+``` r
+result <- bru(
+  components = linpred,
+  data_model)
+```
+
+Summary of the model parameters
+
+``` r
+result$summary.fixed
+#>                mean       sd 0.025quant  0.5quant 0.975quant      mode
+#> Intercept 0.6690758 3.969868  -6.886579 0.5095548   9.213222 0.5379881
+#>                    kld
+#> Intercept 5.712418e-05
+result$summary.hyperpar
+#>                      mean        sd 0.025quant 0.5quant 0.975quant      mode
+#> Theta1 for field 1.190358 0.4867880   0.362423 1.153755   2.255714 0.9726899
+#> Theta2 for field 1.435283 0.1709765   1.103480 1.433658   1.776675 1.4267684
+```
+
+Note: The default prior for the intercept in inlabru has smaller
+variance than the default for INLA, which explains the slight difference
+in the results.
+
+# Package index
+
+## All functions
+
+- [`Earth_poly()`](https://eliaskrainski.github.io/INLAspacetime/reference/Earth_poly.md)
+  : Function to define the boundary Earch polygon in longlat projection
+  for a given resolution.
+
+- [`INLAspacetime()`](https://eliaskrainski.github.io/INLAspacetime/reference/INLAspacetime.md)
+  : Spatial and Spatio-Temporal Models using INLA
+
+- [`Jmatrices()`](https://eliaskrainski.github.io/INLAspacetime/reference/Jmatrices.md)
+  : The 2nd order temporal matrices with boundary correction
+
+- [`stlines()`](https://eliaskrainski.github.io/INLAspacetime/reference/Plot.md)
+  [`stpoints()`](https://eliaskrainski.github.io/INLAspacetime/reference/Plot.md)
+  : To visualize time series over space.
+
+- [`ar2cov()`](https://eliaskrainski.github.io/INLAspacetime/reference/ar2cov.md)
+  : Illustrative code to compute the covariance of the second order
+  autoregression (AR2) model.
+
+- [`ar2precision()`](https://eliaskrainski.github.io/INLAspacetime/reference/ar2precision.md)
+  : Precision matrix for a stationary AR2 model.
+
+- [`barrierModel.define()`](https://eliaskrainski.github.io/INLAspacetime/reference/barrierModel.define.md)
+  :
+
+  Define a spacetime model object for the
+  [`f()`](https://rdrr.io/pkg/INLA/man/f.html) call.
+
+- [`bru_get_mapper(`*`<stModel_cgeneric>`*`)`](https://eliaskrainski.github.io/INLAspacetime/reference/bru_get_mapper.stModel_cgeneric.md)
+  : Mapper object for automatic inlabru interface
+
+- [`cWhittleMatern()`](https://eliaskrainski.github.io/INLAspacetime/reference/cWhittleMatern.md)
+  : Computes the Whittle-Matern correlation function.
+
+- [`cgeneric_sspde()`](https://eliaskrainski.github.io/INLAspacetime/reference/cgeneric_sspde.md)
+  : Define the stationary SPDE cgeneric model for INLA.
+
+- [`downloadUtilFiles()`](https://eliaskrainski.github.io/INLAspacetime/reference/downloadUtilFiles.md)
+  : Download files from the NOAA's GHCN daily data
+
+- [`ghcndSelect()`](https://eliaskrainski.github.io/INLAspacetime/reference/ghcndSelect.md)
+  : Select data from the daily dataset
+
+- [`mesh.dual()`](https://eliaskrainski.github.io/INLAspacetime/reference/mesh.dual.md)
+  : Extracts the dual of a mesh object.
+
+- [`mesh2d()`](https://eliaskrainski.github.io/INLAspacetime/reference/mesh2d.md)
+  : Illustrative code for building a mesh in 2d domain.
+
+- [`mesh2fem()`](https://eliaskrainski.github.io/INLAspacetime/reference/mesh2fem.md)
+  [`mesh2fem.barrier()`](https://eliaskrainski.github.io/INLAspacetime/reference/mesh2fem.md)
+  : Illustrative code for Finite Element matrices of a mesh in 2d
+  domain.
+
+- [`mesh2projector()`](https://eliaskrainski.github.io/INLAspacetime/reference/mesh2projector.md)
+  : Illustrative code to build the projector matrix for SPDE models.
+
+- [`outDetect()`](https://eliaskrainski.github.io/INLAspacetime/reference/outDetect.md)
+  : Detect outliers in a time series considering the raw data and a
+  smoothed version of it.
+
+- [`lgsConstant()`](https://eliaskrainski.github.io/INLAspacetime/reference/paramsUtils.md)
+  [`params2gammas()`](https://eliaskrainski.github.io/INLAspacetime/reference/paramsUtils.md)
+  [`gammas2params()`](https://eliaskrainski.github.io/INLAspacetime/reference/paramsUtils.md)
+  : Functions to help converting from/to user/internal parametrization.
+  The internal parameters are 'gamma_s, 'gamma_t', 'gamma_E' The user
+  parameters are 'r_s', 'r_t', 'sigma'
+
+- [`Heron()`](https://eliaskrainski.github.io/INLAspacetime/reference/polyUtils.md)
+  [`Area()`](https://eliaskrainski.github.io/INLAspacetime/reference/polyUtils.md)
+  [`s2trArea()`](https://eliaskrainski.github.io/INLAspacetime/reference/polyUtils.md)
+  [`flatArea()`](https://eliaskrainski.github.io/INLAspacetime/reference/polyUtils.md)
+  [`Stiffness()`](https://eliaskrainski.github.io/INLAspacetime/reference/polyUtils.md)
+  : Internal util functions for polygon properties.
+
+- [`spde2precision()`](https://eliaskrainski.github.io/INLAspacetime/reference/spde2precision.md)
+  : Illustrative code to build the precision matrix for SPDE kind
+  models.
+
+- [`stModel.define()`](https://eliaskrainski.github.io/INLAspacetime/reference/stModel.define.md)
+  :
+
+  Define a spacetime model object for the
+  [`f()`](https://rdrr.io/pkg/INLA/man/f.html) call.
+
+- [`stModel.matrices()`](https://eliaskrainski.github.io/INLAspacetime/reference/stModel.matrices.md)
+  : Define the spacetime model matrices.
+
+- [`stModel.precision()`](https://eliaskrainski.github.io/INLAspacetime/reference/stModel.precision.md)
+  : Spacetime precision matrix.
+
+- [`stats.inla()`](https://eliaskrainski.github.io/INLAspacetime/reference/stats.inla.md)
+  : To retrieve goodness of fit statistics for a specific model class.
+
+- [`stdSubs()`](https://eliaskrainski.github.io/INLAspacetime/reference/stdSubs.md)
+  : To check unusual low/high variance segments
+
+- [`worldMap()`](https://eliaskrainski.github.io/INLAspacetime/reference/worldMap.md)
+  : Helper functions to retrieve the world map, a world polygon, and
+  create grid centers.
+
+- [`world_grid()`](https://eliaskrainski.github.io/INLAspacetime/reference/world_grid.md)
+  : Define a regular grid in 'Mollweide' projection, with units in
+  kilometers.
+
+# Articles
+
+### All vignettes
+
+- [A barrier model
+  illustration](https://eliaskrainski.github.io/INLAspacetime/articles/web/barrierExample.md):
+- [The Piemonte dataset
+  example](https://eliaskrainski.github.io/INLAspacetime/articles/web/piemonte.md):
+- [The SPDE model with transparent
+  barriers](https://eliaskrainski.github.io/INLAspacetime/articles/transparent_barriers.md):
+- [Vignettes on the INLAspacetime
+  website](https://eliaskrainski.github.io/INLAspacetime/articles/website_examples.md):

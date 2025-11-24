@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">INLAspacetime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.12.009</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.12.012</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,23 +71,24 @@ Krainski</h4>
 <div class="section level2">
 <h2 id="the-transparent-barrier-model">The transparent barrier model<a class="anchor" aria-label="anchor" href="#the-transparent-barrier-model"></a>
 </h2>
-<p>This model considers an SPDE over a domain
+<p>The transparent barrier model consider a domain
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Ω</mi><annotation encoding="application/x-tex">\Omega</annotation></semantics></math>
 which is partitioned into
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
-subdomains
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Ω</mi><mi>d</mi></msub><annotation encoding="application/x-tex">\Omega_d</annotation></semantics></math>,
+sub-domains,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Ω</mi><mi>d</mi></msub><annotation encoding="application/x-tex">\Omega_d</annotation></semantics></math>
+for
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo>∈</mo><mo stretchy="false" form="prefix">{</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>k</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">d\in\{1,\ldots,k\}</annotation></semantics></math>,
 where
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mo>∪</mo><mrow><mi>d</mi><mo>=</mo><mn>1</mn></mrow><mi>k</mi></msubsup><msub><mi>Ω</mi><mi>d</mi></msub><mo>=</mo><mi>Ω</mi></mrow><annotation encoding="application/x-tex">\cup_{d=1}^k\Omega_d=\Omega</annotation></semantics></math>.
-A common marginal variance is assumed but the range can be particular to
+The SPDE model assumes a common marginal variance and a particular to
 each
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>Ω</mi><mi>d</mi></msub><annotation encoding="application/x-tex">\Omega_d</annotation></semantics></math>,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>d</mi></msub><annotation encoding="application/x-tex">r_d</annotation></semantics></math>.</p>
 <p>From <span class="citation">Bakka et al. (2019)</span>, the precision
 matrix is
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐐</mi><mo>=</mo><mfrac><mn>1</mn><msup><mi>σ</mi><mn>2</mn></msup></mfrac><mi>𝐑</mi><msup><mover><mi>𝐂</mi><mo accent="true">̃</mo></mover><mrow><mo>−</mo><mn>1</mn></mrow></msup><mi>𝐑</mi><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> for </mtext><mspace width="0.333em"></mspace></mrow><msub><mi>𝐑</mi><mi>r</mi></msub><mo>=</mo><mi>𝐂</mi><mo>+</mo><mfrac><mn>1</mn><mn>8</mn></mfrac><munderover><mo>∑</mo><mrow><mi>d</mi><mo>=</mo><mn>1</mn></mrow><mi>k</mi></munderover><msubsup><mi>r</mi><mi>d</mi><mn>2</mn></msubsup><msub><mi>𝐆</mi><mi>d</mi></msub><mo>,</mo><mspace width="0.278em"></mspace><mspace width="0.278em"></mspace><mspace width="0.278em"></mspace><msub><mover><mi>𝐂</mi><mo accent="true">̃</mo></mover><mi>r</mi></msub><mo>=</mo><mfrac><mi>π</mi><mn>2</mn></mfrac><munderover><mo>∑</mo><mrow><mi>d</mi><mo>=</mo><mn>1</mn></mrow><mi>k</mi></munderover><msubsup><mi>r</mi><mi>d</mi><mn>2</mn></msubsup><msub><mover><mi>𝐂</mi><mo accent="true">̃</mo></mover><mi>d</mi></msub></mrow><annotation encoding="application/x-tex">
-\mathbf{Q} = \frac{1}{\sigma^2}\mathbf{R}\mathbf{\tilde{C}}^{-1}\mathbf{R}
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐐</mi><mo>=</mo><mfrac><mn>1</mn><msup><mi>σ</mi><mn>2</mn></msup></mfrac><msub><mi>𝐑</mi><mi>r</mi></msub><msup><mover><mi>𝐂</mi><mo accent="true">̃</mo></mover><mrow><mo>−</mo><mn>1</mn></mrow></msup><msub><mi>𝐑</mi><mi>r</mi></msub><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> for </mtext><mspace width="0.333em"></mspace></mrow><msub><mi>𝐑</mi><mi>r</mi></msub><mo>=</mo><mi>𝐂</mi><mo>+</mo><mfrac><mn>1</mn><mn>8</mn></mfrac><munderover><mo>∑</mo><mrow><mi>d</mi><mo>=</mo><mn>1</mn></mrow><mi>k</mi></munderover><msubsup><mi>r</mi><mi>d</mi><mn>2</mn></msubsup><msub><mi>𝐆</mi><mi>d</mi></msub><mo>,</mo><mspace width="0.278em"></mspace><mspace width="0.278em"></mspace><mspace width="0.278em"></mspace><msub><mover><mi>𝐂</mi><mo accent="true">̃</mo></mover><mi>r</mi></msub><mo>=</mo><mfrac><mi>π</mi><mn>2</mn></mfrac><munderover><mo>∑</mo><mrow><mi>d</mi><mo>=</mo><mn>1</mn></mrow><mi>k</mi></munderover><msubsup><mi>r</mi><mi>d</mi><mn>2</mn></msubsup><msub><mover><mi>𝐂</mi><mo accent="true">̃</mo></mover><mi>d</mi></msub></mrow><annotation encoding="application/x-tex">
+\mathbf{Q} = \frac{1}{\sigma^2}\mathbf{R}_r\mathbf{\tilde{C}}^{-1}\mathbf{R}_r
 \textrm{ for } 
  \mathbf{R}_r = \mathbf{C} +
  \frac{1}{8}\sum_{d=1}^kr_d^2\mathbf{G}_d ,
@@ -132,10 +133,8 @@ in place of
 <div class="section level2">
 <h2 id="implementation">Implementation<a class="anchor" aria-label="anchor" href="#implementation"></a>
 </h2>
-<p>In practice we define
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>d</mi></msub><annotation encoding="application/x-tex">r_d</annotation></semantics></math>
-as
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mi>d</mi></msub><mo>=</mo><msub><mi>p</mi><mi>d</mi></msub><mi>r</mi></mrow><annotation encoding="application/x-tex">r_d = p_d r</annotation></semantics></math>,
+<p>We assume
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mi>d</mi></msub><mo>=</mo><msub><mi>p</mi><mi>d</mi></msub><mi>r</mi></mrow><annotation encoding="application/x-tex">r_d = p_d r</annotation></semantics></math>
 for known
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>p</mi><mi>k</mi></msub></mrow><annotation encoding="application/x-tex">p_1,\ldots,p_k</annotation></semantics></math>
 constants. This gives
@@ -150,7 +149,7 @@ constants. This gives
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>𝐂</mi><mo accent="true">̃</mo></mover><mrow><msub><mi>p</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>p</mi><mi>k</mi></msub></mrow></msub><annotation encoding="application/x-tex">\mathbf{\tilde{C}}_{p_1,\ldots,p_k}</annotation></semantics></math>
 and
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mover><mi>𝐆</mi><mo accent="true">̃</mo></mover><mrow><msub><mi>p</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>p</mi><mi>k</mi></msub></mrow></msub><annotation encoding="application/x-tex">\mathbf{\tilde{G}}_{p_1,\ldots,p_k}</annotation></semantics></math>
-are pre-computed.</p>
+are pre-computed matrices.</p>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -179,7 +178,7 @@ Statistical Software</em> 63 (19): 1–25.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

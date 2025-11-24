@@ -1,0 +1,68 @@
+# Select data from the daily dataset
+
+Select data from the daily dataset
+
+## Usage
+
+``` r
+ghcndSelect(
+  gzfile,
+  variable = c("TMIN", "TAVG", "TMAX"),
+  station = NULL,
+  qflag = "",
+  verbose = TRUE,
+  astype = as.integer
+)
+```
+
+## Arguments
+
+- gzfile:
+
+  the local filename for the daily data file file. E.g. 2023.csv.gz from
+  the daily GHCN data repository at NCEI-NOAA, at
+  "https://www.ncei.noaa.gov/pub/data/ghcn/daily/by_year/". Please see
+  the references bellow.
+
+- variable:
+
+  string with the variable name(s) to be selected
+
+- station:
+
+  string (vector) with the station(s) to be selected
+
+- qflag:
+
+  a string with quality control flag(s)
+
+- verbose:
+
+  logical indicating if progress is to be printed
+
+- astype:
+
+  function to convert data to a class, default is set to convert the
+  data to integer.
+
+## Value
+
+if more than one variable, it returns an array whose dimentions are
+days, stations, variables. If one variable, then it returns a matrix
+whose dimentions are days, stations.
+
+## Details
+
+The default selects TMIN, TAVG and TMAX and return it as integer because
+the original data is also integer with units in 10 Celcius degrees.
+
+## Warning
+
+It can take time to execute if, for example, the data.table package is
+not available.
+
+## References
+
+Menne, M., Durre, I., Vose, R., Gleason, B. and Houston, T. (2012) An
+overview of the global historical climatology network-daily database.
+Journal of Atmospheric and Oceanic Technology, 897–910.
