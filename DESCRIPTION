@@ -34,7 +34,7 @@ Depends:
     R (>= 4.3),
     Matrix,
     fmesher,
-    INLAtools (>= 0.0.4)
+    INLAtools (>= 0.0.5)
 Imports:
     graphics,
     grDevices,
