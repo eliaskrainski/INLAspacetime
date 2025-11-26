@@ -58,6 +58,7 @@ Suggests:
     DOYPAColors,
     s2,
     lubridate,
-    ggOceanMaps
+    ggOceanMaps,
+    spdep
 VignetteBuilder: knitr
 BuildVignettes: true
