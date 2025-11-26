@@ -65,7 +65,6 @@ library(INLA)
 library(INLAspacetime)
 library(inlabru)
 library(ggOceanMaps)
-library(tidyverse)
 library(s2)
 library(DOYPAColors)
 library(ggpubr)
@@ -213,7 +212,7 @@ Moreover, we will give the option for expanding some straits, such as
 the Suez Canal or the Strait of Gibraltar to minimize correlation near
 the borders.
 
-```{r suez}
+```{r Suez}
 ## Enlarge Suez canal
 ## Define the coordinates for the Suez canal polygon
 suez_ll <- matrix(
@@ -296,7 +295,7 @@ the world. For example, we want to account for the closure of the
 Panama Canal, consider the ice cover of Antarctica, and include a
 buffer around the Gulf of Ob to facilitate the simulation.
 
-```{r}
+```{r Panama}
 ## Panama country polygon retrieval and buffer creation
 panm_ll <- ne_countries(country = "panama", scale = "medium", returnclass = "sf")
 panm_mll <- st_buffer(
@@ -335,7 +334,7 @@ integrate them with our multipolygon of world countries. We also use
 the *st_simplify* function to simplify the borders of the polygons
 while preserving the topology of the domain.
 
-```{r}
+```{r wbarrierdef}
 ## Buffer world land
 world_lnd <- st_union(c(world_barrier_initial, panm_mll, gulf_mll, antar_mll))
 
@@ -357,7 +356,7 @@ world_barrier <- st_simplify(
 
 ## Classifying polygon areas 
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Classify polygons based on size, where TRUE indicates a large polygon, and FALSE indicates a small polygon."}
+```{r visualizeworld, echo = FALSE, results='asis', fig.align='center', fig.cap="Classify polygons based on size, where TRUE indicates a large polygon, and FALSE indicates a small polygon."}
 ## Plot the transformed world map
 ggplot() + 
   theme_minimal() +
@@ -369,7 +368,7 @@ ggplot() +
 
 ## Classifying polygon loneliness
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Classify polygons based on size and connectivity, so that a polygon can be categorized as either big or small and connected or isolated."}
+```{r visualisepolyclass, echo = FALSE, results='asis', fig.align='center', fig.cap="Classify polygons based on size and connectivity, so that a polygon can be categorized as either big or small and connected or isolated."}
 ggplot() + theme_minimal() +
     geom_sf(aes(fill = wpolyclass), 
             data = world_mll) +
@@ -378,7 +377,7 @@ ggplot() + theme_minimal() +
 
 ## Buffers and straits 
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Modifications were implemented on the globe to generate the barrier model."}
+```{r visualizemaps, echo = FALSE, results='asis', fig.align='center', fig.cap="Modifications were implemented on the globe to generate the barrier model."}
 ggarrange(
     ggplot() + theme_minimal() +
   geom_sf(data = world_mll) +
@@ -409,7 +408,7 @@ ggarrange(
 
 ## Barrier polygons
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Barrier polygons after filtering small isolated polygons and specifying modifications to open and close certain areas."}
+```{r visualizebarrier, echo = FALSE, results='asis', fig.align='center', fig.cap="Barrier polygons after filtering small isolated polygons and specifying modifications to open and close certain areas."}
 ggplot() +
   geom_sf(data = world_barrier, fill = "grey") +
   theme_minimal()
@@ -430,7 +429,7 @@ the results of the model. It's crucial to note that the mesh is
 designed with consideration for a sphere (**fm_transform**), allowing
 us to work in three dimensions.
 
-```{r}
+```{r meshcreate}
 ## Create a initial set of points over the globe considering the desired resolution
 reg.glob.pts <- fmesher_globe_points(
     globe = sresol ## subdivision resolution for a semi-regular spherical triangulation with equidistant points along equidistant latitude bands
@@ -458,7 +457,7 @@ achieve this, we utilize the **fm_rcdt_2d function**, specifying the
 sphere, *loc* for the high-resolution points previously created, and
 the *cutoff* to avoid tiny triangles.
 
-```{r}
+```{r smesh}
 ## Create a triangular mesh on the globe with a specified resolution
 smesh <- fm_rcdt_2d_inla(
     loc = reg.glob.pts[in_ocean, ], ## use the initial points
@@ -476,7 +475,7 @@ projections. We are interested in utilizing the Mollweide projection
 for plotting the mesh. To achieve this, we employ the **fm_transform**
 function.
 
-```{r}
+```{r mesh_mll}
 ## Collect the mesh locations and directly transform it to the Mollweide projection
 lmesh_mll <- fm_transform(
     st_as_sf(as.data.frame(smesh$loc), coords = 1:3,
@@ -500,7 +499,7 @@ triBarrier <- unlist(fm_contains(
 
 ## Initial points
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Generation of initial points for the mesh throughout the domain."}
+```{r visualizeBpoints, echo = FALSE, results='asis', fig.align='center', fig.cap="Generation of initial points for the mesh throughout the domain."}
 ## Plot the transformed world map
 ggplot() +
   geom_sf(data = world_barrier, fill = "gray") +
@@ -510,7 +509,7 @@ ggplot() +
 
 ## Mesh with barriers
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Representation of mesh nodes on the sphere: nodes inside a barrier are black, while those outside are blue."}
+```{r triCenters, echo = FALSE, results='asis', fig.align='center', fig.cap="Representation of mesh nodes on the sphere: nodes inside a barrier are black, while those outside are blue."}
 ## Calculate triangle centroids in spherical coordinates (plot)
 triCenters.xyz0 <- cbind(
     smesh$loc[smesh$graph$tv[,1], 1:3] +
@@ -561,7 +560,7 @@ determined as a fraction of the range across the entire domain.
 Specifically, we set a range of 0.63, corresponding to 4000 km. In
 proximity to a barrier, we use 0.008 of the value of the range.
 
-```{r}
+```{r corrlocal}
 ## Create a barrier model using the mesh 
 bfem <- mesh2fem.barrier(smesh, triBarrier)
 
@@ -579,7 +578,7 @@ the tutorial "A Barrier Model Illustration"
 correlation from a given set of locations to each mesh node location
 (with minor changes in the function).
 
-```{r}
+```{r localCorrel2D}
 ## Define a function for calculating local correlations
 localCorrel2D <- function(locs, mesh.locs, Q) {
     nl <- nrow(locs)  ## Number of locations
@@ -610,7 +609,7 @@ working properly. We should observe a decrease around the barrier. We
 will also convert the mesh into latitude and longitude coordinates,
 allowing us to work with a 2D representation of the mesh.
 
-```{r}
+```{r corrlocdefine}
 ## Locations for correlation calculation
 locs_ll <- matrix(c(
     -60, 70,
@@ -639,7 +638,7 @@ mesh_locs_ll <- sf::st_as_sf( ## Convert foreign object to an sf object
 )
 ```
 
-```{r, echo = FALSE}
+```{r corr_tab, echo = FALSE}
 knitr::kable(locs_ll, caption = "Locations for computing correlations.", col.names = c("x coordinates", "y coordinates"))
 ```
 
@@ -649,7 +648,7 @@ need to use the mesh into the latitude and longitude projection
 (*mesh_locs_ll*) previously define, so we can work the correlation on
 the planar.
 
-```{r}
+```{r corrcompt}
 ## Calculate local correlations
 mcorrels <- localCorrel2D(
     locs_latlong, ## locations
@@ -665,7 +664,7 @@ dimensions. Once we have the *gproj* in spherical coordinates, we can
 further transform them into kilometer coordinates using the Mollweide
 projection for visualization.
 
-```{r}
+```{r visualizecorr_make}
 ## Create a grid projector using the mesh and spherical grid
 gproj <- inla.mesh.projector(mesh = smesh, loc = mgrid_sph)
 
@@ -690,7 +689,7 @@ ggcorrels <- do.call(
           correlation = gcorrels[, l])))
 ```
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Correlation value for the 2 selected spatial points"}
+```{r visualizecorr, echo = FALSE, results='asis', fig.align='center', fig.cap="Correlation value for the 2 selected spatial points"}
 ## Create ggplot object for correlation visualization
 gg0 <- ggplot() + 
   xlab("") + ylab("") +
@@ -714,7 +713,7 @@ Subsequently, we can project the random field onto the defined grid
 for visualization. Since we are working in space and time, we have
 simulated a total of 6 random fields.
 
-```{r}
+```{r simulates}
 ## Number of years k 
 k <- 6
 
@@ -740,7 +739,7 @@ for(i in 1:k) {
 Then, to ensure they are not independent from each other, we are going
 to correlate them using an autoregressive model of order 1 (AR1).
 
-```{r}
+```{r simulatest}
 ## Autoregressive smoothing
 rho <- 0.98
 u_time <- u
@@ -760,7 +759,7 @@ for(i in 1:k) {
 
 ## Simulated random fields (independent space-time effect)
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Simulated spatial random fields. Each random field is independent of each other."}
+```{r visualizes, echo = FALSE, results='asis', fig.align='center', fig.cap="Simulated spatial random fields. Each random field is independent of each other."}
 ## Plot the spatial fields at each time 
 p_u <- list()
 for(i in 1:k) {
@@ -777,7 +776,7 @@ ggarrange(plotlist = p_u, common.legend = TRUE)
 
 ## Simulated random fields (dependent space-time effect)
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Simulated spatial random fields, including an autoregressive model of order 1."}
+```{r visualizest, echo = FALSE, results='asis', fig.align='center', fig.cap="Simulated spatial random fields, including an autoregressive model of order 1."}
 ## Plot the spatial fields at each time 
 p_u_time <- list()
 for(i in 1:k) {
@@ -796,7 +795,7 @@ ggarrange(plotlist = p_u_time, common.legend = TRUE)
 
 Regarding the simulation of the response variable, we first need to determine a set of locations where our variable will be observed. To achieve this, we simulate *n* values from a polygon within the limits of our domain, and the observations will vary for each time. Note that the simulation of locations takes into account a coordinate reference system (CRS). Without a CRS, there would be a disproportionately large number of points near the poles compared to the equator. This discrepancy arises due to the Earth's shape, and utilizing a CRS helps maintain a more balanced and accurate representation in our simulations.
 
-```{r, results='hide'}
+```{r slocs, results='hide'}
 ## Generate random data locations in longlat
 ## Create world-size sampling area without crs
 world_poly_wgs84 <- Earth_poly(resol = 100)
@@ -835,7 +834,7 @@ for(i in 1:k) {
 Point out that we need to exclude all points that are inside a
 barrier, as our response variable cannot be observed inside.
 
-```{r}
+```{r locsselect}
 ## Identify locations outside the world polygon in Mollweide projection
 ilocs_in <- list()
 locs <- list()
@@ -849,7 +848,7 @@ for(i in 1:k) {
 
 Furthermore, we transform the points onto the sphere using the **fm_transform** function, allowing us to fit the model later on in 3D.
 
-```{r}
+```{r locs_sph}
 ## Map the data locations back to the sphere
 locs_sph <- list()
 for(i in 1:k) {
@@ -859,7 +858,7 @@ for(i in 1:k) {
 }
 ```
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Spatial points where we have observed the response variable"}
+```{r visualizelocs, echo = FALSE, results='asis', fig.align='center', fig.cap="Spatial points where we have observed the response variable"}
 ## Create spatial points for visualization
 p_points <- list()
 for(i in 1:k) { 
@@ -876,7 +875,7 @@ ggarrange(plotlist = p_points,common.legend = TRUE)
 
 Here, we aim to include a continuous covariate with a linear effect. For that, we are going to use the ocean depth and consider a negative linear effect. Note that to download the depth data, you need to run this in R outside of Quarto or Rmarkdown. You only need to do this once.
 
-```{r, include = FALSE}
+```{r depth_get_fn, include = FALSE}
 load_map_data_modify <- function(x, force = FALSE, downsample = 0) {
   
   ## Detect load-case for bathy
@@ -1107,7 +1106,7 @@ get_depth <- function(data, bathy.style = "raster_continuous", lon = NULL, lat =
 }
 ```
 
-```{r, results='hide'}
+```{r depth_get, results='hide'}
 depth_values <- list()
 for(i in 1:k) {
       depth_values[[i]] <- get_depth(as.data.frame(locs[[i]]))
@@ -1116,7 +1115,7 @@ for(i in 1:k) {
 
 We have some missing data, so we are going to eliminate those locations that do not have any depth associated.
 
-```{r, results='hide'}
+```{r locsll, results='hide'}
 ## Create a new data frame 'locs_latlong' with columns 'x', 'y', and 'depth'
 locs_latlong <- list()
 for(i in 1:k) {
@@ -1169,7 +1168,7 @@ for(i in 1:k) {
 }
 ```
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Scale values of depth in the selected locations"}
+```{r visualize_depth, echo = FALSE, results='asis', fig.align='center', fig.cap="Scale values of depth in the selected locations"}
 p_depth <- list()
 for(i in 1:k) {
   p_depth[[i]] <- ggplot() + theme_void() + 
@@ -1194,7 +1193,7 @@ Next, we are going to simulate the same response variables, but including the ti
 
 For the normal response variable, we will use all the simulated random fields. Subsequently, we will prepare a data.frame with the coordinates in the sphere and values of depth and the simulated response at those coordinates for fitting the model.
 
-```{r}
+```{r rGaussian}
 ## Create sparse precision matrices for data locations
 Alocs_time <- list()
 for(i in 1:k) {
@@ -1253,7 +1252,7 @@ for (i in 1:k) {
 } 
 ```
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Values of the response variable over the space and time"}
+```{r visualizeG, echo = FALSE, results='asis', fig.align='center', fig.cap="Values of the response variable over the space and time"}
 ## Response variable 
 p_normal_t <- list()
 for(i in 1:k) {
@@ -1271,7 +1270,7 @@ ggarrange(plotlist = p_normal_t,common.legend = TRUE)
 
 Then, for the Bernoulli distribution, we follow the same steps, but considering the probability as the parameter of interest.
 
-```{r}
+```{r rBernoulli}
 ## Set parameters for data simulation
 beta0_ber <- 1 ## Intercept
 beta1_ber <- -1.5 ## Depth coefficient
@@ -1337,7 +1336,7 @@ for (i in 1:k) {
 }
 ```
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Values of the response variable over the space and time"}
+```{r visualizeB, echo = FALSE, results='asis', fig.align='center', fig.cap="Values of the response variable over the space and time"}
 ## Response variable 
 p_ocurrences_t <- list()
 for(i in 1:k) {
@@ -1355,7 +1354,7 @@ ggarrange(plotlist = p_ocurrences_t, common.legend = TRUE)
 
 To begin, we define the model object using the **barrierModel.define** function. In this step, we specify details such as the mesh, the barrier, the PC priors for the random field hyperparameters, and the fraction of the range when a barrier is in close proximity. This will be the same for all the scenarios.
 
-```{r}
+```{r bmodel_def}
 ## Define a barrier model using the mesh and specified prior parameters
 bmodel <- barrierModel.define(
   mesh = smesh, ## mesh in 3D
@@ -1376,7 +1375,7 @@ We will fit the model using both the inla base code and inlabru. For both approa
 
 We use the model formula in the inlabru way, where *field* will be the name of the spatial effect. The main function in inlabru is **bru**, and we just need to specify the model formula (*model*), the data (*dataset*), and the family (*gaussian*). We also turn on the *verbose* argument to be able to see the fitting process while it is running.
 
-```{r}
+```{r fitG}
 ## Specify the model formula
 model_norm <- y ~
   ## Intercept
@@ -1400,27 +1399,27 @@ result_norm <- bru(
 
 Once we have fitted the model, we can observe if we get back the results. First, we check the summary of the fixed effect and the hyperparameters.
 
-```{r}
+```{r fitGfixed}
 ## Beta 0 (intercept) and Beta 1 (depth)
 res_summary_fixed_rounded <- round(result_norm$summary.fixed, 2)
 ```
 
-```{r, echo = FALSE}
+```{r fitGfixK, echo = FALSE}
 knitr::kable(res_summary_fixed_rounded, caption = "Summary of the posterior distribution of fixed effects.")
 ```
 
-```{r}
+```{r fixGhyper}
 ## Range, standard deviation (spatial effect), and standard deviation (Gaussian)
 res_summary_hyper_rounded <- round(result_norm$summary.hyperpar, 2)
 ```
 
-```{r, echo = FALSE}
+```{r fixGhyperK, echo = FALSE}
 knitr::kable(res_summary_hyper_rounded, caption = "Summary of the posterior distribution of hyperparameters")
 ```
 
 Then, we compute the marginals of the hyperparameters: range $r$, standard deviation of the spatial effect $\sigma$, and standard deviation of the Gaussian distribution $\sigma_{e}$.
 
-```{r}
+```{r pmargsG}
 ## Create a list of hyperparameter marginals for visualization
 pmarginals <- 
   list(
@@ -1449,7 +1448,7 @@ pmarginals[[3]]$true <- rep(1, length(pmarginals[[1]]$x))
 
 Likewise, we can plot the marginals for the fixed effects: intercept and depth linear coefficients.
 
-```{r}
+```{r fixmargsG}
 ## Create a list of parameter marginals for visualization
 fmarginals <- 
   list(
@@ -1470,7 +1469,7 @@ fmarginals[[2]]$true <- rep(beta1_norm, length(fmarginals[[2]]$value.y))
 
 We can also visualize the predicted random field. In this case, we compute the mean of the spatial field and also the standard deviation.
 
-```{r}
+```{r fittedG}
 ## Add mean and standard deviation of the field to the grid 
 grid_sf[[1]]$u_mean <- as.vector( ## mean 
   inla.mesh.project(
@@ -1485,7 +1484,7 @@ grid_sf[[1]]$u_sd <- exp(as.vector( ## standard deviation
 
 ##### Hyperparameters posterior distributions
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Marginals posterior distributions for the hyperparameters (red line represents the true value)"}
+```{r visualizepmargsG, echo = FALSE, results='asis', fig.align='center', fig.cap="Marginals posterior distributions for the hyperparameters (red line represents the true value)"}
 ## Visualize parameter marginals
 ggplot(do.call(rbind, pmarginals)) + 
   geom_line(aes(x=x, y=y)) + 
@@ -1496,7 +1495,7 @@ ggplot(do.call(rbind, pmarginals)) +
 
 ##### Fixed parameters
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Marginals posterior distributions for the fixed parameters (red line represents the true value)"}
+```{r visualizeFixedG, echo = FALSE, results='asis', fig.align='center', fig.cap="Marginals posterior distributions for the fixed parameters (red line represents the true value)"}
 ## Visualize parameter marginals
 ggplot(do.call(rbind, fmarginals)) + 
   geom_line(aes(x=value.x, y=value.y)) + 
@@ -1507,7 +1506,7 @@ ggplot(do.call(rbind, fmarginals)) +
 
 ##### Simulated vs posterior mean of the random field
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Simulated random field (u) compared to the posterior mean of the random field (u.mean)"}
+```{r simvspred, echo = FALSE, results='asis', fig.align='center', fig.cap="Simulated random field (u) compared to the posterior mean of the random field (u.mean)"}
 ## Visualize the mean of the field
 ## Plot the simulated barrier field on the Mollweide projection
 p1 <- ggplot() +
@@ -1531,7 +1530,7 @@ p1_joint
 
 ##### Posterior standard deviation of the field
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Posterior standard deviation of the random field with the observed points (black docs)"}
+```{r poststd, echo = FALSE, results='asis', fig.align='center', fig.cap="Posterior standard deviation of the random field with the observed points (black docs)"}
 df <- as.data.frame(st_coordinates(data_mll_norm_t[[1]]))
 ggplot() +
   geom_sf(aes(color = u_sd), data = grid_sf[[1]]) + 
@@ -1545,7 +1544,7 @@ ggplot() +
 
 The following code fits the model using the INLA base code. To accomplish this, an INLA stack is initially created to model a response variable according to a specified formula. This stack includes a projector matrix (Alocs), spatial effect (i), depth (beta1), and an intercept (beta0).
 
-```{r}
+```{r inlastack}
 ## Create an INLA stack (stk) for modeling the response variable based on the specified formula and data
 stk <- inla.stack(
   data = list(resp = data_model_norm_t[data_model_norm_t$time == 1,]$y), ## Response variable
@@ -1570,27 +1569,27 @@ result_norm <- inla(resp ~ 0 + beta0 + f(beta1, model = "linear") + f(i, model =
 
 Once we have fitted the model, we can observe if we get back the results. First, we check the summary of the fixed effect and the hyperparameters.
 
-```{r}
+```{r fixed2}
 ## Beta 0 (intercept) and Beta 1 (depth)
 res_summary_fixed_rounded <- round(result_norm$summary.fixed, 2)
 ```
 
-```{r, echo = FALSE}
+```{r fixe2k, echo = FALSE}
 knitr::kable(res_summary_fixed_rounded, caption = "Summary of the posterior distribution of fixed effects.")
 ```
 
-```{r}
+```{r hyper2}
 ## Range, standard deviation (spatial effect), and standard deviation (Gaussian)
 res_summary_hyper_rounded <- round(result_norm$summary.hyperpar, 2)
 ```
 
-```{r, echo = FALSE}
+```{r hyper2K, echo = FALSE}
 knitr::kable(res_summary_hyper_rounded, caption = "Summary of the posterior distribution of hyperparameters")
 ```
 
 Then, we compute the marginals of the hyperparameters: ranges $r$, standard deviation of the spatial effect $\sigma$, and standard deviation of the Gaussian distribution $\sigma_{e}$.
 
-```{r}
+```{r pmargs2}
 ## Create a list of parameter marginals for visualization
 pmarginals <- 
   list(
@@ -1619,7 +1618,7 @@ pmarginals[[3]]$true <- rep(1, length(pmarginals[[1]]$x))
 
 Likewise, we can plot the marginals for the fixed parameters: intercept and depth linear coefficient.
 
-```{r}
+```{r fixed2margs}
 ## Create a list of parameter marginals for visualization
 fmarginals <- 
   list(
@@ -1640,7 +1639,7 @@ fmarginals[[2]]$true <- rep(beta1_norm, length(fmarginals[[2]]$value.y))
 
 We can also visualize the predicted random field. In this case, we compute the mean of the spatial field and also the standard deviation.
 
-```{r}
+```{r fitted2}
 ## Add mean and standard deviation of the field to the grid 
 grid_sf[[1]]$u_mean <- as.vector( ## mean 
   inla.mesh.project(
@@ -1655,7 +1654,7 @@ grid_sf[[1]]$u_sd <- exp(as.vector( ## standard deviation
 
 ##### Hyperparameters posterior distributions
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Marginals posterior distributions for the hyperparameters (red line represents the true value)"}
+```{r visualizeh2, echo = FALSE, results='asis', fig.align='center', fig.cap="Marginals posterior distributions for the hyperparameters (red line represents the true value)"}
 ## Visualize parameter marginals
 ggplot(do.call(rbind, pmarginals)) + 
   geom_line(aes(x=x, y=y)) + 
@@ -1666,7 +1665,7 @@ ggplot(do.call(rbind, pmarginals)) +
 
 ##### Fixed parameters
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Marginals posterior distributions for the fixed parameters (red line represents the true value)"}
+```{r visualizefix2, echo = FALSE, results='asis', fig.align='center', fig.cap="Marginals posterior distributions for the fixed parameters (red line represents the true value)"}
 ## Visualize parameter marginals
 ggplot(do.call(rbind, fmarginals)) + 
   geom_line(aes(x=value.x, y=value.y)) + 
@@ -1677,7 +1676,7 @@ ggplot(do.call(rbind, fmarginals)) +
 
 ##### Simulated vs posterior mean of the random field
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Simulated random field (u) compared to the posterior mean of the random field (u.mean)"}
+```{r simvspred2, echo = FALSE, results='asis', fig.align='center', fig.cap="Simulated random field (u) compared to the posterior mean of the random field (u.mean)"}
 ## Visualize the mean of the field
 ## Plot the simulated barrier field on the Mollweide projection
 p1 <- ggplot() +
@@ -1701,7 +1700,7 @@ p1_joint
 
 ##### Posterior standard deviation of the field
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Posterior standard deviation of the random field with the observed points (black docs)"}
+```{r stdpost2, echo = FALSE, results='asis', fig.align='center', fig.cap="Posterior standard deviation of the random field with the observed points (black docs)"}
 df <- as.data.frame(st_coordinates(data_mll_norm_t[[1]]))
 ggplot() +
   geom_sf(aes(color = u_sd), data = grid_sf[[1]]) + 
@@ -1715,7 +1714,7 @@ ggplot() +
 
 Another common objective with these models is to predict the response variable in unsampled locations. Here, we share the code for predicting with the barrier model across the Earth. Initially, we must download the depth values for the locations we want to predict. In this case, we'll utilize the grid previously defined for projecting the random field.
 
-```{r}
+```{r predgridset}
 ## Extracting latitude and longitude from the defined grid
 locs_latlong_pred <- get_depth(data = as.data.frame(
 st_coordinates(grid_ll[[1]])))
@@ -1726,7 +1725,7 @@ locs_latlong_pred$depth <- as.vector(locs_latlong_pred$depth / 1000)
 
 Next, we have to set up the stack for prediction. Here, the response variable is defined with NA (not available), and we replicate the same effects present in the stack for estimation but with the updated depth values. Lastly, we merge both stacks, combining those for estimation and prediction.
 
-```{r}
+```{r stackpred}
 ## Create an inla.stack object for prediction
 stk.pred <- inla.stack(
   data = list(resp = NA), ## Placeholder for the response variable (to be predicted)
@@ -1743,7 +1742,7 @@ stk.full <- inla.stack(stk, stk.pred)
 
 Once we have our complete stack, we can rerun the model exclusively for prediction, utilizing the previously fitted results (adjust this in *control.mode*).
 
-```{r}
+```{r predfit}
 ## Re-run the model
 set.seed(52134)
 res_pred <- inla(resp ~ 0 + beta0 + f(beta1, model = "linear") + f(i, model = bmodel), ## Formula
@@ -1757,7 +1756,7 @@ res_pred <- inla(resp ~ 0 + beta0 + f(beta1, model = "linear") + f(i, model = bm
 
 In the end, we extract the predicted values from the model and generate an sf object for visualization.
 
-```{r}
+```{r getPred}
 ## Extracting the values of the response variable
 pred <- inla.stack.index(stk.full, "pred")$data
 pred_values <- res_pred$summary.fitted.values$mean[pred]
@@ -1777,7 +1776,7 @@ data_pred <- st_as_sf(x = data_raster_pred,
 data_pred_mll <- st_transform(data_pred, crs = crs_vis)
 ```
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Predicted response variable across the entire domain"}
+```{r visualixepredfit, echo = FALSE, results='asis', fig.align='center', fig.cap="Predicted response variable across the entire domain"}
 ggplot() + theme_void() + 
   geom_sf(aes(color = pred), data = data_pred_mll) + 
   scale_color_gradientn(colours = doypa("tidy", 4)) +
@@ -1792,7 +1791,7 @@ We will use the same code provided for the normal response variable to fit the B
 
 First, we will establish the components of the model and indicate that our response variable follows a Bernoulli distribution.
 
-```{r}
+```{r fitBinlabru}
 ## Specify the model formula
 model_ber <- y ~
   ## Intercept
@@ -1816,27 +1815,27 @@ result_ber <- bru(
 
 Once we have fitted the model, we can observe if we get back the results. First, we check the summary of the fixed effect and the hyperparameters.
 
-```{r}
+```{r fixedB}
 ## Beta 0 (intercept) and Beta 1 (depth)
 res_summary_fixed_rounded <- round(result_ber$summary.fixed, 2)
 ```
 
-```{r, echo = FALSE}
+```{r fixedBk, echo = FALSE}
 knitr::kable(res_summary_fixed_rounded, caption = "Summary of the posterior distribution of fixed effects.")
 ```
 
-```{r}
+```{r hyperB}
 ## Range, standard deviation (spatial effect), and standard deviation (Gaussian)
 res_summary_hyper_rounded <- round(result_ber$summary.hyperpar, 2)
 ```
 
-```{r, echo = FALSE}
+```{r hyperBk, echo = FALSE}
 knitr::kable(res_summary_hyper_rounded, caption = "Summary of the posterior distribution of hyperparameters")
 ```
 
 Then, we compute the marginals of the hyperparameters: ranges $r$ and standard deviation of the spatial effect $\sigma$.
 
-```{r}
+```{r pmargsB}
 ## Create a list of parameter marginals for visualization
 pmarginals <- 
   list(
@@ -1859,7 +1858,7 @@ pmarginals[[2]]$true <- rep(1, length(pmarginals[[1]]$x))
 
 Likewise, we can plot the marginals for the fixed effects: intercept and depth linear coefficients.
 
-```{r}
+```{r fixedBmargs}
 ## Create a list of parameter marginals for visualization
 fmarginals <- 
   list(
@@ -1880,7 +1879,7 @@ fmarginals[[2]]$true <- rep(beta1_ber, length(fmarginals[[2]]$value.y))
 
 We can also visualize the predicted random field. In this case, we compute the mean of the spatial field and also the standard deviation.
 
-```{r}
+```{r fittedBgrid}
 ## Add mean and standard deviation of the field to the grid 
 grid_sf[[1]]$u_mean <- as.vector( ## mean 
   inla.mesh.project(
@@ -1895,7 +1894,7 @@ grid_sf[[1]]$u_sd <- exp(as.vector( ## standard deviation
 
 ##### Hyperparameters posterior distributions
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Marginals posterior distributions for the hyperparameters (red line represents the true value)"}
+```{r visualizepmargsB, echo = FALSE, results='asis', fig.align='center', fig.cap="Marginals posterior distributions for the hyperparameters (red line represents the true value)"}
 ## Visualize parameter marginals
 ggplot(do.call(rbind, pmarginals)) + 
   geom_line(aes(x=x, y=y)) + 
@@ -1906,7 +1905,7 @@ ggplot(do.call(rbind, pmarginals)) +
 
 ##### Fixed parameters
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Marginals posterior distributions for the fixed parameters (red line represents the true value)"}
+```{r visualizefixedB, echo = FALSE, results='asis', fig.align='center', fig.cap="Marginals posterior distributions for the fixed parameters (red line represents the true value)"}
 ## Visualize parameter marginals
 ggplot(do.call(rbind, fmarginals)) + 
   geom_line(aes(x=value.x, y=value.y)) + 
@@ -1917,7 +1916,7 @@ ggplot(do.call(rbind, fmarginals)) +
 
 ##### Simulated vs posterior mean of the random field
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Simulated random field (u) compared to the posterior mean of the random field (u.mean)"}
+```{r simvspredB, echo = FALSE, results='asis', fig.align='center', fig.cap="Simulated random field (u) compared to the posterior mean of the random field (u.mean)"}
 ## Visualize the mean of the field
 ## Plot the simulated barrier field on the Mollweide projection
 p1 <- ggplot() +
@@ -1941,7 +1940,7 @@ p1_joint
 
 ##### Posterior standard deviation of the field
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Posterior standard deviation of the random field with the observed points (black docs)"}
+```{r visualizepredB, echo = FALSE, results='asis', fig.align='center', fig.cap="Posterior standard deviation of the random field with the observed points (black docs)"}
 df <- as.data.frame(st_coordinates(data_mll_ber_t[[1]]))
 ggplot() +
   geom_sf(aes(color = u_sd), data = grid_sf[[1]]) + 
@@ -1955,7 +1954,7 @@ ggplot() +
 
 The following code fits the model using the INLA base code. To accomplish this, an INLA stack is initially created to model a response variable according to a specified formula. This stack includes a projector matrix (Alocs), spatial effect (i), depth (beta1), and an intercept (beta0).
 
-```{r}
+```{r inlastackB}
 ## Create an INLA stack (stk) for modeling the response variable based on the specified formula and data
 stk <- inla.stack(
   data = list(resp = data_model_ber_t[data_model_ber_t$time == 1,]$y), ## Response variable
@@ -1980,27 +1979,27 @@ result_ber <- inla(resp ~ 0 + beta0 + f(beta1, model = "linear") + f(i, model = 
 
 Once we have fitted the model, we can observe if we get back the results. First, we check the summary of the fixed effect and the hyperparameters.
 
-```{r}
+```{r fixedBinla}
 ## Beta 0 (intercept) and Beta 1 (depth)
 res_summary_fixed_rounded <- round(result_ber$summary.fixed, 2)
 ```
 
-```{r, echo = FALSE}
+```{r fixedBinlaK, echo = FALSE}
 knitr::kable(res_summary_fixed_rounded, caption = "Summary of the posterior distribution of fixed effects.")
 ```
 
-```{r}
+```{r hyperBinla}
 ## Range, standard deviation (spatial effect), and standard deviation (Gaussian)
 res_summary_hyper_rounded <- round(result_ber$summary.hyperpar, 2)
 ```
 
-```{r, echo = FALSE}
+```{r hyperBinlaK, echo = FALSE}
 knitr::kable(res_summary_hyper_rounded, caption = "Summary of the posterior distribution of hyperparameters")
 ```
 
 Then, we compute the marginals of the hyperparameters: ranges $r$ and standard deviation of the spatial effect $\sigma$.
 
-```{r}
+```{r pmargsBinla}
 ## Create a list of parameter marginals for visualization
 pmarginals <- 
   list(
@@ -2023,7 +2022,7 @@ pmarginals[[2]]$true <- rep(1, length(pmarginals[[1]]$x))
 
 Likewise, we can plot the marginals for the fixed effects: intercept and depth linear coefficients.
 
-```{r}
+```{r fmargsBinla}
 ## Create a list of parameter marginals for visualization
 fmarginals <- 
   list(
@@ -2044,7 +2043,7 @@ fmarginals[[2]]$true <- rep(beta1_ber, length(fmarginals[[2]]$value.y))
 
 We can also visualize the predicted random field. In this case, we compute the mean of the spatial field and also the standard deviation.
 
-```{r}
+```{r predBinla_musd}
 ## Add mean and standard deviation of the field to the grid 
 grid_sf[[1]]$u_mean <- as.vector( ## mean 
   inla.mesh.project(
@@ -2059,7 +2058,7 @@ grid_sf[[1]]$u_sd <- exp(as.vector( ## standard deviation
 
 ##### Hyperparameters posterior distributions
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Marginals posterior distributions for the hyperparameters (red line represents the true value)"}
+```{r visualizehyperBinla, echo = FALSE, results='asis', fig.align='center', fig.cap="Marginals posterior distributions for the hyperparameters (red line represents the true value)"}
 ## Visualize parameter marginals
 ggplot(do.call(rbind, pmarginals)) + 
   geom_line(aes(x=x, y=y)) + 
@@ -2070,7 +2069,7 @@ ggplot(do.call(rbind, pmarginals)) +
 
 ##### Fixed parameters
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Marginals posterior distributions for the fixed parameters (red line represents the true value)"}
+```{r visualizefixBinla, echo = FALSE, results='asis', fig.align='center', fig.cap="Marginals posterior distributions for the fixed parameters (red line represents the true value)"}
 ## Visualize parameter marginals
 ggplot(do.call(rbind, fmarginals)) + 
   geom_line(aes(x=value.x, y=value.y)) + 
@@ -2081,7 +2080,7 @@ ggplot(do.call(rbind, fmarginals)) +
 
 ##### Simulated vs posterior mean of the random field
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Simulated random field (u) compared to the posterior mean of the random field (u.mean)"}
+```{r simvspredBinla, echo = FALSE, results='asis', fig.align='center', fig.cap="Simulated random field (u) compared to the posterior mean of the random field (u.mean)"}
 ## Visualize the mean of the field
 ## Plot the simulated barrier field on the Mollweide projection
 p1 <- ggplot() +
@@ -2105,7 +2104,7 @@ p1_joint
 
 ##### Posterior standard deviation of the field
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Posterior standard deviation of the random field with the observed points (black docs)"}
+```{r visualizestdBinla, echo = FALSE, results='asis', fig.align='center', fig.cap="Posterior standard deviation of the random field with the observed points (black docs)"}
 df <- as.data.frame(st_coordinates(data_mll_ber_t[[1]]))
 ggplot() +
   geom_sf(aes(color = u_sd), data = grid_sf[[1]]) + 
@@ -2119,7 +2118,7 @@ ggplot() +
 
 Now, we will predict the probability of presence according to the fitted model.
 
-```{r}
+```{r predsetupB}
 ## Extracting latitude and longitude from the defined grid
 locs_latlong_pred <- get_depth(data = as.data.frame(    st_coordinates(grid_ll[[1]])))
 
@@ -2129,7 +2128,7 @@ locs_latlong_pred$depth <- as.vector(locs_latlong_pred$depth / 1000)
 
 Next, we have to set up the stack for prediction. Here, the respons variable is defined with NA (not available), and we replicate the same effects present in the stack for estimation but with the updated depth values. Lastly, we merge both stacks, combining those for estimation and prediction.
 
-```{r}
+```{r predstackB}
 ## Create an inla.stack object for prediction
 stk.pred <- inla.stack(
   data = list(resp = NA), ## Placeholder for the response variable (to be predicted)
@@ -2146,7 +2145,7 @@ stk.full <- inla.stack(stk, stk.pred)
 
 Once we have our complete stack, we can rerun the model exclusively for prediction, utilizing the previously fitted results (adjust this in *control.mode*).
 
-```{r}
+```{r fitpredBinla}
 ## Re-run the model
 set.seed(52134)
 res_pred <- inla(resp ~ 0 + beta0 + f(beta1, model = "linear") + f(i, model = bmodel), ## Formula
@@ -2161,7 +2160,7 @@ res_pred <- inla(resp ~ 0 + beta0 + f(beta1, model = "linear") + f(i, model = bm
 
 In the end, we extract the predicted values from the model and generate an sf object for visualization.
 
-```{r}
+```{r predBinla}
 ## Extracting the values of the response variable
 pred <- inla.stack.index(stk.full, "pred")$data
 pred_values <- res_pred$summary.fitted.values$mean[pred]
@@ -2182,7 +2181,7 @@ data_pred <- st_as_sf(x = data_raster_pred,
 data_pred_m <- st_transform(data_pred, crs = crs_vis)
 ```
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Predicted response variable across the entire domain"}
+```{r visualizepredBinla, echo = FALSE, results='asis', fig.align='center', fig.cap="Predicted response variable across the entire domain"}
 ggplot() + 
   theme_void() + 
   geom_sf(aes(color = pred), data = data_pred_m) +
@@ -2194,7 +2193,7 @@ ggplot() +
 
 After fitting and predicting only in space, we are now going to implement a separable space-time model, as illustrated in Krainski et al., 2018. Essentially, we will include the autoregressive model of order 1 into the spatial effect. As we did with the space examples, we will fit two different likelihoods (Gaussian and Bernoulli). Then, as displayed in the code, we will include an autoregressive term of order 1 with *model = "ar1"*, where the probability of the parameter $\rho$ being greater than 0 is 0.9.
 
-```{r}
+```{r stscenarios}
 ## Define formula for the space-time effect
 rho.prior <- list(prior = 'pc.cor1', param = c(0, 0.9)) ## P(rho>0) = 0.9
 form.barrier.st_ar1 <- y ~ 0 + intercept +
@@ -2208,7 +2207,7 @@ form.barrier.st_ar1 <- y ~ 0 + intercept +
 
 The code for fitting a spatio-temporal scenario is almost the same as in the spatial example; we just include the effect of time in the projector matrix and also in the stack.
 
-```{r}
+```{r stGstack}
 ## space-time projector matrix
 A.st_norm_t <- inla.spde.make.A(
   mesh = smesh,
@@ -2233,7 +2232,7 @@ stk.st_norm_t <- inla.stack(
 
 For the fitting, we use the *inla* function and specify the family as *"gaussian"* for this particular simulation.
 
-```{r}
+```{r stGfit}
 ## Fit spatial-temporal model with AR1 correlation structure
 result_ar1_norm <- inla(form.barrier.st_ar1,
                    data = inla.stack.data(stk.st_norm_t),
@@ -2246,13 +2245,13 @@ result_ar1_norm <- inla(form.barrier.st_ar1,
 
 Then, we can display the main statistical measures for the estimation of the hyperparameters and parameters.
 
-```{r}
+```{r stGfix}
 ## Print summary of fixed effects
 res_summary_fixed_rounded <- round(result_ar1_norm$summary.fixed, 2)
 knitr::kable(res_summary_fixed_rounded, caption = "Summary of the posterior distribution of fixed effects.")
 ```
 
-```{r}
+```{r stGfixK}
 ## Print summary of hyperparameters
 res_summary_hyper_rounded <- round(result_ar1_norm$summary.hyperpar, 2)
 knitr::kable(res_summary_hyper_rounded, caption = "Summary of the posterior distribution of hyperparameters")
@@ -2260,7 +2259,7 @@ knitr::kable(res_summary_hyper_rounded, caption = "Summary of the posterior dist
 
 We also compute the marginal distribution for the hyperparameters and parameters, so we can compare the results obtained with the simulated case.
 
-```{r}
+```{r stGpmargs}
 ## Plot marginal posterior distributions of hyperparameters
 pmarginals <- 
   list(
@@ -2307,7 +2306,7 @@ names(pmarginals[[6]]) <- c("param", "x", "y", "true")
 
 #### Parameter and hyperparameters posterior distributions
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Posterior distribution of parameters and hyperparameters, where, beta1 represents the coefficient for the depth covariate, rho represents the correlation parameter for the autoregressive model of order 1, sigma represents the standard deviation of the random field, and sigma.e represents the standard deviation of the Gaussian distribution."}
+```{r visualizestGmargs, echo = FALSE, results='asis', fig.align='center', fig.cap="Posterior distribution of parameters and hyperparameters, where, beta1 represents the coefficient for the depth covariate, rho represents the correlation parameter for the autoregressive model of order 1, sigma represents the standard deviation of the random field, and sigma.e represents the standard deviation of the Gaussian distribution."}
 ## Plot the parameter marginals with true values
 ggplot(do.call(rbind, pmarginals)) + 
   geom_line(aes(x=x, y=y)) + 
@@ -2318,7 +2317,7 @@ ggplot(do.call(rbind, pmarginals)) +
 
 #### Predited random fields
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Predicted random fields (u) for all years"}
+```{r stpred, echo = FALSE, results='asis', fig.align='center', fig.cap="Predicted random fields (u) for all years"}
 k<- 6
 m<- smesh$n
 m.prj <- lapply(1:k, function(j) {
@@ -2349,7 +2348,7 @@ ggarrange(plotlist = p_pred_field, common.legend = TRUE)
 
 The same framework as that for the Normal response variable can be applied to the Bernoulli response variable. We simply need to change the family in the *inla* function to *"binomial"*. Consequently, we obtain similar outputs, but in this case, they parameter of interest is a probability.
 
-```{r}
+```{r stBfit}
 ## space-time projector matrix
 A.st_ber_t <- inla.spde.make.A(
   mesh = smesh,
@@ -2397,7 +2396,7 @@ res_summary_hyper_rounded <- round(result_ar1_ber$summary.hyperpar, 2)
 knitr::kable(res_summary_hyper_rounded, caption = "Summary of the posterior distribution of hyperparameters")
 ```
 
-```{r}
+```{r stmargs}
 ## Plot marginal posterior distributions of hyperparameters
 pmarginals <- 
   list(
@@ -2438,7 +2437,7 @@ names(pmarginals[[5]]) <- c("param", "x", "y", "true")
 
 #### Parameter and hyperparameters posterior distributions
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Posterior distribution of parameters and hyperparameters, where, beta1 represents the coefficient for the depth covariate, rho represents the correlation parameter for the autoregressive model of order 1, and sigma represents the standar deviation of the random field."}
+```{r stBhyper, echo = FALSE, results='asis', fig.align='center', fig.cap="Posterior distribution of parameters and hyperparameters, where, beta1 represents the coefficient for the depth covariate, rho represents the correlation parameter for the autoregressive model of order 1, and sigma represents the standar deviation of the random field."}
 ## Plot the parameter marginals with true values
 ggplot(do.call(rbind, pmarginals)) + 
   geom_line(aes(x=x, y=y)) + 
@@ -2449,7 +2448,7 @@ ggplot(do.call(rbind, pmarginals)) +
 
 #### Predited random fields 
 
-```{r, echo = FALSE, results='asis', fig.align='center', fig.cap="Predicted random fields (u) for all years"}
+```{r stBpred, echo = FALSE, results='asis', fig.align='center', fig.cap="Predicted random fields (u) for all years"}
 k<- 6
 m<- smesh$n
 m.prj <- lapply(1:k, function(j) {
@@ -2478,7 +2477,7 @@ ggarrange(plotlist = p_pred_field, common.legend = TRUE)
 
 # Session information
 
-```{r, echo = FALSE}
+```{r ssI, echo = FALSE}
 sessionInfo()
 ```
 
