@@ -1,7 +1,7 @@
 Package: INLAspacetime
 Type: Package
 Title: Spatial and Spatio-Temporal Models using 'INLA'
-Version: 0.1.12.012
+Version: 0.1.12.013
 Authors@R: c(
   person("Elias Teixeira", "Krainski", email = "eliaskrainski@gmail.com",
          role = c("cre", "aut", "cph"), 
@@ -52,6 +52,12 @@ Suggests:
     rmarkdown,
     parallel,
     data.table,
-    rnaturalearth
+    rnaturalearth,
+    ggpubr,
+    DOYPAColors,
+    s2,
+    lubridate,
+    ggOceanMaps,
+    tidyverse
 VignetteBuilder: knitr
 BuildVignettes: true
