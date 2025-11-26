@@ -53,6 +53,7 @@ Suggests:
     parallel,
     data.table,
     rnaturalearth,
+    rnaturalearthdata,
     ggpubr,
     DOYPAColors,
     s2,
