@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../../index.html">INLAspacetime</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.12.012</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.12.013</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,7 +61,7 @@
 Krainski</h4>
             
             <h4 data-toc-skip class="date">Created in March, 2023. Last
-update: Mon 24 Nov, 2025</h4>
+update: Wed 26 Nov, 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/eliaskrainski/INLAspacetime/blob/master/vignettes/web/barrierExample.Rmd" class="external-link"><code>vignettes/web/barrierExample.Rmd</code></a></small>
       <div class="d-none name"><code>barrierExample.Rmd</code></div>
@@ -435,9 +435,9 @@ the intercept with</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">summary.fix</span></span>
 <span><span class="co">#&gt;               mean        sd 0.025quant 0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; Intercept 10.11302 0.4112101   9.304148 10.10419   10.97202 10.10514</span></span>
+<span><span class="co">#&gt; Intercept 10.11302 0.4110092   9.304565  10.1042   10.97157 10.10515</span></span>
 <span><span class="co">#&gt;                    kld</span></span>
-<span><span class="co">#&gt; Intercept 1.107568e-06</span></span></code></pre></div>
+<span><span class="co">#&gt; Intercept 1.079871e-06</span></span></code></pre></div>
 <p>For the hyper-parameters the computations were performed in an
 internal scale. That is log of range and
 log(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>σ</mi><annotation encoding="application/x-tex">\sigma</annotation></semantics></math>),
@@ -473,8 +473,8 @@ data:</p>
 <span>             <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/INLA/man/marginal.html" class="external-link">inla.zmarginal</a></span><span class="op">(</span><span class="va">m</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;         sigma.e    range     sigma</span></span>
 <span><span class="co">#&gt; true 1.00000000 4.000000 1.0000000</span></span>
-<span><span class="co">#&gt; mean 1.04429472 4.049527 0.9015846</span></span>
-<span><span class="co">#&gt; sd   0.03813067 1.100007 0.1406692</span></span></code></pre></div>
+<span><span class="co">#&gt; mean 1.04431454 4.049196 0.9014254</span></span>
+<span><span class="co">#&gt; sd   0.03812892 1.098464 0.1405383</span></span></code></pre></div>
 <p>We can also visualize these these posterior marginal distributions
 with</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">

@@ -305,13 +305,13 @@ Summary of the posterior marginal distributions for the fixed effects
 ``` r
 fit102$summary.fixed[, c(1, 2, 3, 5)]
 #>                  mean          sd   0.025quant   0.975quant
-#> Intercept  3.73693547 0.246297844  3.250930206  4.222600898
-#> A         -0.17937691 0.050016442 -0.278517972 -0.081351363
-#> WS        -0.06042471 0.008441560 -0.076967979 -0.043860000
-#> TEMP      -0.12239854 0.035187299 -0.191469050 -0.053463287
-#> HMIX      -0.02373418 0.013204483 -0.049589612  0.002198942
-#> PREC      -0.05355017 0.008606597 -0.070412609 -0.036656971
-#> EMI        0.03629588 0.015192557  0.006140688  0.065808090
+#> Intercept  3.73693823 0.246316017  3.250885642  4.222649422
+#> A         -0.17937607 0.050020482 -0.278529488 -0.081343508
+#> WS        -0.06042592 0.008441734 -0.076969497 -0.043860832
+#> TEMP      -0.12239581 0.035188018 -0.191467942 -0.053459337
+#> HMIX      -0.02373568 0.013204746 -0.049591522  0.002198076
+#> PREC      -0.05355159 0.008606716 -0.070414235 -0.036658128
+#> EMI        0.03629578 0.015193521  0.006137179  0.065808696
 ```
 
 For the hyperparameters, we transform the posterior marginal
@@ -340,11 +340,11 @@ Then we compute and show the summary of it
 shyper <- t(sapply(post.h, function(m) 
   unlist(inla.zmarginal(m, silent = TRUE))))
 shyper[, c(1, 2, 3, 7)]
-#>                mean          sd  quant0.025  quant0.975
-#> sigma_e   0.1809983  0.00376960   0.1737362   0.1885405
-#> range_s 280.5875551 17.01369733 248.8643042 315.6644867
-#> range_t  49.8892342  8.10656224  36.1317149  67.8968049
-#> sigma_u   1.1370044  0.08679946   0.9787617   1.3194495
+#>                mean           sd  quant0.025  quant0.975
+#> sigma_e   0.1810037  0.003772596   0.1737315   0.1885476
+#> range_s 280.5962223 17.069613244 248.7725665 315.7921834
+#> range_t  49.9090614  8.174251999  36.0540431  68.0831369
+#> sigma_u   1.1371070  0.087445832   0.9778042   1.3210244
 ```
 
 However, it is better to look at the posterior marginal itself, and we
@@ -365,7 +365,7 @@ Cameletti et al. (2013) with
 c(shyper[c(1, 4, 2), 1], 
   a = exp(-h * sqrt(8 * 0.5) / shyper[3, 1]))
 #>     sigma_e     sigma_u     range_s           a 
-#>   0.1809983   1.1370044 280.5875551   0.9607041
+#>   0.1810037   1.1371070 280.5962223   0.9607194
 ```
 
 ## Comparing different models
@@ -407,10 +407,10 @@ The computing time for each model fit
 ``` r
 sapply(results, function(r) r$cpu.used)
 #>                u102        u121
-#> Pre       0.4420817   0.3430767
-#> Running 118.3381822 215.5014620
-#> Post      4.7159481   3.2243192
-#> Total   123.4962120 219.0688579
+#> Pre       0.4544694   0.3488176
+#> Running 134.8050725 254.6783457
+#> Post      4.2852588   2.8637428
+#> Total   139.5448008 257.8909061
 ```
 
 and the number of fn-calls during the optimization are
@@ -418,7 +418,7 @@ and the number of fn-calls during the optimization are
 ``` r
 sapply(results, function(r) r$misc$nfunc)
 #> u102 u121 
-#>  337  375
+#>  318  401
 ```
 
 The posterior mode for each parameter in each model (in internal scale)
@@ -426,11 +426,11 @@ are
 
 ``` r
 sapply(results, function(r) r$mode$theta)
-#>                                                 u102      u121
-#> Log precision for the Gaussian observations 3.419727  3.594140
-#> Theta1 for field                            5.633347  7.290216
-#> Theta2 for field                            3.884673 10.977697
-#> Theta3 for field                            0.120434  2.153510
+#>                                                  u102      u121
+#> Log precision for the Gaussian observations 3.4195705  3.594098
+#> Theta1 for field                            5.6333676  7.291771
+#> Theta2 for field                            3.8846603 10.982427
+#> Theta3 for field                            0.1203597  2.155461
 ```
 
 We compute the posterior marginal distribution for the hyper-parameters
@@ -513,8 +513,8 @@ t(sapply(results, function(r) {
     LCPO = -mean(log(r$cpo$cpo), na.rm = TRUE))
 }))
 #>             DIC       WAIC        LPO       LCPO
-#> u102 -0.3768064 -0.2596659 -0.4054513 -0.1174379
-#> u121 -0.4110864 -0.3528799 -0.5082381 -0.1158501
+#> u102 -0.3768010 -0.2596477 -0.4054261 -0.1174270
+#> u121 -0.4110888 -0.3528269 -0.5082013 -0.1158488
 ```
 
 ## The automatic group-leave-out cross validation
@@ -541,7 +541,7 @@ g5cv$u102$group[[100]]
 #> [1]  52  76  98 100 106 124
 #> 
 #> $corr
-#> [1] 0.2574514 0.4288981 0.3003306 1.0000000 0.3298532 0.4288981
+#> [1] 0.2574879 0.4289277 0.3003505 1.0000000 0.3298707 0.4289277
 ```
 
 and for the result under model “121” we have
@@ -552,7 +552,7 @@ g5cv$u121$group[[100]]
 #> [1]  52  76  98 100 124 148
 #> 
 #> $corr
-#> [1] 0.1658304 0.3724819 0.1658304 1.0000000 0.3748453 0.1618507
+#> [1] 0.1659362 0.3725930 0.1659362 1.0000000 0.3749559 0.1619523
 ```
 
 which has intersection but are not the same, for the model setup used.
@@ -585,7 +585,7 @@ number is better
 ``` r
 sapply(g5cv, function(r) -mean(log(r$cv), na.rm = TRUE))
 #>       u102       u121 
-#> 0.08181567 0.11333987
+#> 0.08181355 0.11349366
 ```
 
 ## References

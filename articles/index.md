@@ -2,6 +2,8 @@
 
 ### All vignettes
 
+- [Global oceanic barrier model on the
+  sphere](https://eliaskrainski.github.io/INLAspacetime/articles/web/barrier_global.md):
 - [A barrier model
   illustration](https://eliaskrainski.github.io/INLAspacetime/articles/web/barrierExample.md):
 - [The Piemonte dataset
