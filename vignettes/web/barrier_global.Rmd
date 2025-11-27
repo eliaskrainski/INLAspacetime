@@ -477,10 +477,7 @@ function.
 
 ```{r mesh_mll}
 ## Collect the mesh locations and directly transform it to the Mollweide projection
-lmesh_mll <- fm_transform(
-    st_as_sf(as.data.frame(smesh$loc), coords = 1:3,
-             crs = fm_crs(smesh)), 
-    crs = crs_vis)
+lmesh_mll <- fm_transform(fm_as_sfc(smesh, format = "loc"), crs = crs_vis)
 ```
 
 Since we are working with a barrier model, we need to identify the
