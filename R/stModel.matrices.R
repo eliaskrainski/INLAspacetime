@@ -241,8 +241,10 @@ stModel.matrices <-
     stopifnot(ncol(val$TT) == (length(val) - 2L))
     names(val)[3:length(val)] <- paste0("M", 1:ncol(val$TT))
 
-    if (length(unique(diff(tmesh$loc))) > 1) {
-      warning("Edge correction for irregular are not OK yet!")
+    dts <- diff(tmesh$loc)
+    if (length(unique(dts))>1) {
+      if(!all.equal(dts[1], dts[-1]))
+        warning("Edge correction for irregular are not OK yet!")
     }
 
     if (constr) {

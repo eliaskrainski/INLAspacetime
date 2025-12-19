@@ -23,8 +23,8 @@ mesh <- fm_mesh_2d(
     loc = cbind(
         rep(0:7, 8),
         rep(0:7, each = 8))*10,
-    offset = 30, 
-    max.edge = 25, 
+    offset = 30,
+    max.edge = 25,
     n = 4,
     cutoff = 5
 )
@@ -33,7 +33,7 @@ mesh$n
 plot(mesh)
 
 spde1 <- inla.spde2.pcmatern(
-    mesh = mesh, alpha = alpha, 
+    mesh = mesh, alpha = alpha,
     prior.range = c(5, 0.05),
     prior.sigma = c(1, NA)
 )
@@ -52,10 +52,10 @@ all.equal(Q1, Q2)
 
 cmode <- list(theta = c(20, log(50)), fixed = TRUE)
 fit1 <- inla(
-    y ~ 0 + f(s, model = spde1), data = dataf, 
+    y ~ 0 + f(s, model = spde1), data = dataf,
     control.mode = cmode)
 fit2 <- inla(
-    y ~ 0 + f(s, model = spde2), data = dataf, 
+    y ~ 0 + f(s, model = spde2), data = dataf,
     control.mode = cmode)
 
 q1 <- prec(fit1)
@@ -80,11 +80,11 @@ image(qd)
 
 ### test 2: prior
 fit1b <- inla(
-    y ~ 0 + f(s, model = spde1), data = dataf, 
+    y ~ 0 + f(s, model = spde1), data = dataf,
     control.family = cfam.pfix
 )
 fit2b <- inla(
-    y ~ 0 + f(s, model = spde2), data = dataf, 
+    y ~ 0 + f(s, model = spde2), data = dataf,
     control.family = cfam.pfix
 )
 
@@ -112,14 +112,6 @@ lines(inla.tmarginal(exp, fit2b$marginals.hyperpar[[1]]),
 
 if(FALSE){ ## check the constant for shere
 
-    Fab <- function(gs2,a,b,alpha=1) {
-        res <- 0.0
-        for(k in a:b) {
-            res <- res + (2*k+1)/((gs2 + k*(k+1))^alpha)
-        }
-    }
-    IaInf <- 
-    
     k = 0:50
     par(mfrow = c(1, 1), mar = c(4,4,1,1))
     plot(function(x) sapply(x, function(xx)
@@ -135,7 +127,7 @@ if(FALSE){ ## check the constant for shere
            as.double(alpha),
            const = double(1))$const),
         0.01, 100, lwd = 2, col = 5, lty = 3, add = TRUE)
-    
+
 }
 
 mesh <- fm_rcdt_2d_inla(globe = 10)
@@ -161,7 +153,7 @@ Q1 <- forceSymmetric(inla.as.sparse(
     inla.spde.precision(spde = spde1, theta = theta0)))
 
 fit1 <- inla(
-    formula = y ~ 0 + f(s, model = spde1), 
+    formula = y ~ 0 + f(s, model = spde1),
     data = dataf,
     control.family = cfam.pfix
 )

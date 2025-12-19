@@ -5,12 +5,7 @@
 \alias{lgsConstant}
 \alias{gammas2params}
 \alias{params2gammas}
-\title{Functions to help converting
-from/to user/internal parametrization.
-The internal parameters are
-'gamma_s, 'gamma_t', 'gamma_E'
-The user parameters are
-'r_s', 'r_t', 'sigma'}
+\title{User/internal parameters mapping functions}
 \usage{
 lgsConstant(lg.s, alpha, smanifold)
 
@@ -64,10 +59,6 @@ The internal parameters are
 'gamma_s, 'gamma_t', 'gamma_E'
 The user parameters are
 'r_s', 'r_t', 'sigma'
-
-Convert from user parameters to SPDE parameters
-
-Convert from SPDE parameters to user parameters
 }
 \details{
 See equation (23) in the paper.

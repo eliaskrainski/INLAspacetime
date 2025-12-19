@@ -1,13 +1,15 @@
+#' User/internal parameters mapping functions
+#' @rdname paramsUtils
+#' @name paramsUtils
+#' @aliases gammas2params
+#' @aliases params2gammas
+#' @description
 #' Functions to help converting
 #' from/to user/internal parametrization.
 #' The internal parameters are
 #' 'gamma_s, 'gamma_t', 'gamma_E'
 #' The user parameters are
 #' 'r_s', 'r_t', 'sigma'
-#' @rdname paramsUtils
-#' @name paramsUtils
-#' @aliases gammas2params
-#' @aliases params2gammas
 #' @param lg.s the logarithm of the SPDE parameter `\gamma_s`
 #' @param alpha the resulting spatial order.
 #' @param smanifold spatial domain manifold, which could be
@@ -101,3 +103,29 @@ gammas2params <- function(lgammas, alpha.t, alpha.s, alpha.e, smanifold = "R2") 
     lsigma = 0.5 * (lct + lgsCs - lgammas[2]) - lgammas[3]
   ))
 }
+#' Penalized Complexity (PC) prior for (log) range
+#' @rdname pcrange
+#' @param lrange numeric with the log of the (practical) range
+#' @param lam numeric with the prior parameter
+#' @param d integer to specify the domain dimention
+#' @param logdens logical indicating if the density
+#' is to be returned in the log scale
+pclrange <- function(lrange, lam, d = 2, logdens = FALSE) {
+  dh <- 0.5 * d
+  out <- log(lam * dh) -dh * lrange - lam * exp(-dh * lrange)
+  if(logdens)
+    return(out)
+  return(exp(out))
+}
+#' @rdname pcrange
+#' @param range numeric with the of the (practical) range
+#' @export
+#' @examples
+#' # P(range < 2.0) = 0.1
+#'  lam <- -log(0.1) * 2.0
+#'  plot(function(x) pcrange(x, lam), 1/100, 10, n = 100)
+pcrange <- function(range, lam, d = 2, logdens = FALSE) {
+  pclrange(log(range), lam)/range
+}
+
+
