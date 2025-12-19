@@ -99,10 +99,7 @@ We first load the other packages that will be used in this tutorial.
 ``` r
 library(INLA)
 #> Loading required package: Matrix
-#> This is INLA_25.11.22 built 2025-11-22 08:57:21 UTC.
-#>  - See www.r-inla.org/contact-us for how to get help.
-#>  - List available models/likelihoods/etc with inla.list.models()
-#>  - Use inla.doc(<NAME>) to access documentation
+#> 
 library(INLAspacetime)
 #> Loading required package: fmesher
 #> Loading required package: INLAtools
@@ -431,9 +428,9 @@ intercept with
 ``` r
 result$summary.fix
 #>               mean        sd 0.025quant 0.5quant 0.975quant     mode
-#> Intercept 10.11293 0.4113279   9.303834 10.10409   10.97223 10.10505
+#> Intercept 10.11293 0.4114173   9.303652 10.10409   10.97242 10.10505
 #>                    kld
-#> Intercept 1.130677e-06
+#> Intercept 1.137315e-06
 ```
 
 For the hyper-parameters the computations were performed in an internal
@@ -469,10 +466,10 @@ summary to compare with the values used to sample the data:
 rbind(true = c(sigma.e = sigma.e, range = ranges[1], sigma = 1),
       sapply(pmarginals, function(m)
              unlist(inla.zmarginal(m[, -1], TRUE))[1:2]))
-#>         sigma.e    range     sigma
-#> true 1.00000000 4.000000 1.0000000
-#> mean 1.04420892 4.048205 0.9017188
-#> sd   0.03813191 1.100204 0.1405147
+#>        sigma.e    range     sigma
+#> true 1.0000000 4.000000 1.0000000
+#> mean 1.0442015 4.048214 0.9017741
+#> sd   0.0381354 1.100800 0.1405150
 ```
 
 We can also visualize these these posterior marginal distributions with

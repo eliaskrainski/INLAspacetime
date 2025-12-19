@@ -1073,7 +1073,7 @@ res_summary_hyper_rounded <- round(result_norm$summary.hyperpar, 2)
 |                                         |  mean |   sd | 0.025quant | 0.5quant | 0.975quant |  mode |
 |:----------------------------------------|------:|-----:|-----------:|---------:|-----------:|------:|
 | Precision for the Gaussian observations | 10.85 | 0.36 |      10.16 |    10.84 |      11.57 | 10.83 |
-| Theta1 for field                        | -0.41 | 0.08 |      -0.56 |    -0.41 |      -0.23 | -0.42 |
+| Theta1 for field                        | -0.41 | 0.08 |      -0.57 |    -0.41 |      -0.24 | -0.41 |
 | Theta2 for field                        |  0.05 | 0.07 |      -0.09 |     0.05 |       0.19 |  0.04 |
 
 Summary of the posterior distribution of hyperparameters
@@ -1903,7 +1903,7 @@ knitr::kable(res_summary_hyper_rounded, caption = "Summary of the posterior dist
 
 |                                         |  mean |   sd | 0.025quant | 0.5quant | 0.975quant |  mode |
 |:----------------------------------------|------:|-----:|-----------:|---------:|-----------:|------:|
-| Precision for the Gaussian observations | 11.16 | 0.13 |      10.90 |    11.15 |      11.41 | 11.15 |
+| Precision for the Gaussian observations | 11.15 | 0.13 |      10.90 |    11.15 |      11.41 | 11.14 |
 | Theta1 for i                            | -0.45 | 0.04 |      -0.54 |    -0.45 |      -0.37 | -0.45 |
 | Theta2 for i                            |  0.03 | 0.04 |      -0.05 |     0.03 |       0.11 |  0.03 |
 | GroupRho for i                          |  0.98 | 0.00 |       0.98 |     0.98 |       0.98 |  0.98 |
@@ -2137,31 +2137,31 @@ Predicted random fields (u) for all years
     ## 
     ## other attached packages:
     ##  [1] ggpubr_0.6.2             DOYPAColors_0.0.2        s2_1.1.9                
-    ##  [4] ggOceanMaps_2.2.0        INLAspacetime_0.1.12.013 INLAtools_0.0.5         
-    ##  [7] inlabru_2.13.0           fmesher_0.5.0            ggplot2_4.0.1           
-    ## [10] sf_1.0-22                rnaturalearth_1.1.0      rmarkdown_2.30          
-    ## [13] knitr_1.50               INLA_25.11.22            Matrix_1.7-4            
+    ##  [4] ggOceanMaps_2.2.0        INLAspacetime_0.1.12.014 INLAtools_0.0.5         
+    ##  [7] inlabru_2.13.0           fmesher_0.6.1            ggplot2_4.0.1           
+    ## [10] sf_1.0-23                rnaturalearth_1.1.0      rmarkdown_2.30          
+    ## [13] knitr_1.50               INLA_25.12.16            Matrix_1.7-4            
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] gtable_0.3.6            xfun_0.54               bslib_0.9.0            
+    ##  [1] gtable_0.3.6            xfun_0.55               bslib_0.9.0            
     ##  [4] rstatix_0.7.3           lattice_0.22-7          vctrs_0.6.5            
     ##  [7] tools_4.5.2             generics_0.1.4          spdep_1.4-1            
-    ## [10] parallel_4.5.2          tibble_3.3.0            proxy_0.4-27           
+    ## [10] parallel_4.5.2          tibble_3.3.0            proxy_0.4-28           
     ## [13] pkgconfig_2.0.3         KernSmooth_2.23-26      RColorBrewer_1.1-3     
     ## [16] S7_0.2.1                desc_1.4.3              lifecycle_1.0.4        
     ## [19] deldir_2.0-4            compiler_4.5.2          farver_2.1.2           
     ## [22] MatrixModels_0.5-4      textshaping_1.0.4       carData_3.0-5          
-    ## [25] stars_0.6-8             htmltools_0.5.8.1       class_7.3-23           
-    ## [28] sass_0.4.10             yaml_2.3.10             Formula_1.2-5          
+    ## [25] stars_0.7-0             htmltools_0.5.9         class_7.3-23           
+    ## [28] sass_0.4.10             yaml_2.3.12             Formula_1.2-5          
     ## [31] car_3.1-3               tidyr_1.3.1             pillar_1.11.1          
     ## [34] pkgdown_2.2.0           jquerylib_0.1.4         classInt_0.4-11        
-    ## [37] cachem_1.1.0            wk_0.9.4                boot_1.3-32            
+    ## [37] cachem_1.1.0            wk_0.9.5                boot_1.3-32            
     ## [40] abind_1.4-8             rnaturalearthdata_1.0.0 Deriv_4.2.0            
     ## [43] tidyselect_1.2.1        digest_0.6.39           dplyr_1.1.4            
     ## [46] purrr_1.2.0             labeling_0.4.3          splines_4.5.2          
     ## [49] cowplot_1.2.0           fastmap_1.2.0           grid_4.5.2             
-    ## [52] cli_3.6.5               magrittr_2.0.4          broom_1.0.10           
-    ## [55] e1071_1.7-16            withr_3.0.2             backports_1.5.0        
+    ## [52] cli_3.6.5               magrittr_2.0.4          broom_1.0.11           
+    ## [55] e1071_1.7-17            withr_3.0.2             backports_1.5.0        
     ## [58] scales_1.4.0            sp_2.2-0                spData_2.3.4           
     ## [61] gridExtra_2.3           ggsignif_0.6.4          ragg_1.5.0             
     ## [64] evaluate_1.0.5          rlang_1.1.6             Rcpp_1.1.0             

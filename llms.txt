@@ -296,9 +296,11 @@ in the results.
 - [`lgsConstant()`](https://eliaskrainski.github.io/INLAspacetime/reference/paramsUtils.md)
   [`params2gammas()`](https://eliaskrainski.github.io/INLAspacetime/reference/paramsUtils.md)
   [`gammas2params()`](https://eliaskrainski.github.io/INLAspacetime/reference/paramsUtils.md)
-  : Functions to help converting from/to user/internal parametrization.
-  The internal parameters are 'gamma_s, 'gamma_t', 'gamma_E' The user
-  parameters are 'r_s', 'r_t', 'sigma'
+  : User/internal parameters mapping functions
+
+- [`pclrange()`](https://eliaskrainski.github.io/INLAspacetime/reference/pcrange.md)
+  [`pcrange()`](https://eliaskrainski.github.io/INLAspacetime/reference/pcrange.md)
+  : Penalized Complexity (PC) prior for (log) range
 
 - [`Heron()`](https://eliaskrainski.github.io/INLAspacetime/reference/polyUtils.md)
   [`Area()`](https://eliaskrainski.github.io/INLAspacetime/reference/polyUtils.md)

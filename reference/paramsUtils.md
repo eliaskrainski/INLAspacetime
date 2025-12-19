@@ -1,12 +1,8 @@
-# Functions to help converting from/to user/internal parametrization. The internal parameters are 'gamma_s, 'gamma_t', 'gamma_E' The user parameters are 'r_s', 'r_t', 'sigma'
+# User/internal parameters mapping functions
 
 Functions to help converting from/to user/internal parametrization. The
 internal parameters are 'gamma_s, 'gamma_t', 'gamma_E' The user
 parameters are 'r_s', 'r_t', 'sigma'
-
-Convert from user parameters to SPDE parameters
-
-Convert from SPDE parameters to user parameters
 
 ## Usage
 
