@@ -10,8 +10,7 @@ explicitly).
 ## Usage
 
 ``` r
-# S3 method for class 'stModel_cgeneric'
-bru_get_mapper(model, ...)
+bru_get_mapper.stModel_cgeneric(model, ...)
 ```
 
 ## Arguments

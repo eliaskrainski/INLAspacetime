@@ -29,11 +29,8 @@
   Define a spacetime model object for the
   [`f()`](https://rdrr.io/pkg/INLA/man/f.html) call.
 
-- [`bru_get_mapper(`*`<stModel_cgeneric>`*`)`](https://eliaskrainski.github.io/INLAspacetime/reference/bru_get_mapper.stModel_cgeneric.md)
+- [`bru_get_mapper.stModel_cgeneric()`](https://eliaskrainski.github.io/INLAspacetime/reference/bru_get_mapper.stModel_cgeneric.md)
   : Mapper object for automatic inlabru interface
-
-- [`cWhittleMatern()`](https://eliaskrainski.github.io/INLAspacetime/reference/cWhittleMatern.md)
-  : Computes the Whittle-Matern correlation function.
 
 - [`cgeneric_sspde()`](https://eliaskrainski.github.io/INLAspacetime/reference/cgeneric_sspde.md)
   : Define the stationary SPDE cgeneric model for INLA.
