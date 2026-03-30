@@ -185,6 +185,15 @@ bfit <- inla(
 rbind(sfit$mode$theta,
       bfit$mode$theta)
 
+cbind(true = c(range, sigma),
+      stat = sfit$summary.hyperpar[, 1],
+      barr = exp(bfit$summary.hyperpar[, 1]))
+
+c(sd(sfit$summary.random$i$mean),
+  mean(sfit$summary.random$i$sd))
+c(sd(bfit$summary.random$i$mean),
+  mean(bfit$summary.random$i$sd))
+
 spmargs <- lapply(sfit$internal.marginals.hyperpar, function(m)
                  inla.tmarginal(exp, m))
 bpmargs <- lapply(bfit$internal.marginals.hyperpar, function(m)

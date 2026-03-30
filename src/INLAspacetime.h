@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <math.h>
+#include <Rmath.h>
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
@@ -46,6 +47,7 @@
 #define iszero(x) (((__typeof(x))(x)) == 0)
 #endif
 #endif
+
 #if __GNUC__ > 7
 typedef size_t fortran_charlen_t;
 #else
@@ -53,6 +55,22 @@ typedef int fortran_charlen_t;
 #endif
 #define F_ONE ((fortran_charlen_t)1)
 
+// print elements of a matrix
+#define printMat(_M, _nr, _nc, _msg)					      \
+if(1) {								                                \
+  int _i, _j;						                            \
+  printf("%s (%d x %d)\n", _msg, _nr, _nc);		  \
+  for(_i=0; _i<_nr; _i++) {				                \
+    for(_j=0; _j<_nc; _j++) {			               \
+      printf("%5.4f ", (_M)[(_nc) * _i + _j]); \
+    }						                                    \
+    printf("\n");					                         \
+  }							                                     \
+  printf("\n");						                          \
+}								                                      \
+
+void dposv_(char *uplo, int *n, int *nrhs, double *A,
+	    int *lda, double *B, int *ldb, int *info, fortran_charlen_t);
 void dgemv_(char *trans, int *M, int *N, double *alpha, double *A, int *LDA, double *x,
 	    int *incx, double *beta, double *y, int *incy, fortran_charlen_t);
 double ddot_(int *N, double *DX, int *INCX, double *DY, int *INCY);
@@ -66,3 +84,7 @@ double pclogrange(double logrange, double lamda, int dim);
 double pclogsigma(double logsigma, double lamda);
 void CSphere_gamma_alpha(double *lnGamma2, double *dalpha, double *cska);
 void ar2covk(int *n, int *k, double *a1, double *a2, double *r);
+void cWMatern(int *N, double *S2, double *Scale,
+              double *Nu, double *x, double *cc);
+void c2ad(int *N, int *M, int *Mi, double *cb,
+          double *cc, double *d, double *aa);

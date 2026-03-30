@@ -31,6 +31,8 @@
 static const R_CMethodDef CEntries[] = {
 	{"ar2covk", (DL_FUNC) &ar2covk, 5},
 	{"CSphere_gamma_alpha", (DL_FUNC) &CSphere_gamma_alpha, 3},
+	{"cWMatern", (DL_FUNC) &cWMatern, 6},
+	{"c2ad", (DL_FUNC) &c2ad, 7},
 	{NULL, NULL, 0}
 };
 
@@ -40,6 +42,6 @@ void
 #endif
     R_init_INLAspacetime(DllInfo *dll)
 {
-	R_registerRoutines(dll, CEntries, NULL, NULL, NULL);
+	R_registerRoutines(dll, CEntries,  NULL, NULL, NULL);
 	R_useDynamicSymbols(dll, FALSE);
 }

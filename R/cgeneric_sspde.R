@@ -81,6 +81,10 @@ cgeneric_sspde <-
       dotArgs$useINLAprecomp <- dotArgs$useINLAprecomp[1]
     }
     stopifnot(is.logical(dotArgs$useINLAprecomp))
+    if(is.na(INLAversion) && dotArgs$useINLAprecomp) {
+      warning("Upgrade INLA! useINLAprecomp set to FALSE")
+      dotArgs$useINLAprecomp <- FALSE
+    }
     libpath <- INLAtools::cgeneric_shlib(
       package = "INLAspacetime",
       useINLAprecomp = dotArgs$useINLAprecomp

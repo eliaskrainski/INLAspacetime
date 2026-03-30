@@ -125,6 +125,8 @@ ifit <- inla(
     control.compute = list(config = TRUE)
 )
 
+summary(ifit$summary.random$i$sd)
+
 ## the upper part of the prior
 Qub <- inla.as.sparse(
     ifit$misc$configs$config[[1]]$Qprior

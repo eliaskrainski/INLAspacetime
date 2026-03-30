@@ -5,7 +5,7 @@
 \alias{bru_get_mapper}
 \title{Mapper object for automatic inlabru interface}
 \usage{
-\method{bru_get_mapper}{stModel_cgeneric}(model, ...)
+bru_get_mapper.stModel_cgeneric(model, ...)
 }
 \arguments{
 \item{model}{The model object (of class \code{stModel_cgeneric}, from
