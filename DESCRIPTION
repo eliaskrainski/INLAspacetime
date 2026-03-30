@@ -42,7 +42,8 @@ Imports:
     stats,
     utils,
     sp,
-    sf
+    sf,
+    terra
 Suggests:
     INLA (>= 24.02.09),
     inlabru (>= 2.10.1),
