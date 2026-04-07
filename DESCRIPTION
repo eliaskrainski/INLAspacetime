@@ -31,22 +31,21 @@ RoxygenNote: 7.3.3
 NeedsCompilation: yes
 Roxygen: list(markdown = TRUE)
 Depends:
-    R (>= 4.3),
-    Matrix,
-    fmesher,
-    INLAtools (>= 0.1.1)
+    R (>= 4.3)
 Imports:
     graphics,
     grDevices,
     methods,
     stats,
     utils,
-    sp,
-    sf,
-    terra
+    Matrix,
+    fmesher,
+    INLAtools (>= 0.1.1),
+    inlabru (>= 2.14)
 Suggests:
+    sf,
+    terra,
     INLA (>= 24.02.09),
-    inlabru (>= 2.14),
     knitr,
     ggplot2,
     rmarkdown,
@@ -59,6 +58,7 @@ Suggests:
     s2,
     lubridate,
     ggOceanMaps,
+    sp,
     spdep
 VignetteBuilder: knitr
 BuildVignettes: true
