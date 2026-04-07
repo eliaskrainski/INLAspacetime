@@ -1,15 +1,9 @@
-
+## Compare the PC-prior for the practical range from
+##  inla.spde2.pcmatern, cgeneric(model='sspde'),
+##   and INLAtools::pcrange()
 library(fmesher)
 library(INLA)
 library(INLAspacetime)
-
-pclrange <- function(lrange, lam, d = 2, logdens = FALSE) {
-    dh <- 0.5 * d
-    out <- log(lam * dh) -dh * lrange - lam * exp(-dh * lrange) 
-    if(logdens)
-        return(out)
-    return(exp(out))
-}
 
 mesh <- fm_mesh_2d(
     loc = cbind(0, 0),

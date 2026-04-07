@@ -103,29 +103,4 @@ gammas2params <- function(lgammas, alpha.t, alpha.s, alpha.e, smanifold = "R2") 
     lsigma = 0.5 * (lct + lgsCs - lgammas[2]) - lgammas[3]
   ))
 }
-#' Penalized Complexity (PC) prior for (log) range
-#' @rdname pcrange
-#' @param lrange numeric with the log of the (practical) range
-#' @param lam numeric with the prior parameter
-#' @param d integer to specify the domain dimention
-#' @param logdens logical indicating if the density
-#' is to be returned in the log scale
-pclrange <- function(lrange, lam, d = 2, logdens = FALSE) {
-  dh <- 0.5 * d
-  out <- log(lam * dh) -dh * lrange - lam * exp(-dh * lrange)
-  if(logdens)
-    return(out)
-  return(exp(out))
-}
-#' @rdname pcrange
-#' @param range numeric with the of the (practical) range
-#' @export
-#' @examples
-#' # P(range < 2.0) = 0.1
-#'  lam <- -log(0.1) * 2.0
-#'  plot(function(x) pcrange(x, lam), 1/100, 10, n = 100)
-pcrange <- function(range, lam, d = 2, logdens = FALSE) {
-  pclrange(log(range), lam)/range
-}
-
 

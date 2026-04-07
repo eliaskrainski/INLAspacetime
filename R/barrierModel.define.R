@@ -56,7 +56,7 @@ barrierModel.define <-
     stopifnot(prior.sigma[2] >= 0)
     stopifnot(prior.sigma[2] < 1)
 
-    INLAversion <- INLAtools::packageCheck(
+    INLAversion <- packageCheck(
       name = "INLA",
       minimum_version = "24.10.07",
       quietly = TRUE
@@ -66,28 +66,19 @@ barrierModel.define <-
         warning("length(useINLAprecomp)>1, first taken!")
         useINLAprecomp <- useINLAprecomp[1]
       }
-      stopifnot(is.logical(useINLAprecomp))
-      if(is.na(INLAversion) & useINLAprecomp) {
-        stop("Update INLA or try `useINLAprecomp = FALSE`!")
-      }
-      if (useINLAprecomp) {
+      libpath <- cgeneric_shlib(
+        package = "INLAspacetime",
+        useINLAprecomp = useINLAprecomp,
+        debug = debug
+      )
+      if (useINLAprecomp)
         hasverbose <- (INLAversion<="25.02.10") ## to work with old C versions
-        libpath <- INLA::inla.external.lib("INLAspacetime")
-      } else {
-        hasverbose <- FALSE
-        libpath <- system.file("libs", package = "INLAspacetime")
-        if (Sys.info()["sysname"] == "Windows") {
-          libpath <- file.path(libpath, "INLAspacetime.dll")
-        } else {
-          libpath <- file.path(libpath, "INLAspacetime.so")
-        }
-      }
     } else {
       hasverbose <- FALSE
     }
     stopifnot(file.exists(libpath))
 
-    bfem <- INLAspacetime::mesh2fem.barrier(mesh, barrier.triangles)
+    bfem <- mesh2fem.barrier(mesh, barrier.triangles)
     n <- nrow(bfem$I)
 
     if(!is.list(barrier.triangles)) {
@@ -109,7 +100,7 @@ barrierModel.define <-
     }
     iC <- Diagonal(n, 1 / CC)
 
-    lmats <- INLAtools::upperPadding(
+    lmats <- upperPadding(
       list(
         ici = t(Imat) %*% iC %*% Imat,
         icd = t(Imat) %*% iC %*% Dmat,
@@ -129,7 +120,7 @@ barrierModel.define <-
     if(hasverbose) { ## to work with old C versions
       args0$verbose <- as.integer(0)
     }
-    if(INLAversion<="25.02.10") {
+    if(useINLAprecomp && (INLAversion<="25.02.10")) {
       args0$prs <- prior.range
     } else {
       args0$prange <- prior.range
@@ -137,7 +128,7 @@ barrierModel.define <-
     args0$psigma <- prior.sigma
 
     the_model <- do.call(
-      "inla.cgeneric.define",
+      "cgenericBuilder",
       c(args0,
         list(
         ii = lmats$graph@i,
@@ -161,7 +152,7 @@ barrierModel.define <-
 
     the_model$mapper <- NULL
     if(requireNamespace("inlabru")) {
-      if(!is.na(INLAtools::packageCheck(
+      if(!is.na(packageCheck(
         name = "inlabru",
         minimum_version = "2.12.0.9021",
         quietly = TRUE

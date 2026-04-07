@@ -83,8 +83,6 @@ stModel.precision <-
 #' 4. the matrix `T`
 #' 5. the model matrices `M_1`, ..., `M_m`
 #' @export
-#' @importFrom fmesher fm_fem
-#' @importFrom INLAtools upperPadding
 stModel.matrices <-
   function(smesh, tmesh, model, constr = FALSE) {
     stopifnot(inherits(smesh, "fm_mesh_2d"))

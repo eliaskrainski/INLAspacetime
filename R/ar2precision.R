@@ -56,7 +56,7 @@ ar2precision <- function(n, a) {
   }
   if (n > 3) {
     return(
-      INLAtools::Sparse(
+      Sparse(
         Matrix::sparseMatrix(
           i = c(1:n, 1:(n - 1), 1:(n - 2)),
           j = c(1:n, 2:n, 3:n),

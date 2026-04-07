@@ -72,7 +72,6 @@
 #' \doi{10.1214/22-STS864}.
 #' @export
 #'
-#' @importFrom stats dnorm pnorm complete.cases
 stats.inla <- function(m, i = NULL, y, fsummarize = mean) {
   crps.g <- function(y, m, s) {
     md <- y - m
@@ -86,9 +85,11 @@ stats.inla <- function(m, i = NULL, y, fsummarize = mean) {
   if (is.null(i)) {
     i <- 1:length(m$dic$local.dic)
   }
-  sigma2.mean <- INLA::inla.emarginal(
+## let it fail if INLA is not available...
+  sigma2.mean <- findGetFunction("inla.emarginal", "INLA")(
     function(x) exp(-x),
-    m$internal.marginals.hyperpar[[1]])
+    m$internal.marginals.hyperpar[[1]]
+  )
   r <- c(
     dic = fsummarize(m$dic$local.dic[i]),
     waic = fsummarize(m$waic$local.waic[i]),

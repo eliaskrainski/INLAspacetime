@@ -50,11 +50,11 @@ mesh2fem <- function(mesh, order = 2, barrier.triangles = NULL) {
   }
   ijx <- which((ii > 0) | (jj > 0))
   res <- list(
-    c0 = Matrix::sparseMatrix(i = 1:n, j = 1:n, x = c0, repr = "T"),
-    c1 = INLA::inla.as.dgTMatrix(Matrix::sparseMatrix(
+    c0 = Sparse(Matrix::sparseMatrix(i = 1:n, j = 1:n, x = c0, repr = "T")),
+    c1 = Sparse(Matrix::sparseMatrix(
       i = ii[ijx], j = jj[ijx], x = c1x[ijx], dims = c(n, n)
     )),
-    g1 = INLA::inla.as.dgTMatrix(Matrix::sparseMatrix(
+    g1 = Sparse(Matrix::sparseMatrix(
       i = ii[ijx], j = jj[ijx], x = g1x[ijx], dims = c(n, n)
     ))
   )
@@ -62,7 +62,7 @@ mesh2fem <- function(mesh, order = 2, barrier.triangles = NULL) {
   if (order > 1) {
     for (o in 2:order) {
       g1s <- res$g1 %*% Diagonal(n, 1 / c0)
-      res[[2 + o]] <- INLA::inla.as.dgTMatrix(g1s %*% res[[o + 1]])
+      res[[2 + o]] <- Sparse(g1s %*% res[[o + 1]])
     }
     names(res)[4:(order + 2)] <- paste0("g", 2:order)
     res$va <- matrix(c0, ncol = 1)
@@ -171,12 +171,12 @@ mesh2fem.barrier <- function(mesh, barrier.triangles = NULL) {
       Matrix::sparseMatrix(
         i = ii[ijx], j = jj[ijx], x = c1x[ijx], dims = c(n, n)
       )
-    res$D[[o]] <- INLA::inla.as.sparse(Matrix::sparseMatrix(
+    res$D[[o]] <- Sparse(Matrix::sparseMatrix(
       i = ii[ijx], j = jj[ijx], x = g1x[ijx], dims = c(n, n)
     ))
     res$C[[o]] <- c0
     res$hdim <- res$hdim + 1L
   }
-  res$I <- INLA::inla.as.sparse(res$I)
+  res$I <- Sparse(res$I)
   return(res)
 }

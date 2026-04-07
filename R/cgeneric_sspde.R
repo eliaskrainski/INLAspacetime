@@ -29,7 +29,6 @@
 #' [SORT vol.  48, no. 1, pp. 3-66](https://raco.cat/index.php/SORT/article/view/428665)
 #' <doi: 10.57645/20.8080.02.13>
 #' @return objects to be used in the f() formula term in INLA.
-#' @importFrom fmesher fm_manifold
 #' @export
 cgeneric_sspde <-
   function(mesh,
@@ -68,7 +67,7 @@ cgeneric_sspde <-
     stopifnot(control.priors$prange[2]<1)
     stopifnot(control.priors$psigma[2]<1)
 
-    INLAversion <- INLAtools::packageCheck(
+    INLAversion <- packageCheck(
       name = "INLA",
       minimum_version = "25.03.11",
       quietly = TRUE
@@ -85,7 +84,7 @@ cgeneric_sspde <-
       warning("Upgrade INLA! useINLAprecomp set to FALSE")
       dotArgs$useINLAprecomp <- FALSE
     }
-    libpath <- INLAtools::cgeneric_shlib(
+    libpath <- cgeneric_shlib(
       package = "INLAspacetime",
       useINLAprecomp = dotArgs$useINLAprecomp
     )
@@ -126,9 +125,9 @@ cgeneric_sspde <-
       print(c(cc = cc))
     }
 
-    fem <- fmesher::fm_fem(mesh, order = 2)
+    fem <- fm_fem(mesh, order = 2)
     stopifnot((n <- nrow(fem$g1))>0)
-    lmats <- INLAtools::upperPadding(
+    lmats <- upperPadding(
       fem[c("c0", "g1", "g2")],
       relative = FALSE,
       unique = TRUE,
@@ -137,7 +136,7 @@ cgeneric_sspde <-
     stopifnot(n == nrow(lmats$graph))
 
     the_model <- do.call(
-      what = INLAtools::cgenericBuilder,
+      what = "cgenericBuilder",
       args = list(
         model = "inla_cgeneric_sspde",
         shlib = libpath,
@@ -164,7 +163,7 @@ cgeneric_sspde <-
 
     the_model$mapper <- NULL
     if(requireNamespace("inlabru")) {
-      if(!is.na(INLAtools::packageCheck(
+      if(!is.na(packageCheck(
         name = "inlabru",
         minimum_version = "2.12.0.9021",
         quietly = TRUE

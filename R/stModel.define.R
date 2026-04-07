@@ -33,7 +33,6 @@
 #' [SORT vol.  48, no. 1, pp. 3-66](https://raco.cat/index.php/SORT/article/view/428665)
 #' <doi: 10.57645/20.8080.02.13>
 #' @export
-#' @importFrom fmesher fm_manifold
 stModel.define <-
   function(smesh, tmesh, model, control.priors,
            constr = FALSE, debug = FALSE,
@@ -72,7 +71,7 @@ stModel.define <-
     stopifnot(control.priors$prs[2]<1)
     stopifnot(control.priors$psigma[2]<1)
 
-    INLAversion <- INLAtools::packageCheck(
+    INLAversion <- packageCheck(
       name = "INLA",
       minimum_version = "23.08.16",
       quietly = TRUE
@@ -86,18 +85,13 @@ stModel.define <-
       if(is.na(INLAversion) & useINLAprecomp) {
         stop("Update INLA or try `useINLAprecomp = FALSE`!")
       }
-      if (useINLAprecomp) {
+      libpath <- cgeneric_shlib(
+        package = "INLAspacetime",
+        useINLAprecomp = useINLAprecomp,
+        debug = debug
+      )
+      if (useINLAprecomp)
         hasverbose <- (INLAversion<="25.02.10") ## to work with old C versions
-        libpath <- INLA::inla.external.lib("INLAspacetime")
-      } else {
-        hasverbose <- FALSE
-        libpath <- system.file("libs", package = "INLAspacetime")
-        if (Sys.info()["sysname"] == "Windows") {
-          libpath <- file.path(libpath, "INLAspacetime.dll")
-        } else {
-          libpath <- file.path(libpath, "INLAspacetime.so")
-        }
-      }
     } else {
       hasverbose <- FALSE ## assumed...
     }
@@ -145,7 +139,7 @@ stModel.define <-
     jmm <- pmatch(paste0("M", 1:nm), names(mm))
     stopifnot(length(jmm[complete.cases(jmm)]) == nm)
 
-    lmats <- INLAtools::upperPadding(
+    lmats <- upperPadding(
       mm[jmm], relative = FALSE)
     stopifnot(n == nrow(lmats$graph))
 
@@ -160,7 +154,7 @@ stModel.define <-
     }
 
     the_model <- do.call(
-      "inla.cgeneric.define",
+      "cgenericBuilder",
       c(args0,
         list(
         Rmanifold = as.integer(Rmanifold),
@@ -188,7 +182,7 @@ stModel.define <-
     if(requireNamespace("inlabru")) {
       ## (construct the mapper already here, but that would
       ## require loading inlabru even when it's not going to be used)
-      if(!is.na(INLAtools::packageCheck(
+      if(!is.na(packageCheck(
         name = "inlabru",
         minimum_version = "2.12.0.9021",
         quietly = TRUE

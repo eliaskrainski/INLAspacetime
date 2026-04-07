@@ -1,7 +1,7 @@
 Package: INLAspacetime
 Type: Package
 Title: Spatial and Spatio-Temporal Models using 'INLA'
-Version: 0.1.13.902
+Version: 0.1.13.905
 Authors@R: c(
   person("Elias Teixeira", "Krainski", email = "eliaskrainski@gmail.com",
          role = c("cre", "aut", "cph"), 
@@ -34,7 +34,7 @@ Depends:
     R (>= 4.3),
     Matrix,
     fmesher,
-    INLAtools (>= 0.0.5)
+    INLAtools (>= 0.1.1)
 Imports:
     graphics,
     grDevices,
@@ -46,7 +46,7 @@ Imports:
     terra
 Suggests:
     INLA (>= 24.02.09),
-    inlabru (>= 2.10.1),
+    inlabru (>= 2.14),
     knitr,
     ggplot2,
     rmarkdown,
