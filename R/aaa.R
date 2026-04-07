@@ -7,4 +7,5 @@
 #' @importFrom INLAtools is.zero packageCheck cgeneric_shlib
 #' @importFrom INLAtools Sparse upperPadding cgenericBuilder
 #' @importFrom INLAtools cgeneric prec graph mu initial prior
+#' @importFrom INLAtools findGetFunction
 NULL
