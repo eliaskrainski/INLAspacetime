@@ -1073,7 +1073,7 @@ res_summary_hyper_rounded <- round(result_norm$summary.hyperpar, 2)
 |                                         |  mean |   sd | 0.025quant | 0.5quant | 0.975quant |  mode |
 |:----------------------------------------|------:|-----:|-----------:|---------:|-----------:|------:|
 | Precision for the Gaussian observations | 10.85 | 0.36 |      10.16 |    10.84 |      11.57 | 10.83 |
-| Theta1 for field                        | -0.41 | 0.08 |      -0.56 |    -0.41 |      -0.24 | -0.41 |
+| Theta1 for field                        | -0.41 | 0.08 |      -0.57 |    -0.41 |      -0.24 | -0.41 |
 | Theta2 for field                        |  0.05 | 0.07 |      -0.09 |     0.05 |       0.19 |  0.04 |
 
 Summary of the posterior distribution of hyperparameters
@@ -1235,7 +1235,7 @@ res_summary_hyper_rounded <- round(result_norm$summary.hyperpar, 2)
 |                                         |  mean |   sd | 0.025quant | 0.5quant | 0.975quant |  mode |
 |:----------------------------------------|------:|-----:|-----------:|---------:|-----------:|------:|
 | Precision for the Gaussian observations | 10.85 | 0.36 |      10.16 |    10.84 |      11.57 | 10.83 |
-| Theta1 for i                            | -0.41 | 0.08 |      -0.57 |    -0.41 |      -0.24 | -0.41 |
+| Theta1 for i                            | -0.41 | 0.08 |      -0.56 |    -0.41 |      -0.23 | -0.42 |
 | Theta2 for i                            |  0.05 | 0.07 |      -0.09 |     0.05 |       0.19 |  0.04 |
 
 Summary of the posterior distribution of hyperparameters
@@ -1479,7 +1479,7 @@ res_summary_hyper_rounded <- round(result_ber$summary.hyperpar, 2)
 
 |                  |  mean |   sd | 0.025quant | 0.5quant | 0.975quant |  mode |
 |:-----------------|------:|-----:|-----------:|---------:|-----------:|------:|
-| Theta1 for field |  0.12 | 0.25 |      -0.36 |     0.11 |       0.63 |  0.08 |
+| Theta1 for field |  0.12 | 0.25 |      -0.36 |     0.11 |       0.63 |  0.09 |
 | Theta2 for field | -0.08 | 0.16 |      -0.39 |    -0.08 |       0.22 | -0.08 |
 
 Summary of the posterior distribution of hyperparameters

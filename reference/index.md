@@ -32,16 +32,6 @@
 - [`bru_get_mapper.stModel_cgeneric()`](https://eliaskrainski.github.io/INLAspacetime/reference/bru_get_mapper.stModel_cgeneric.md)
   : Mapper object for automatic inlabru interface
 
-- [`cgeneric_ast()`](https://eliaskrainski.github.io/INLAspacetime/reference/cgeneric_ast.md)
-  :
-
-  Build an `cgeneric` conditional autoregression spacetime model.
-
-- [`cgeneric_nngp()`](https://eliaskrainski.github.io/INLAspacetime/reference/cgeneric_nngp.md)
-  :
-
-  Build a `cgeneric` for Nearest Neighbour Gaussian Process.
-
 - [`cgeneric_sspde()`](https://eliaskrainski.github.io/INLAspacetime/reference/cgeneric_sspde.md)
   : Define the stationary SPDE cgeneric model for INLA.
 
