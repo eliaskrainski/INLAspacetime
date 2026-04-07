@@ -101,10 +101,9 @@ library(INLA)
 #> Loading required package: Matrix
 #> 
 library(INLAspacetime)
-#> Loading required package: fmesher
-#> Loading required package: INLAtools
 #> see more at https://eliaskrainski.github.io/INLAspacetime
 library(inlabru)
+#> Loading required package: fmesher
 library(patchwork)
 library(fmesher)
 ```
@@ -427,9 +426,9 @@ intercept with
 ``` r
 result$summary.fix
 #>              mean        sd 0.025quant 0.5quant 0.975quant     mode
-#> Intercept 10.1129 0.4112227    9.30403 10.10406   10.97201 10.10502
+#> Intercept 10.1131 0.4108101   9.305038 10.10429   10.97115 10.10524
 #>                    kld
-#> Intercept 1.144981e-06
+#> Intercept 1.029568e-06
 ```
 
 For the hyper-parameters the computations were performed in an internal
@@ -467,8 +466,8 @@ rbind(true = c(sigma.e = sigma.e, range = ranges[1], sigma = 1),
              unlist(inla.zmarginal(m[, -1], TRUE))[1:2]))
 #>         sigma.e    range     sigma
 #> true 1.00000000 4.000000 1.0000000
-#> mean 1.04420287 4.048613 0.9016896
-#> sd   0.03813028 1.100788 0.1405173
+#> mean 1.04438368 4.049249 0.9012520
+#> sd   0.03812052 1.096353 0.1405182
 ```
 
 We can also visualize these these posterior marginal distributions with

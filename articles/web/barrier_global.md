@@ -1235,7 +1235,7 @@ res_summary_hyper_rounded <- round(result_norm$summary.hyperpar, 2)
 |                                         |  mean |   sd | 0.025quant | 0.5quant | 0.975quant |  mode |
 |:----------------------------------------|------:|-----:|-----------:|---------:|-----------:|------:|
 | Precision for the Gaussian observations | 10.85 | 0.36 |      10.16 |    10.84 |      11.57 | 10.83 |
-| Theta1 for i                            | -0.41 | 0.08 |      -0.56 |    -0.41 |      -0.23 | -0.42 |
+| Theta1 for i                            | -0.41 | 0.08 |      -0.56 |    -0.41 |      -0.24 | -0.42 |
 | Theta2 for i                            |  0.05 | 0.07 |      -0.09 |     0.05 |       0.19 |  0.04 |
 
 Summary of the posterior distribution of hyperparameters
@@ -2137,37 +2137,37 @@ Predicted random fields (u) for all years
     ## 
     ## other attached packages:
     ##  [1] ggpubr_0.6.3             DOYPAColors_0.0.2        s2_1.1.9                
-    ##  [4] ggOceanMaps_2.3.0        inlabru_2.14.0           INLAspacetime_0.1.13.905
-    ##  [7] INLAtools_0.1.1          fmesher_0.7.0            ggplot2_4.0.2           
-    ## [10] sf_1.1-0                 rnaturalearth_1.2.0      rmarkdown_2.31          
-    ## [13] knitr_1.51               INLA_26.03.19            Matrix_1.7-4            
+    ##  [4] ggOceanMaps_2.3.0        inlabru_2.14.0           fmesher_0.7.0           
+    ##  [7] INLAspacetime_0.1.13.905 ggplot2_4.0.2            sf_1.1-0                
+    ## [10] rnaturalearth_1.2.0      rmarkdown_2.31           knitr_1.51              
+    ## [13] INLA_26.03.19            Matrix_1.7-4            
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] gtable_0.3.6            xfun_0.57               bslib_0.10.0           
     ##  [4] rstatix_0.7.3           lattice_0.22-9          vctrs_0.7.2            
     ##  [7] tools_4.5.3             generics_0.1.4          spdep_1.4-2            
     ## [10] parallel_4.5.3          tibble_3.3.1            proxy_0.4-29           
-    ## [13] pkgconfig_2.0.3         KernSmooth_2.23-26      RColorBrewer_1.1-3     
-    ## [16] S7_0.2.1                desc_1.4.3              lifecycle_1.0.5        
-    ## [19] deldir_2.0-4            compiler_4.5.3          farver_2.1.2           
-    ## [22] MatrixModels_0.5-4      textshaping_1.0.5       carData_3.0-6          
-    ## [25] stars_0.7-2             htmltools_0.5.9         class_7.3-23           
-    ## [28] sass_0.4.10             yaml_2.3.12             Formula_1.2-5          
-    ## [31] car_3.1-5               tidyr_1.3.2             pillar_1.11.1          
-    ## [34] pkgdown_2.2.0           jquerylib_0.1.4         classInt_0.4-11        
-    ## [37] cachem_1.1.0            wk_0.9.5                boot_1.3-32            
-    ## [40] abind_1.4-8             rnaturalearthdata_1.0.0 Deriv_4.2.0            
-    ## [43] tidyselect_1.2.1        digest_0.6.39           dplyr_1.2.1            
-    ## [46] purrr_1.2.1             labeling_0.4.3          splines_4.5.3          
-    ## [49] cowplot_1.2.0           fastmap_1.2.0           grid_4.5.3             
-    ## [52] cli_3.6.5               magrittr_2.0.5          broom_1.0.12           
-    ## [55] e1071_1.7-17            withr_3.0.2             backports_1.5.1        
-    ## [58] scales_1.4.0            sp_2.2-1                spData_2.3.4           
-    ## [61] gridExtra_2.3           ggsignif_0.6.4          ragg_1.5.2             
-    ## [64] evaluate_1.0.5          rlang_1.2.0             Rcpp_1.1.1             
-    ## [67] glue_1.8.0              DBI_1.3.0               jsonlite_2.0.0         
-    ## [70] plyr_1.8.9              R6_2.6.1                systemfonts_1.3.2      
-    ## [73] fs_2.0.1                units_1.0-1
+    ## [13] pkgconfig_2.0.3         INLAtools_0.1.1         KernSmooth_2.23-26     
+    ## [16] RColorBrewer_1.1-3      S7_0.2.1                desc_1.4.3             
+    ## [19] lifecycle_1.0.5         deldir_2.0-4            compiler_4.5.3         
+    ## [22] farver_2.1.2            MatrixModels_0.5-4      textshaping_1.0.5      
+    ## [25] carData_3.0-6           stars_0.7-2             htmltools_0.5.9        
+    ## [28] class_7.3-23            sass_0.4.10             yaml_2.3.12            
+    ## [31] Formula_1.2-5           car_3.1-5               tidyr_1.3.2            
+    ## [34] pillar_1.11.1           pkgdown_2.2.0           jquerylib_0.1.4        
+    ## [37] classInt_0.4-11         cachem_1.1.0            wk_0.9.5               
+    ## [40] boot_1.3-32             abind_1.4-8             rnaturalearthdata_1.0.0
+    ## [43] Deriv_4.2.0             tidyselect_1.2.1        digest_0.6.39          
+    ## [46] dplyr_1.2.1             purrr_1.2.1             labeling_0.4.3         
+    ## [49] splines_4.5.3           cowplot_1.2.0           fastmap_1.2.0          
+    ## [52] grid_4.5.3              cli_3.6.5               magrittr_2.0.5         
+    ## [55] broom_1.0.12            e1071_1.7-17            withr_3.0.2            
+    ## [58] backports_1.5.1         scales_1.4.0            sp_2.2-1               
+    ## [61] spData_2.3.4            gridExtra_2.3           ggsignif_0.6.4         
+    ## [64] ragg_1.5.2              evaluate_1.0.5          rlang_1.2.0            
+    ## [67] Rcpp_1.1.1              glue_1.8.0              DBI_1.3.0              
+    ## [70] jsonlite_2.0.0          plyr_1.8.9              R6_2.6.1               
+    ## [73] systemfonts_1.3.2       fs_2.0.1                units_1.0-1
 
 ## References
 

@@ -161,10 +161,9 @@ tutorial.</p>
 <span><span class="co">#&gt; Loading required package: Matrix</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/eliaskrainski/INLAspacetime" class="external-link">INLAspacetime</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading required package: fmesher</span></span>
-<span><span class="co">#&gt; Loading required package: INLAtools</span></span>
 <span><span class="co">#&gt; see more at https://eliaskrainski.github.io/INLAspacetime</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.inlabru.org" class="external-link">inlabru</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: fmesher</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://inlabru-org.github.io/fmesher/" class="external-link">fmesher</a></span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -432,9 +431,9 @@ the intercept with</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">result</span><span class="op">$</span><span class="va">summary.fix</span></span>
 <span><span class="co">#&gt;              mean        sd 0.025quant 0.5quant 0.975quant     mode</span></span>
-<span><span class="co">#&gt; Intercept 10.1129 0.4112227    9.30403 10.10406   10.97201 10.10502</span></span>
+<span><span class="co">#&gt; Intercept 10.1131 0.4108101   9.305038 10.10429   10.97115 10.10524</span></span>
 <span><span class="co">#&gt;                    kld</span></span>
-<span><span class="co">#&gt; Intercept 1.144981e-06</span></span></code></pre></div>
+<span><span class="co">#&gt; Intercept 1.029568e-06</span></span></code></pre></div>
 <p>For the hyper-parameters the computations were performed in an
 internal scale. That is log of range and
 log(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>σ</mi><annotation encoding="application/x-tex">\sigma</annotation></semantics></math>),
@@ -470,8 +469,8 @@ data:</p>
 <span>             <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/INLA/man/marginal.html" class="external-link">inla.zmarginal</a></span><span class="op">(</span><span class="va">m</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;         sigma.e    range     sigma</span></span>
 <span><span class="co">#&gt; true 1.00000000 4.000000 1.0000000</span></span>
-<span><span class="co">#&gt; mean 1.04420287 4.048613 0.9016896</span></span>
-<span><span class="co">#&gt; sd   0.03813028 1.100788 0.1405173</span></span></code></pre></div>
+<span><span class="co">#&gt; mean 1.04438368 4.049249 0.9012520</span></span>
+<span><span class="co">#&gt; sd   0.03812052 1.096353 0.1405182</span></span></code></pre></div>
 <p>We can also visualize these these posterior marginal distributions
 with</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">

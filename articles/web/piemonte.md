@@ -24,10 +24,9 @@ library(INLA)
 #> Loading required package: Matrix
 #> 
 library(INLAspacetime)
-#> Loading required package: fmesher
-#> Loading required package: INLAtools
 #> see more at https://eliaskrainski.github.io/INLAspacetime
 library(inlabru)
+#> Loading required package: fmesher
 library(fmesher)
 ```
 
@@ -301,13 +300,13 @@ Summary of the posterior marginal distributions for the fixed effects
 ``` r
 fit102$summary.fixed[, c(1, 2, 3, 5)]
 #>                  mean          sd   0.025quant   0.975quant
-#> Intercept  3.73691687 0.246502543  3.250502152  4.222994833
-#> A         -0.17939392 0.050051653 -0.278606154 -0.081298496
-#> WS        -0.06043038 0.008441584 -0.076973634 -0.043865556
-#> TEMP      -0.12241682 0.035188088 -0.191488686 -0.053479842
-#> HMIX      -0.02373298 0.013204714 -0.049588838  0.002200625
-#> PREC      -0.05355216 0.008606811 -0.070414985 -0.036658507
-#> EMI        0.03628280 0.015198315  0.006116003  0.065805913
+#> Intercept  3.73692994 0.246416167  3.250687730  4.222833925
+#> A         -0.17938520 0.050037917 -0.278569694 -0.081317040
+#> WS        -0.06042706 0.008441977 -0.076971117 -0.043861503
+#> TEMP      -0.12240638 0.035189307 -0.191480728 -0.053467121
+#> HMIX      -0.02373398 0.013205216 -0.049590815  0.002200607
+#> PREC      -0.05355078 0.008607090 -0.070414168 -0.036656599
+#> EMI        0.03628890 0.015196373  0.006126007  0.065808346
 ```
 
 For the hyperparameters, we transform the posterior marginal
@@ -337,10 +336,10 @@ shyper <- t(sapply(post.h, function(m)
   unlist(inla.zmarginal(m, silent = TRUE))))
 shyper[, c(1, 2, 3, 7)]
 #>                mean           sd  quant0.025  quant0.975
-#> sigma_e   0.1810207  0.003767295   0.1737469   0.1885422
-#> range_s 280.6392444 17.035789996 248.7888977 315.6769365
-#> range_t  49.8862868  8.133528915  36.0275541  67.9007204
-#> sigma_u   1.1370169  0.087193717   0.9775174   1.3197758
+#> sigma_e   0.1810165  0.003768799   0.1737456   0.1885468
+#> range_s 280.5970288 17.016322204 248.8238890 315.6350641
+#> range_t  49.8868299  8.123658756  36.0728898  67.9062408
+#> sigma_u   1.1371046  0.086972568   0.9782579   1.3196382
 ```
 
 However, it is better to look at the posterior marginal itself, and we
@@ -361,7 +360,7 @@ Cameletti et al. (2013) with
 c(shyper[c(1, 4, 2), 1], 
   a = exp(-h * sqrt(8 * 0.5) / shyper[3, 1]))
 #>     sigma_e     sigma_u     range_s           a 
-#>   0.1810207   1.1370169 280.6392444   0.9607018
+#>   0.1810165   1.1371046 280.5970288   0.9607023
 ```
 
 ## Comparing different models
@@ -402,11 +401,11 @@ The computing time for each model fit
 
 ``` r
 sapply(results, function(r) r$cpu.used)
-#>                u102        u121
-#> Pre       0.6272011   0.2264724
-#> Running 135.9698298 242.7034025
-#> Post      3.2782199   2.2119708
-#> Total   139.8752508 245.1418457
+#>                u102       u121
+#> Pre       0.6502872   0.243484
+#> Running 143.2216532 240.950477
+#> Post      3.4021046   2.279327
+#> Total   147.2740450 243.473288
 ```
 
 and the number of fn-calls during the optimization are
@@ -414,7 +413,7 @@ and the number of fn-calls during the optimization are
 ``` r
 sapply(results, function(r) r$misc$nfunc)
 #> u102 u121 
-#>  332  383
+#>  342  373
 ```
 
 The posterior mode for each parameter in each model (in internal scale)
@@ -423,10 +422,10 @@ are
 ``` r
 sapply(results, function(r) r$mode$theta)
 #>                                                  u102      u121
-#> Log precision for the Gaussian observations 3.4191220  3.592162
-#> Theta1 for field                            5.6341565  7.293052
-#> Theta2 for field                            3.8870315 10.987443
-#> Theta3 for field                            0.1214187  2.156606
+#> Log precision for the Gaussian observations 3.4192963  3.593933
+#> Theta1 for field                            5.6337056  7.290641
+#> Theta2 for field                            3.8858359 10.979087
+#> Theta3 for field                            0.1210402  2.153984
 ```
 
 We compute the posterior marginal distribution for the hyper-parameters
@@ -509,8 +508,8 @@ t(sapply(results, function(r) {
     LCPO = -mean(log(r$cpo$cpo), na.rm = TRUE))
 }))
 #>             DIC       WAIC        LPO       LCPO
-#> u102 -0.3767682 -0.2595370 -0.4053040 -0.1173983
-#> u121 -0.4110414 -0.3523317 -0.5077186 -0.1157675
+#> u102 -0.3767799 -0.2596172 -0.4053672 -0.1174178
+#> u121 -0.4110723 -0.3528106 -0.5081760 -0.1158390
 ```
 
 ## The automatic group-leave-out cross validation
@@ -537,7 +536,7 @@ g5cv$u102$group[[100]]
 #> [1]  52  76  98 100 106 124
 #> 
 #> $corr
-#> [1] 0.2577355 0.4291153 0.3004867 1.0000000 0.3299806 0.4291153
+#> [1] 0.2575712 0.4289893 0.3003958 1.0000000 0.3299058 0.4289893
 ```
 
 and for the result under model “121” we have
@@ -548,7 +547,7 @@ g5cv$u121$group[[100]]
 #> [1]  52  76  98 100 124 148
 #> 
 #> $corr
-#> [1] 0.1664949 0.3732036 0.1664949 1.0000000 0.3755628 0.1624894
+#> [1] 0.1659084 0.3725665 0.1659084 1.0000000 0.3749294 0.1619258
 ```
 
 which has intersection but are not the same, for the model setup used.
@@ -581,7 +580,7 @@ number is better
 ``` r
 sapply(g5cv, function(r) -mean(log(r$cv), na.rm = TRUE))
 #>       u102       u121 
-#> 0.08188544 0.11413084
+#> 0.08176397 0.11370898
 ```
 
 ## References
