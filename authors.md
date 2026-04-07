@@ -15,13 +15,13 @@ Source:
 [`DESCRIPTION`](https://github.com/eliaskrainski/INLAspacetime/blob/master/DESCRIPTION)
 
 Krainski E, Lindgren F, Rue H (2026). *INLAspacetime: Spatial and
-Spatio-Temporal Models using 'INLA'*. R package version 0.1.13.902,
+Spatio-Temporal Models using 'INLA'*. R package version 0.1.13.905,
 <https://github.com/eliaskrainski/INLAspacetime>.
 
     @Manual{,
       title = {INLAspacetime: Spatial and Spatio-Temporal Models using 'INLA'},
       author = {Elias Teixeira Krainski and Finn Lindgren and Haavard Rue},
       year = {2026},
-      note = {R package version 0.1.13.902},
+      note = {R package version 0.1.13.905},
       url = {https://github.com/eliaskrainski/INLAspacetime},
     }

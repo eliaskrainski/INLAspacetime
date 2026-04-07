@@ -427,9 +427,9 @@ intercept with
 ``` r
 result$summary.fix
 #>               mean        sd 0.025quant 0.5quant 0.975quant     mode
-#> Intercept 10.11291 0.4112994   9.303879 10.10407   10.97218 10.10503
+#> Intercept 10.11289 0.4111901   9.304086 10.10405   10.97192 10.10501
 #>                    kld
-#> Intercept 1.146258e-06
+#> Intercept 1.137877e-06
 ```
 
 For the hyper-parameters the computations were performed in an internal
@@ -467,8 +467,8 @@ rbind(true = c(sigma.e = sigma.e, range = ranges[1], sigma = 1),
              unlist(inla.zmarginal(m[, -1], TRUE))[1:2]))
 #>         sigma.e    range     sigma
 #> true 1.00000000 4.000000 1.0000000
-#> mean 1.04420071 4.048593 0.9017374
-#> sd   0.03813219 1.101092 0.1405611
+#> mean 1.04419247 4.048179 0.9016677
+#> sd   0.03813106 1.100175 0.1404466
 ```
 
 We can also visualize these these posterior marginal distributions with
