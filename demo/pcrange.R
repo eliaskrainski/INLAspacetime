@@ -71,10 +71,10 @@ fit2b <- inla(
 par(mfrow = c(2, 1), mar = c(4,4,1,1), mgp = c(2,1,0), las = 1, bty = 'n')
 plot(fit1$marginals.hyperpar[[1]], type = 'l', log = 'x')
 lines(fit2$marginals.hyperpar[[1]], col = 2, lty = 2, lwd = 2)
-plot(function(x) pclrange(log(x), -log(0.95)*50)/x,
+plot(function(x) pcrange(x, -log(0.95)*50)/x,
      0.1, 200, n = 10001, add = TRUE, ylab = '',
      col = 5, lty = 3, lwd = 3)
-plot(function(x) pclrange(log(x), -log(0.05)*5)/x,
+plot(function(x) pcrange(x, -log(0.05)*5)/x,
      0.1, 200, n = 10001, add = TRUE, ylab = '',
      col = 6, lty = 3, lwd = 3)
 
