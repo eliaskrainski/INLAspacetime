@@ -7,3 +7,4 @@ tests/*
 ^_pkgdown.yml$
 ^doc$
 ^Meta$
+^jarl\.toml$
