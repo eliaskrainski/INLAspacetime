@@ -1235,7 +1235,7 @@ res_summary_hyper_rounded <- round(result_norm$summary.hyperpar, 2)
 |                                         |  mean |   sd | 0.025quant | 0.5quant | 0.975quant |  mode |
 |:----------------------------------------|------:|-----:|-----------:|---------:|-----------:|------:|
 | Precision for the Gaussian observations | 10.85 | 0.36 |      10.16 |    10.84 |      11.57 | 10.83 |
-| Theta1 for i                            | -0.41 | 0.08 |      -0.56 |    -0.41 |      -0.24 | -0.42 |
+| Theta1 for i                            | -0.41 | 0.08 |      -0.56 |    -0.41 |      -0.24 | -0.41 |
 | Theta2 for i                            |  0.05 | 0.07 |      -0.09 |     0.05 |       0.19 |  0.04 |
 
 Summary of the posterior distribution of hyperparameters
@@ -1903,9 +1903,9 @@ knitr::kable(res_summary_hyper_rounded, caption = "Summary of the posterior dist
 
 |                                         |  mean |   sd | 0.025quant | 0.5quant | 0.975quant |  mode |
 |:----------------------------------------|------:|-----:|-----------:|---------:|-----------:|------:|
-| Precision for the Gaussian observations | 11.16 | 0.13 |      10.90 |    11.15 |      11.41 | 11.15 |
+| Precision for the Gaussian observations | 11.15 | 0.13 |      10.90 |    11.15 |      11.41 | 11.14 |
 | Theta1 for i                            | -0.45 | 0.04 |      -0.54 |    -0.45 |      -0.37 | -0.45 |
-| Theta2 for i                            |  0.03 | 0.04 |      -0.05 |     0.03 |       0.11 |  0.03 |
+| Theta2 for i                            |  0.03 | 0.04 |      -0.06 |     0.03 |       0.11 |  0.04 |
 | GroupRho for i                          |  0.98 | 0.00 |       0.98 |     0.98 |       0.98 |  0.98 |
 
 Summary of the posterior distribution of hyperparameters
@@ -2147,7 +2147,7 @@ Predicted random fields (u) for all years
     ##  [4] rstatix_0.7.3           lattice_0.22-9          vctrs_0.7.2            
     ##  [7] tools_4.5.3             generics_0.1.4          spdep_1.4-2            
     ## [10] parallel_4.5.3          tibble_3.3.1            proxy_0.4-29           
-    ## [13] pkgconfig_2.0.3         INLAtools_0.1.1         KernSmooth_2.23-26     
+    ## [13] pkgconfig_2.0.3         INLAtools_0.1.2         KernSmooth_2.23-26     
     ## [16] RColorBrewer_1.1-3      S7_0.2.1                desc_1.4.3             
     ## [19] lifecycle_1.0.5         deldir_2.0-4            compiler_4.5.3         
     ## [22] farver_2.1.2            MatrixModels_0.5-4      textshaping_1.0.5      
@@ -2160,7 +2160,7 @@ Predicted random fields (u) for all years
     ## [43] Deriv_4.2.0             tidyselect_1.2.1        digest_0.6.39          
     ## [46] dplyr_1.2.1             purrr_1.2.1             labeling_0.4.3         
     ## [49] splines_4.5.3           cowplot_1.2.0           fastmap_1.2.0          
-    ## [52] grid_4.5.3              cli_3.6.5               magrittr_2.0.5         
+    ## [52] grid_4.5.3              cli_3.6.6               magrittr_2.0.5         
     ## [55] broom_1.0.12            e1071_1.7-17            withr_3.0.2            
     ## [58] backports_1.5.1         scales_1.4.0            sp_2.2-1               
     ## [61] spData_2.3.4            gridExtra_2.3           ggsignif_0.6.4         
