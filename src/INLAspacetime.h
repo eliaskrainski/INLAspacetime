@@ -78,7 +78,7 @@ double ddot_(int *N, double *DX, int *INCX, double *DY, int *INCY);
 inla_cgeneric_func_tp inla_cgeneric_ast;
 inla_cgeneric_func_tp inla_cgeneric_ar2ss_model;
 inla_cgeneric_func_tp inla_cgeneric_barrier;
-inla_cgeneric_func_tp inla_cgeneric_nngp.c;
+inla_cgeneric_func_tp inla_cgeneric_nngp;
 inla_cgeneric_func_tp inla_cgeneric_sspde;
 inla_cgeneric_func_tp inla_cgeneric_sstspde;
 
