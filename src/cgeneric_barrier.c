@@ -192,12 +192,12 @@ double *inla_cgeneric_barrier(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 		if (ifix[0] == 0) {
 			lam = -log(prange->doubles[1]) / prange->doubles[0];
 //			ret[0] += log(lam1 * daux) - daux * theta[ith] - lam1 * exp(-daux * theta[ith]) + log(daux);
-			ret[0] += pclogrange(theta[ith], lam, 2L);
+			ret[0] += Ist_pc_logrange(theta[ith], lam, 2L);
 			ith++;
 		}
 		if (ifix[1] == 0) {
 			lam = -log(psigma->doubles[1]) / psigma->doubles[0];
-		  ret[0] += pclogsigma(theta[ith], lam);
+		  ret[0] += Ist_pc_logsigma(theta[ith], lam);
 		  ith++;
 		}
 		assert(ith == nth);

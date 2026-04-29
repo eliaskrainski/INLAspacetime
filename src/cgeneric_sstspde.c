@@ -274,18 +274,18 @@ double *inla_cgeneric_sstspde(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgen
 		if (ifix[0] == 0) {
 			lam = -log(prs->doubles[1]) * pow(prs->doubles[0], daux);
 //			ret[0] += log(lam) - daux * theta[ith] - lam * exp(-daux * theta[ith]) + log(daux);
-			ret[0] += pclogrange(theta[ith], lam, dimension);
+			ret[0] += Ist_pc_logrange(theta[ith], lam, dimension);
 			ith++;
 		}
 		if (ifix[1] == 0) {
 			lam = -log(prt->doubles[1]) * sqrt(prt->doubles[0]);
 //			ret[0] += log(lam) - 0.5 * theta[ith] - lam * exp(-0.5 * theta[ith]) + log(0.5);
-			ret[0] += pclogrange(theta[ith], lam, 1L);
+			ret[0] += Ist_pc_logrange(theta[ith], lam, 1L);
 			ith++;
 		}
 		if (ifix[2] == 0) {
 			lam = -log(psigma->doubles[1]) / psigma->doubles[0];
-			ret[0] += pclogsigma(theta[ith], lam);
+			ret[0] += Ist_pc_logsigma(theta[ith], lam);
 			ith++;
 		}
 		assert(ith == nth);
