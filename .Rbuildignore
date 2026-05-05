@@ -7,5 +7,4 @@ tests/*
 ^_pkgdown.yml$
 ^doc$
 ^Meta$
-^\.positai$
-^\.claude$
+^jarl\.toml$
