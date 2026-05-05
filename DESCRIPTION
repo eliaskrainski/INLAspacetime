@@ -1,7 +1,7 @@
 Package: INLAspacetime
 Type: Package
 Title: Spatial and Spatio-Temporal Models using 'INLA'
-Version: 0.1.14
+Version: 0.1.13.907
 Authors@R: c(
   person(given = "Elias", 
          family = "Teixeira Krainski", 
