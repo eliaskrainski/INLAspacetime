@@ -71,17 +71,19 @@ if(1) {								                                \
 
 void dposv_(char *uplo, int *n, int *nrhs, double *A,
 	    int *lda, double *B, int *ldb, int *info, fortran_charlen_t);
-void dgemv_(char *trans, int *M, int *N, double *alpha, double *A, int *LDA, double *x,
+void dgemv_(const char *trans, int *M, int *N, double *alpha, double *A, int *LDA, double *x,
 	    int *incx, double *beta, double *y, int *incy, fortran_charlen_t);
 double ddot_(int *N, double *DX, int *INCX, double *DY, int *INCY);
 
+inla_cgeneric_func_tp inla_cgeneric_ast;
 inla_cgeneric_func_tp inla_cgeneric_ar2ss_model;
-inla_cgeneric_func_tp inla_cgeneric_sspde;
 inla_cgeneric_func_tp inla_cgeneric_barrier;
+inla_cgeneric_func_tp inla_cgeneric_nngp;
+inla_cgeneric_func_tp inla_cgeneric_sspde;
 inla_cgeneric_func_tp inla_cgeneric_sstspde;
 
-double pclogrange(double logrange, double lamda, int dim);
-double pclogsigma(double logsigma, double lamda);
+double Ist_pc_logrange(double logrange, double lamda, int dim);
+double Ist_pc_logsigma(double lsigma, double lam);
 void CSphere_gamma_alpha(double *lnGamma2, double *dalpha, double *cska);
 void ar2covk(int *n, int *k, double *a1, double *a2, double *r);
 void cWMatern(int *N, double *S2, double *Scale,

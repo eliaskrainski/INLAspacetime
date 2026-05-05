@@ -20,3 +20,4 @@ vignettes/web/piemonte_files/figure-latex/smeshvis-1.png
 vignettes/web/*.rds
 /doc/
 /Meta/
+.positai

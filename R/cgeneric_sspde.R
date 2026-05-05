@@ -16,9 +16,10 @@
 #'  `useINLAprecomp` logical, default is TRUE, indicating if it is to
 #' be used the shared object pre-compiled by INLA.
 #' @note
-#' This is the stationary case of [INLA::inla.spde2.pcmatern()]
-#' with slight change on the marginal variance when the domain is
-#' the sphere, following Eq. (23) in Lindgren et. al. (2024).
+#' This is the stationary case of the `inla.spde2.pcmatern` function
+#' in the INLA package with slight change on the marginal variance
+#' when the domain is the sphere, as it follows the Eq. (23) in
+#' Lindgren et. al. (2024).
 #' @references
 #' Geir-Arne Fuglstad, Daniel Simpson, Finn Lindgren & Håvard Rue (2019).
 #' Constructing Priors that Penalize the Complexity of Gaussian Random Fields.
@@ -84,7 +85,7 @@ cgeneric_sspde <-
       warning("Upgrade INLA! useINLAprecomp set to FALSE")
       dotArgs$useINLAprecomp <- FALSE
     }
-    libpath <- cgeneric_shlib(
+    libpath <- cgeneric_shlib_path(
       package = "INLAspacetime",
       useINLAprecomp = dotArgs$useINLAprecomp
     )

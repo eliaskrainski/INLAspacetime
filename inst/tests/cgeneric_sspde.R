@@ -45,8 +45,8 @@ spde2 <- cgeneric_sspde(
     control.priors = list(
         prange = c(5, 0.05),
         psigma = c(1, NA)
-    ), useINLAprecomp = FALSE)
-Q2 <- prec(spde2, theta = log(c(50)))
+    ))
+Q2 <- cgeneric_Q(spde2, theta = log(c(50)))
 
 all.equal(Q1, Q2)
 
@@ -58,8 +58,8 @@ fit2 <- inla(
     y ~ 0 + f(s, model = spde2), data = dataf,
     control.mode = cmode)
 
-q1 <- prec(fit1)
-q2 <- prec(fit2)
+q1 <- cgeneric_Q(fit1)
+q2 <- cgeneric_Q(fit2)
 
 all.equal(q1, q2)
 all.equal(Q1, q2)
@@ -164,10 +164,10 @@ spde2 <- cgeneric_sspde(
     control.priors = list(
         prange = c(param0[1], 0.5),
         psigma = c(param0[2], 0.5)
-    ), useINLAprecomp = FALSE
+    )
 )
 
-Q2 <- forceSymmetric(prec(spde2, theta = theta0))
+Q2 <- forceSymmetric(cgeneric_Q(spde2, theta = theta0))
 
 all.equal(Q1, Q2)
 
@@ -179,8 +179,8 @@ fit2 <- inla(
 grep("fn-calls=", fit1$logfile, value = TRUE)[1]
 grep("fn-calls=", fit2$logfile, value = TRUE)[1]
 
-q1 <- prec(fit1)
-q2 <- prec(fit2)
+q1 <- cgeneric_Q(fit1)
+q2 <- cgeneric_Q(fit2)
 
 all.equal(q1, q2)
 

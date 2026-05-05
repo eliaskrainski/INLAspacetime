@@ -35,9 +35,10 @@ objects to be used in the f() formula term in INLA.
 Define the stationary SPDE cgeneric model for INLA.
 }
 \note{
-This is the stationary case of \code{\link[INLA:inla.spde2.pcmatern]{INLA::inla.spde2.pcmatern()}}
-with slight change on the marginal variance when the domain is
-the sphere, following Eq. (23) in Lindgren et. al. (2024).
+This is the stationary case of the \code{inla.spde2.pcmatern} function
+in the INLA package with slight change on the marginal variance
+when the domain is the sphere, as it follows the Eq. (23) in
+Lindgren et. al. (2024).
 }
 \references{
 Geir-Arne Fuglstad, Daniel Simpson, Finn Lindgren & Håvard Rue (2019).

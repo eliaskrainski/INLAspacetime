@@ -66,7 +66,7 @@ barrierModel.define <-
         warning("length(useINLAprecomp)>1, first taken!")
         useINLAprecomp <- useINLAprecomp[1]
       }
-      libpath <- cgeneric_shlib(
+      libpath <- cgeneric_shlib_path(
         package = "INLAspacetime",
         useINLAprecomp = useINLAprecomp,
         debug = debug

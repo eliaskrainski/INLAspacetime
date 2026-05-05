@@ -1,9 +1,11 @@
 Package: INLAspacetime
 Type: Package
 Title: Spatial and Spatio-Temporal Models using 'INLA'
-Version: 0.1.13.905
+Version: 0.1.14
 Authors@R: c(
-  person("Elias Teixeira", "Krainski", email = "eliaskrainski@gmail.com",
+  person(given = "Elias", 
+         family = "Teixeira Krainski", 
+         email = "elias.krainski@kaust.edu.sa",
          role = c("cre", "aut", "cph"), 
          comment = c(ORCID = "0000-0002-7063-2615")),
   person("Finn", "Lindgren", email = "finn.lindgren@gmail.com",
@@ -23,7 +25,6 @@ Description: Prepare objects to implement models over spatial and
   <https://raco.cat/index.php/SORT/article/view/428665>. 
   Details are provided in the available vignettes and from the URL bellow.
 URL: https://github.com/eliaskrainski/INLAspacetime
-Additional_repositories: https://inla.r-inla-download.org/R/testing
 BugReports: https://github.com/eliaskrainski/INLAspacetime/issues
 License: GPL (>=2) 
 Encoding: UTF-8
@@ -40,12 +41,11 @@ Imports:
     utils,
     Matrix,
     fmesher,
-    INLAtools (>= 0.1.1),
+    INLAtools (> 0.1.3),
     inlabru (>= 2.14)
 Suggests:
     sf,
     terra,
-    INLA (>= 24.02.09),
     knitr,
     ggplot2,
     rmarkdown,

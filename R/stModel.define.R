@@ -85,7 +85,7 @@ stModel.define <-
       if(is.na(INLAversion) & useINLAprecomp) {
         stop("Update INLA or try `useINLAprecomp = FALSE`!")
       }
-      libpath <- cgeneric_shlib(
+      libpath <- cgeneric_shlib_path(
         package = "INLAspacetime",
         useINLAprecomp = useINLAprecomp,
         debug = debug

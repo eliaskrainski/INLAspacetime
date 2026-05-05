@@ -14,8 +14,3 @@ INLAspacetime <- function() {
   print("Welcome to the INLAspacetime package!")
   utils::browseURL("https://eliaskrainski.github.io/INLAspacetime")
 }
-.onAttach <- function(...) {
-  packageStartupMessage(
-   "see more at https://eliaskrainski.github.io/INLAspacetime"
-  )
-}

@@ -1,6 +1,6 @@
 #include "INLAspacetime.h"
 
-double pclogrange(double lrange, double lam, int dim) {
+double Ist_pc_logrange(double lrange, double lam, int dim) {
   // return log of the PC-prior density for the log of the
   // practical range parameter in the Mat'ern model defined as
   //     r = (8 \nu) / \kappa
@@ -10,7 +10,7 @@ double pclogrange(double lrange, double lam, int dim) {
   return log(lam * dh) - dh * lrange - lam * exp(-dh * lrange);
 }
 
-double pclogsigma(double lsigma, double lam) {
+double Ist_pc_logsigma(double lsigma, double lam) {
   // return log of the PC-prior density for the log of the
   // standard deviation parameter.
   // See Simpson et. al. (2017) for this prior definition
