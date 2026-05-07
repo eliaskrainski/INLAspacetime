@@ -1,19 +1,14 @@
 Package: INLAspacetime
 Type: Package
 Title: Spatial and Spatio-Temporal Models using 'INLA'
-Version: 0.1.13.907
+Version: 0.1.14.901
 Authors@R: c(
-  person(given = "Elias", 
-         family = "Teixeira Krainski", 
-         email = "elias.krainski@kaust.edu.sa",
-         role = c("cre", "aut", "cph"), 
-         comment = c(ORCID = "0000-0002-7063-2615")),
-  person("Finn", "Lindgren", email = "finn.lindgren@gmail.com",
-         role = c("aut"),
-         comment = c(ORCID = "0000-0002-5833-2011")),
-  person("Haavard", "Rue", email = "haavard.rue@kaust.edu.sa",
-         role = c("aut"),
-         comment = c(ORCID = "0000-0002-0222-1881"))
+    person("Elias", "Teixeira Krainski", , "elias.krainski@kaust.edu.sa", role = c("cre", "aut", "cph"),
+           comment = c(ORCID = "0000-0002-7063-2615")),
+    person("Finn", "Lindgren", , "finn.lindgren@gmail.com", role = "aut",
+           comment = c(ORCID = "0000-0002-5833-2011")),
+    person("Haavard", "Rue’", role = "aut",
+           comment = c(ORCID = "0000-0002-0222-1881"))
   )
 Description: Prepare objects to implement models over spatial and 
   spacetime domains with the 'INLA' package (<https://www.r-inla.org>).
@@ -28,7 +23,6 @@ URL: https://github.com/eliaskrainski/INLAspacetime
 BugReports: https://github.com/eliaskrainski/INLAspacetime/issues
 License: GPL (>=2) 
 Encoding: UTF-8
-RoxygenNote: 7.3.3
 NeedsCompilation: yes
 Roxygen: list(markdown = TRUE)
 Depends:
@@ -62,3 +56,4 @@ Suggests:
     spdep
 VignetteBuilder: knitr
 BuildVignettes: true
+Config/roxygen2/version: 8.0.0

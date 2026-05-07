@@ -34,6 +34,6 @@ Creates a projector matrix object.
 
 This is just for illustration purpose and one should consider the
 efficient functions available in the fmesher package,
-e.g. \code{\link[fmesher:fm_evaluate]{fmesher::fm_evaluator()}} and \code{\link[fmesher:fm_basis]{fmesher::fm_basis()}}.
+e.g. \code{\link[fmesher:fm_evaluator]{fmesher::fm_evaluator()}} and \code{\link[fmesher:fm_basis]{fmesher::fm_basis()}}.
 }
 

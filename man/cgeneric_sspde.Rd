@@ -23,7 +23,7 @@ value of the parameter.}
 integral of the field over the domain is to be constrained to zero.}
 
 \item{...}{additional arguments that will be passed on to
-\code{\link[INLAtools:cgeneric-class]{INLAtools::cgenericBuilder()}}, such as:
+\code{\link[INLAtools:cgenericBuilder]{INLAtools::cgenericBuilder()}}, such as:
 \code{debug} : logical/integer, default is FALSE/0.
 \code{useINLAprecomp} logical, default is TRUE, indicating if it is to
 be used the shared object pre-compiled by INLA.}

@@ -49,11 +49,11 @@
 #endif
 
 #if __GNUC__ > 7
-typedef size_t fortran_charlen_t;
+typedef size_t FORTRAN_CHARLEN_T;
 #else
-typedef int fortran_charlen_t;
+typedef int FORTRAN_CHARLEN_T;
 #endif
-#define F_ONE ((fortran_charlen_t)1)
+#define F_ONE ((FORTRAN_CHARLEN_T)1)
 
 // print elements of a matrix
 #define printMat(_M, _nr, _nc, _msg)					      \
@@ -70,9 +70,9 @@ if(1) {								                                \
 }								                                      \
 
 void dposv_(char *uplo, int *n, int *nrhs, double *A,
-	    int *lda, double *B, int *ldb, int *info, fortran_charlen_t);
+	    int *lda, double *B, int *ldb, int *info, FORTRAN_CHARLEN_T);
 void dgemv_(const char *trans, int *M, int *N, double *alpha, double *A, int *LDA, double *x,
-	    int *incx, double *beta, double *y, int *incy, fortran_charlen_t);
+	    int *incx, double *beta, double *y, int *incy, FORTRAN_CHARLEN_T);
 double ddot_(int *N, double *DX, int *INCX, double *DY, int *INCY);
 
 inla_cgeneric_func_tp inla_cgeneric_ast;

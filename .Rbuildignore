@@ -8,3 +8,5 @@ tests/*
 ^doc$
 ^Meta$
 ^jarl\.toml$
+^\.positai$
+^\.claude$
