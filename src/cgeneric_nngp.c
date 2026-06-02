@@ -155,9 +155,9 @@ double *inla_cgeneric_nngp(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgeneri
     inla_cgeneric_vec_tp *Aj = data->ints[7];
     assert(!strcasecmp(data->ints[8]->name, "nll"));
     inla_cgeneric_vec_tp *nll = data->ints[8];
-    assert(!strcasecmp(data->ints[9]->name, "iL2"));
+    assert(!strcasecmp(data->ints[9]->name, "iL1"));
     inla_cgeneric_vec_tp *iL1 = data->ints[9];
-    assert(!strcasecmp(data->ints[10]->name, "iL1"));
+    assert(!strcasecmp(data->ints[10]->name, "iL2"));
     inla_cgeneric_vec_tp *iL2 = data->ints[10];
 
     assert(!strcasecmp(data->doubles[3]->name, "cbdists"));
