@@ -1,7 +1,7 @@
 Package: INLAspacetime
 Type: Package
 Title: Spatial and Spatio-Temporal Models using 'INLA'
-Version: 0.1.14.901
+Version: 0.1.14.902
 Authors@R: c(
     person("Elias", "Teixeira Krainski", , "elias.krainski@kaust.edu.sa", role = c("cre", "aut", "cph"),
            comment = c(ORCID = "0000-0002-7063-2615")),
@@ -56,4 +56,4 @@ Suggests:
     spdep
 VignetteBuilder: knitr
 BuildVignettes: true
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0

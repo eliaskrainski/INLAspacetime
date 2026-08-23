@@ -85,11 +85,18 @@ cgeneric_sspde <-
       warning("Upgrade INLA! useINLAprecomp set to FALSE")
       dotArgs$useINLAprecomp <- FALSE
     }
-    libpath <- cgeneric_shlib_path(
-      package = "INLAspacetime",
-      useINLAprecomp = dotArgs$useINLAprecomp
-    )
-    stopifnot(file.exists(libpath))
+    if(INLAversion>="26.08.22") {
+      libpath <-
+        cgeneric_shlib_path(
+          package = "INLAspacetime",
+          useINLAprecomp = FALSE
+        )
+    } else {
+      libpath <- cgeneric_shlib_path(
+        package = "INLAspacetime",
+        useINLAprecomp = dotArgs$useINLAprecomp
+      )
+    }
 
     if(alpha!=2) {
       stop("Only 'alpha = 2' is supported for now.")

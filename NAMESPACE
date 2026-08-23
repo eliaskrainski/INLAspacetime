@@ -30,21 +30,29 @@ export(world_grid)
 import(Matrix)
 import(fmesher)
 import(methods)
-importFrom(INLAtools,Sparse)
-importFrom(INLAtools,cgeneric)
-importFrom(INLAtools,cgenericBuilder)
-importFrom(INLAtools,cgeneric_shlib_path)
-importFrom(INLAtools,findGetFunction)
-importFrom(INLAtools,is.zero)
-importFrom(INLAtools,packageCheck)
-importFrom(INLAtools,upperPadding)
-importFrom(Matrix,Diagonal)
-importFrom(Matrix,sparseMatrix)
-importFrom(fmesher,fm_fem)
-importFrom(fmesher,fm_manifold)
-importFrom(fmesher,fm_manifold_dim)
+importFrom(INLAtools,
+  Sparse,
+  cgeneric,
+  cgenericBuilder,
+  cgeneric_shlib_path,
+  findGetFunction,
+  is.zero,
+  packageCheck,
+  upperPadding
+)
+importFrom(Matrix,
+  Diagonal,
+  sparseMatrix
+)
+importFrom(fmesher,
+  fm_fem,
+  fm_manifold,
+  fm_manifold_dim
+)
 importFrom(methods,as)
-importFrom(stats,complete.cases)
-importFrom(stats,dnorm)
-importFrom(stats,pnorm)
+importFrom(stats,
+  complete.cases,
+  dnorm,
+  pnorm
+)
 useDynLib(INLAspacetime, .registration = TRUE)

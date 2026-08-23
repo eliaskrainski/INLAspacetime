@@ -3,6 +3,7 @@
 ##   and INLAtools::pcrange()
 library(fmesher)
 library(INLA)
+library(INLAtools)
 library(INLAspacetime)
 
 mesh <- fm_mesh_2d(

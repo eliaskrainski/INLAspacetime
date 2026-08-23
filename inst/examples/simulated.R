@@ -1,8 +1,13 @@
 
+library(fmesher)
 library(INLA)
 library(INLAspacetime)
 library(inlabru)
 library(sf)
+
+##    inla.setOption(inla.call = "~/.cache/R/INLA/stiles-binary/v26.08.20/bin/inla.run")
+##    inla.setOption(smtp = "stiles")
+
 
 rxy <- c(7, 5) ## size of spatial domain
 nt <- 10 ## number of time points
@@ -22,7 +27,8 @@ smesh <- fm_mesh_2d(
     offset = r0 / c(50, 3),
     max.edge = r0 / c(20, 5),
     cutoff = r0 / 20)
-smesh$n
+
+cat("Number of spatial mesh nodes:", smesh$n, "\n")
 
 if(FALSE)
     plot(smesh)
@@ -30,6 +36,8 @@ if(FALSE)
 ## temporal mesh
 tmesh <- fm_mesh_1d(
     loc = 1:nt)
+
+cat("Number of time points:", nt, "\n")
 
 ## model parameters
 params <- c(
@@ -54,20 +62,26 @@ qq <- stModel.precision(smesh, tmesh, '121', log(params))
 if(FALSE)
     image(qq)
 
-## sample
-xx <- inla.qsample(n = 1, Q = qq)
-
-ns <- 1000 ## number locations in space
-(nd <- nt * ns) ## number of observations
-
-(sigma.e <- 1/sqrt(9))
-error <- rnorm(nd, 0, sigma.e)
-
 ## data spacetime locations
+set.seed(1)
+nd <- 5000
 dataf <- data.frame(
     xloc = runif(nd, bb[1, 1], bb[1, 2]),
     yloc = runif(nd, bb[2, 1], bb[2, 1]),
     tloc = sort(sample(1:nt, nd, replace = TRUE)))
+print(t(sapply(dataf, summary)))
+
+## sample
+set.seed(2)
+zz <- rnorm(nrow(qq))
+xx <- inla.qsolve(qq, matrix(zz, ncol = 1))[,1]
+##xx <- inla.qsample(n = 1, Q = qq, seed = 2)[,1]
+print(summary(xx))
+
+(sigma.e <- 1/sqrt(9))
+set.seed(3)
+error <- rnorm(nd, 0, sigma.e)
+print(summary(error))
 
 ## project the sample to spacetime data locations
 A.d <- inla.spde.make.A(
@@ -77,11 +91,14 @@ A.d <- inla.spde.make.A(
     group.mesh = tmesh)
 dataf$y <- drop(A.d %*% xx + error)
 
+cat("Outcome summary:\n")
+print(summary(dataf$y))
+
 ############################################################
 ## model fit with inlabru
 
 ## likelihood setup
-mlike <- like(
+mlike <- bru_obs(
     y ~ .,
     data = dataf,
     control.family = list(

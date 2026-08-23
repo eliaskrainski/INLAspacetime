@@ -85,17 +85,23 @@ stModel.define <-
       if(is.na(INLAversion) & useINLAprecomp) {
         stop("Update INLA or try `useINLAprecomp = FALSE`!")
       }
-      libpath <- cgeneric_shlib_path(
-        package = "INLAspacetime",
-        useINLAprecomp = useINLAprecomp,
-        debug = debug
-      )
+      if(INLAversion>="26.08.22") {
+        libpath <-
+          cgeneric_shlib_path(
+            package = "INLAspacetime",
+            useINLAprecomp = FALSE
+          )
+      } else {
+        libpath <- cgeneric_shlib_path(
+          package = "INLAspacetime",
+          useINLAprecomp = dotArgs$useINLAprecomp
+        )
+      }
       if (useINLAprecomp)
         hasverbose <- (INLAversion<="25.02.10") ## to work with old C versions
     } else {
       hasverbose <- FALSE ## assumed...
     }
-    stopifnot(file.exists(libpath))
 
     alphas <- as.integer(strsplit(model, "")[[1]])
     alpha <- alphas[3] + alphas[2] * (alphas[1] - 0.5)
