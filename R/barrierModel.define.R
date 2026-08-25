@@ -19,12 +19,7 @@
 #' prevent numerical issues.
 #' @param constr logical, default is FALSE, to indicate if the
 #' integral of the field over the domain is to be constrained to zero.
-#' @param debug integer, default is zero, indicating the verbose level.
-#' Will be used as logical by INLA.
-#' @param useINLAprecomp logical, default is TRUE, indicating if it is to
-#' be used the shared object pre-compiled by INLA.
-#' This is not considered if 'libpath' is provided.
-#' @param libpath string, default is NULL, with the path to the shared object.
+#' @param ... additional arguments, such as debug,useINLAprecomp,shlib.
 #' @details
 #' See the paper.
 #' @return objects to be used in the f() formula term in INLA.
@@ -34,9 +29,14 @@ barrierModel.define <-
            prior.range, prior.sigma,
            range.fraction = 0.1,
            constr = FALSE,
-           debug = FALSE,
-           useINLAprecomp = TRUE,
-           libpath = NULL) {
+           ...) {
+
+    dotArgs <- list(...)
+    if(is.null(dotArgs$debug)) {
+      dotArgs$debug <- FALSE
+    } else {
+      dotArgs$debug <- dotArgs$debug[1]
+    }
 
     stopifnot(length(prior.range)==2)
     prior.range <- as.numeric(prior.range)
@@ -47,6 +47,10 @@ barrierModel.define <-
     stopifnot(prior.range[2] >= 0)
     stopifnot(prior.range[2] < 1)
 
+    if(dotArgs$debug) {
+      cat("The range prior parameters: ", prior.range, "\n")
+    }
+
     stopifnot(length(prior.sigma)==2)
     prior.sigma <- as.numeric(prior.sigma)
     if(is.na(prior.sigma[2])) {
@@ -56,49 +60,73 @@ barrierModel.define <-
     stopifnot(prior.sigma[2] >= 0)
     stopifnot(prior.sigma[2] < 1)
 
+    if(dotArgs$debug) {
+      cat("The sigma prior parameters: ", prior.sigma, "\n")
+    }
+
     INLAversion <- packageCheck(
       name = "INLA",
       minimum_version = "24.10.07",
       quietly = TRUE
     )
-    if (is.null(libpath)) {
-      if(length(useINLAprecomp)>1) {
+    if(is.null(dotArgs$useINLAprecomp))
+      dotArgs$useINLAprecomp <- TRUE
+    if (is.null(dotArgs$libpath) & is.null(dotArgs$shlib)) {
+      if(length(dotArgs$useINLAprecomp)>1) {
         warning("length(useINLAprecomp)>1, first taken!")
-        useINLAprecomp <- useINLAprecomp[1]
+        dotArgs$useINLAprecomp <- dotArgs$useINLAprecomp[1]
       }
-      libpath <- cgeneric_shlib_path(
-        package = "INLAspacetime",
-        useINLAprecomp = useINLAprecomp,
-        debug = debug
-      )
-      if (useINLAprecomp)
+      if(INLAversion>="26.08.22") {
+        shlib <-
+          cgeneric_shlib_path(
+            package = "INLAspacetime",
+            useINLAprecomp = FALSE,
+            debug = dotArgs$debug
+          )
+      } else {
+        shlib <- cgeneric_shlib_path(
+          package = "INLAspacetime",
+          useINLAprecomp = dotArgs$useINLAprecomp,
+          debug = dotArgs$debug
+        )
+      }
+      if (dotArgs$useINLAprecomp)
         hasverbose <- (INLAversion<="25.02.10") ## to work with old C versions
     } else {
+      if(is.null(dotArgs$shlib) & (!is.null(dotArgs$libpath)))
+        dotArgs$shlib <- dotArgs$libpath
+      shlib <- dotArgs$shlib
       hasverbose <- FALSE
     }
-    stopifnot(file.exists(libpath))
 
-    bfem <- mesh2fem.barrier(mesh, barrier.triangles)
+    if(inherits(mesh, "fm_mesh_2d") | inherits(mesh, "inla.mesh")){
+      bfem <- mesh2fem.barrier(mesh, barrier.triangles)
+    } else {
+      bfem <- collect2fem.barrier(mesh, barrier.triangles)
+    }
     n <- nrow(bfem$I)
+    ndom <- length(bfem$D)
 
     if(!is.list(barrier.triangles)) {
       barrier.triangles <- list(barrier.triangles)
     }
-    no <- length(barrier.triangles) + 1
     if(length(range.fraction) == 1) {
-      range.fraction <- rep(range.fraction, no-1)
+      range.fraction <- rep(range.fraction, ndom-1)
     } else {
-      stopifnot(length(range.fraction)==(no-1))
+      stopifnot(length(range.fraction)==(ndom-1))
     }
 
     Imat <- bfem$I
     Dmat <- bfem$D[[1]]
     CC <- bfem$C[[1]]
-    for(o in 2:no) {
+    for(o in 2:ndom) {
       CC <- CC + bfem$C[[o]] * (range.fraction[o-1]^2)
       Dmat <- Dmat +  bfem$D[[o]] * (range.fraction[o-1]^2)
     }
     iC <- Diagonal(n, 1 / CC)
+    if(dotArgs$debug) {
+      print(str(list(Imat = Imat, Dmat = Dmat, CC = CC, iC = iC)))
+    }
 
     lmats <- upperPadding(
       list(
@@ -111,16 +139,20 @@ barrierModel.define <-
     )
     stopifnot(n == nrow(lmats$graph))
 
+    if(dotArgs$debug) {
+      print(str(lmats))
+    }
+
     args0 <- list(
       model = "inla_cgeneric_barrier",
-      shlib = libpath,
+      shlib = shlib,
       n = as.integer(n),
-      debug = as.integer(debug)
+      debug = as.integer(dotArgs$debug)
     )
     if(hasverbose) { ## to work with old C versions
       args0$verbose <- as.integer(0)
     }
-    if(useINLAprecomp && (INLAversion<="25.02.10")) {
+    if(dotArgs$useINLAprecomp && (INLAversion<="25.02.10")) {
       args0$prs <- prior.range
     } else {
       args0$prange <- prior.range
@@ -139,7 +171,7 @@ barrierModel.define <-
     )
     if (constr) {
       the_model$f$extraconstr <- list(
-        A = matrix(1 / n, 1, n), e = 0.0
+        A = matrix(diag(CC), 1, n), e = 0.0
       )
     }
     # Prepend specialised model class identifier, for bru_mapper use:
@@ -157,7 +189,12 @@ barrierModel.define <-
         minimum_version = "2.12.0.9021",
         quietly = TRUE
       ))) {
-        the_model$mapper <- inlabru::bru_mapper(mesh)
+        if(inherits(mesh, "fm_mesh_2d") | inherits(mesh, "inla.mesh")){
+          the_model$mapper <- inlabru::bru_mapper(mesh)
+        } else {
+          the_model$mapper <- list(mesh)
+          attr(the_model$mapper, "class") <- c("bm_fmesher", "bru_mapper")
+        }
       }
     }
 

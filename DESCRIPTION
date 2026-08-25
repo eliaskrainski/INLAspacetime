@@ -1,7 +1,7 @@
 Package: INLAspacetime
 Type: Package
 Title: Spatial and Spatio-Temporal Models using 'INLA'
-Version: 0.1.14.902
+Version: 0.1.14.903
 Authors@R: c(
     person("Elias", "Teixeira Krainski", , "elias.krainski@kaust.edu.sa", role = c("cre", "aut", "cph"),
            comment = c(ORCID = "0000-0002-7063-2615")),

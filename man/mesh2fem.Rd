@@ -3,29 +3,53 @@
 \name{mesh2fem}
 \alias{mesh2fem}
 \alias{mesh2fem.barrier}
+\alias{collect2fem.barrier}
+\alias{barrier_mesh_centroids}
 \title{Illustrative code for Finite Element matrices of a mesh in 2d domain.}
 \usage{
 mesh2fem(mesh, order = 2, barrier.triangles = NULL)
 
 mesh2fem.barrier(mesh, barrier.triangles = NULL)
+
+collect2fem.barrier(collect, barrier.triangles = NULL)
+
+barrier_mesh_centroids(mesh, barriers)
 }
 \arguments{
-\item{mesh}{a 2d mesh object.}
+\item{mesh}{a spatial mesh from \code{\link[fmesher:fm_mesh_2d]{fmesher::fm_mesh_2d()}},
+or collection from \code{\link[fmesher:fm_collect]{fmesher::fm_collect()}}}
 
 \item{order}{the desired order.}
 
 \item{barrier.triangles}{integer index to specify the
 triangles in the barrier domain}
+
+\item{collect}{an output of \link[fmesher:fm_collect]{fmesher::fm_collect}}
+
+\item{barriers}{a list where each element is a
+polygon defining a barrier domain.}
 }
 \value{
 a list object containing the FE matrices.
 
 a list object containing the FE matrices
 for the barrier problem.
+
+a list object containing the FE matrices
+for the barrier problem.
+
+a list with length of one if the mesh is a \code{fm_mesh_2d} or
+length equal the length of the \code{fm_collect} function spaces.
+Each of it elements is a list with legth equal the number of barrier domains,
+containing a index vector with the mesh triangle centroids withing the
+corresponding barrier.
 }
 \description{
 Illustrative code for Finite Element matrices of a mesh in 2d domain.
 
-Illustrative code for Finite Element matrices when some triangles are
-in a barrier domain.
+Finite Element matrices with barrier domain.
+
+Finite Element matrices with barrier domain.
+
+Define the index set of mesh centers within barrier domain.
 }

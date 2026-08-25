@@ -1,6 +1,7 @@
 
 library(ggplot2)
 library(sf)
+library(fmesher)
 library(INLA)
 library(INLAspacetime)
 stopifnot(packageVersion("INLAspacetime")>'0.1.9.2')
@@ -30,63 +31,32 @@ smodel <- inla.spde2.pcmatern(
     prior.sigma = c(1, 0.5)
 )
 
-## Non-stationary model
-
-## triangle centers
-ce.tri <- cbind(   
-  mesh$loc[mesh$graph$tv[,1], 1:2] +
-  mesh$loc[mesh$graph$tv[,2], 1:2] +
-  mesh$loc[mesh$graph$tv[,3], 1:2])/3
-
-## barriers
-barrs <- list(
-    cbind(c(0, 2, 2, 0, 0) * s,
-          c(-1, -1, 1, 1, -1) * s/10),
-    cbind(c(0, 0, -s/5, -1.8*s, -1.5*s, 0),
-          c(-s/10, 0, 0, -1.5*s, -1.5*s, -s/10)),
-    cbind(c(-s/5, 0, 0, -1.5*s, -1.8*s, -s/5),
-          c(0, 0, s/10, 1.5*s, 1.5*s, 0))
-    )
-
-barrier1 <- st_sfc(
-    st_multipolygon(
-        list(st_polygon(barrs[1]))))
-barrier2 <- st_sfc(
-    st_multipolygon(
-        list(st_polygon(barrs[2]))))
-barrier3 <- st_sfc(
-    st_multipolygon(
-        list(st_polygon(barrs[3]))))
+## Barrier definition 
+## Set of barriers poly
+barrs <- lapply(list(
+    st_polygon(list(
+        cbind(c(0, 2, 2, 0, 0) * s,
+              c(-1, -1, 1, 1, -1) * s/10))),
+    st_polygon(list(
+        cbind(c(0, 0, -s/5, -1.8*s, -1.5*s, 0),
+              c(-s/10, 0, 0, -1.5*s, -1.5*s, -s/10)))),
+    st_polygon(list(
+        cbind(c(-s/5, 0, 0, -1.5*s, -1.8*s, -s/5),
+              c(0, 0, s/10, 1.5*s, 1.5*s, 0))))
+    ), function(p)
+        st_sfc(st_multipolygon(list(p))))
 
 ## triangles in the barrier
-tri.ids <- list(
-    unlist(
-        fmesher::fm_contains(
-                     x = barrier1,
-                     y = mesh,
-                     type = 'centroid'
-                 )
-    ),
-    unlist(
-        fmesher::fm_contains(
-                     x = barrier2,
-                     y = mesh,
-                     type = 'centroid'
-                 )
-    ),
-    unlist(
-        fmesher::fm_contains(
-                     x = barrier3,
-                     y = mesh,
-                     type = 'centroid'
-                 )
-    )
-)
+tri.ids <- barrier_mesh_centroids(mesh, barrs)
+str(tri.ids)
 
 ggplot() + theme_minimal() +
-    geom_sf(data = barrier1, fill = rgb(1,.5,.5,.5)) +
-    geom_sf(data = barrier2, fill = rgb(.5,1,.5,.5)) +
-    geom_sf(data = barrier3, fill = rgb(.5,.5,1,.5)) 
+    geom_sf(data = barrs[[1]], fill = rgb(1,.5,.5,.5)) +
+    geom_sf(data = barrs[[2]], fill = rgb(.5,1,.5,.5)) +
+    geom_sf(data = barrs[[3]], fill = rgb(.5,.5,1,.5))
+
+## triangle centorids (to be visualized)
+ce.tri <- fm_centroids(mesh)
 
 plot(mesh)
 for(i in 1:length(tri.ids)) {
@@ -107,12 +77,14 @@ bmodel <- barrierModel.define(
 sfit0 <- inla(
     y ~ 0 + f(i, model = smodel),
     data = data.frame(y = NA, i = 1:mesh$n),
-    control.family = list(hyper = list(prec = list(initial = 10, fixed = TRUE)))
+    control.family = list(hyper = list(prec = list(initial = 10, fixed = TRUE))),
+    control.mode = list(theta = c(log(s), log(1)), restart = FALSE)
 )
 bfit0 <- inla(
     y ~ 0 + f(i, model = bmodel),
     data = data.frame(y = NA, i = 1:mesh$n),
-    control.family = list(hyper = list(prec = list(initial = 10, fixed = TRUE)))
+    control.family = list(hyper = list(prec = list(initial = 10, fixed = TRUE))),
+    control.mode = list(theta = c(log(s), log(1)), restart = FALSE)
 )
 
 rbind(sfit0$mode$theta, 

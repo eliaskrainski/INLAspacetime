@@ -11,9 +11,7 @@ barrierModel.define(
   prior.sigma,
   range.fraction = 0.1,
   constr = FALSE,
-  debug = FALSE,
-  useINLAprecomp = TRUE,
-  libpath = NULL
+  ...
 )
 }
 \arguments{
@@ -42,14 +40,7 @@ prevent numerical issues.}
 \item{constr}{logical, default is FALSE, to indicate if the
 integral of the field over the domain is to be constrained to zero.}
 
-\item{debug}{integer, default is zero, indicating the verbose level.
-Will be used as logical by INLA.}
-
-\item{useINLAprecomp}{logical, default is TRUE, indicating if it is to
-be used the shared object pre-compiled by INLA.
-This is not considered if 'libpath' is provided.}
-
-\item{libpath}{string, default is NULL, with the path to the shared object.}
+\item{...}{additional arguments, such as debug,useINLAprecomp,shlib.}
 }
 \value{
 objects to be used in the f() formula term in INLA.

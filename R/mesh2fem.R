@@ -2,7 +2,8 @@
 #' @rdname mesh2fem
 #' @name mesh2fem
 #' @aliases mesh2fem
-#' @param mesh a 2d mesh object.
+#' @param mesh a spatial mesh from [fmesher::fm_mesh_2d()],
+#' or collection from [fmesher::fm_collect()]
 #' @param order the desired order.
 #' @param barrier.triangles integer index to specify the
 #' triangles in the barrier domain
@@ -15,6 +16,9 @@ mesh2fem <- function(mesh, order = 2, barrier.triangles = NULL) {
       barrier.triangles = barrier.triangles
     ))
   }
+
+  if(inherits(mesh, "fm_collect"))
+    return(fmesher:::fm_fem(mesh))
 
   stopifnot(fm_manifold(mesh, c("S", "R")))
   Rmanifold <- fm_manifold(mesh, "R") + 0L
@@ -70,8 +74,7 @@ mesh2fem <- function(mesh, order = 2, barrier.triangles = NULL) {
   }
   return(res)
 }
-#' Illustrative code for Finite Element matrices when some triangles are
-#' in a barrier domain.
+#' Finite Element matrices with barrier domain.
 #' @rdname mesh2fem
 #' @name mesh2fem
 #' @aliases mesh2fem.barrier
@@ -86,14 +89,14 @@ mesh2fem.barrier <- function(mesh, barrier.triangles = NULL) {
     if(is.list(barrier.triangles)) {
       ntv1 <- nrow(mesh$graph$tv)
       for(i in 1:length(barrier.triangles)) {
-        barrier.triangles[[i]] <- unique(sort(barrier.triangles[[i]]))
-        stopifnot(all(barrier.triangles[[i]] %in% (1:ntv1)))
+        if(length(barrier.triangles[[i]])>0) {
+          barrier.triangles[[i]] <- unique(sort(barrier.triangles[[i]]))
+          stopifnot(all(barrier.triangles[[i]] %in% (1:ntv1)))
+        }
       }
       itv <- c(list(
-        setdiff(
-          1:ntv1, unlist(barrier.triangles))),
-        barrier.triangles
-      )
+        setdiff(1:ntv1, unlist(barrier.triangles))),
+        barrier.triangles)
       ntv <- sapply(itv, length)
     } else {
       barrier.triangles <- unique(sort(barrier.triangles))
@@ -179,4 +182,71 @@ mesh2fem.barrier <- function(mesh, barrier.triangles = NULL) {
   }
   res$I <- Sparse(res$I)
   return(res)
+}
+#' Finite Element matrices with barrier domain.
+#' @rdname mesh2fem
+#' @name mesh2fem
+#' @aliases mesh2fem.barrier
+#' @param collect an output of [fmesher::fm_collect]
+#' @return a list object containing the FE matrices
+#' for the barrier problem.
+#' @export
+collect2fem.barrier <- function(collect, barrier.triangles = NULL) {
+  if (is.null(barrier.triangles)) {
+    warning("No 'barrier.triangles', using fmesher::fm_fem(, order = 2)'!")
+    out <- fmesher::fm_fem(collect, order = 2L)
+  } else {
+    nc <- length(collect[[1]])
+    lfe <- vector("list", nc)
+    for(k in 1:nc) {
+      lfe[[k]] <- mesh2fem.barrier(collect[[1]][[k]], barrier.triangles[[k]])
+    }
+    out <- list(
+      I = Matrix::.bdiag(lapply(lfe, function(x) x$I))
+    )
+    ndom <- length(lfe[[1]]$D)
+    out$D <- lapply(1:ndom, function(d)
+        Matrix::.bdiag(lapply(lfe, function(fe) fe$D[[d]])))
+    out$C <- lapply(1:ndom, function(d)
+      unlist(lapply(lfe, function(fe) fe$C[[d]])))
+  }
+  return(out)
+}
+#' Define the index set of mesh centers within barrier domain.
+#'
+#' @rdname mesh2fem
+#' @name mesh2fem
+#' @aliases mesh2fem.barrier
+#' @param barriers a list where each element is a
+#' polygon defining a barrier domain.
+#' @return a list with length of one if the mesh is a `fm_mesh_2d` or
+#' length equal the length of the `fm_collect` function spaces.
+#' Each of it elements is a list with legth equal the number of barrier domains,
+#' containing a index vector with the mesh triangle centroids withing the
+#' corresponding barrier.
+#' @export
+barrier_mesh_centroids <- function(mesh, barriers) {
+  if(inherits(mesh, "fm_mesh_2d")) {
+    nbr <- length(barriers)
+    out <- vector("list", nbr)
+    for(k in 1:nbr) {
+      out[[k]] <- unlist(
+        fmesher::fm_contains(
+          x = barriers[[k]],
+          y = mesh,
+          type = "centroid"
+        )
+      )
+    }
+  }
+  if(inherits(mesh, "fm_collect")) {
+    nfs <- length(mesh$fun_spaces)
+    out <- vector("list", nfs)
+    for(k in 1:nfs) {
+      out[[k]] <- barrier_mesh_centroids(
+        mesh$fun_spaces[[k]], barriers
+      )
+    }
+  }
+  return(out)
 }
