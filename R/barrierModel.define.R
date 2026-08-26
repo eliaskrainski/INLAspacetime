@@ -100,8 +100,12 @@ barrierModel.define <-
     }
 
     if(inherits(mesh, "fm_mesh_2d") | inherits(mesh, "inla.mesh")){
+      n_mesh <- 1L
+      mesh_n <- mesh$n
       bfem <- mesh2fem.barrier(mesh, barrier.triangles)
     } else {
+      mesh_n <- sapply(mesh[[1]], function(x) x$n)
+      n_mesh <- length(mesh_n)
       bfem <- collect2fem.barrier(mesh, barrier.triangles)
     }
     n <- nrow(bfem$I)
@@ -170,9 +174,16 @@ barrierModel.define <-
       )
     )
     if (constr) {
+      At <- matrix(0, n, n_mesh) ## transposed
+      idk <- split(1:n, factor(rep(1:n_mesh, mesh_n), 1:n_mesh))
+      for(k in 1:n_mesh) {
+        if(length(idk[[k]])>0) {
+          ## within each domain only
+          At[idk[[k]], k] <- bfem$C[[1]][idk[[k]]]
+        }
+      }
       the_model$f$extraconstr <- list(
-        A = matrix(bfem$C[[1]], 1, n), ## within domain only
-        e = 0.0
+        A = t(At), e = rep(0, n_mesh)
       )
     }
     # Prepend specialised model class identifier, for bru_mapper use:

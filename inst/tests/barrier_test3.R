@@ -5,19 +5,18 @@ library(sf)
 library(fmesher)
 library(INLA)
 library(INLAspacetime)
-stopifnot(packageVersion("INLAspacetime")>='0.1.14.904')
+stopifnot(packageVersion("INLAspacetime")>='0.1.14.905')
 
 ## Define two domains
-s <- 10
+plfn <- function(a=0, b=0, s=1, r=0.7) {
+    return(cbind(c(-1, 1, 1, -1, -1)*r + a,
+                 c(-1, -1, 1, 1, -1) + b)*s)
+}
+
+s <- 50
 bnds <- list(
-    bnd1 = st_sfc(list(st_polygon(
-        list(cbind(c(1, 3, 3, 1, 1),
-                   c(0, 0, 3, 3, 0)) * s
-             )))),
-    bnd2 = st_sfc(list(st_polygon(
-        list(cbind(c(-3, -1, -1, -3, -3),
-                   c(0, 0, 3, 3, 0)) * s
-             ))))
+    bnd1 = st_sfc(list(st_polygon(list(plfn(-1,1,s))))),
+    bnd2 = st_sfc(list(st_polygon(list(plfn(1,1,s)))))
 )
 
 plot(st_union(bnds[[1]], bnds[[2]]))
@@ -47,21 +46,23 @@ plot(mesh[[1]]$bnd2, add = TRUE)
 system.time(sfem <- fm_fem(mesh))
 
 ## Barrier definition
-## Set of barriers poly 
-barrs <- lapply(
-    list(
-        st_polygon(list(
-            cbind(c(-5,-5,  5, 5, -5),
-                  c( 5,5.5, -8,-8.5, 5)) * s)),
-        st_polygon(list(
-            cbind(c(-5,-5,  5, 5, -5),
-                  c(-8.5,-8,5.5,5,-8.5)) * s))
-        ), function(p)
-            st_sfc(st_multipolygon(list(p))))
+## Set of barriers poly
+barrs <- list(
+    bnd1 = st_sfc(list(st_polygon(list(plfn(-4,5,s/4,1))))),
+    bnd2 = st_sfc(list(st_polygon(list(plfn(4,5,s/4,1))))),
+    bnd3 = st_sfc(list(st_polygon(list(
+        cbind(c(seq(-1, 1, 0.1), seq(1,-1,-0.1), -1)*1.5,
+              c(1.4-cos(seq(-1,1,0.1)),
+                1.2-cos(seq(1,-1,-0.1)),
+                1.4-cos(-1)))*s))))
+)
 
 ggplot() + theme_minimal() +
-    geom_sf(data = barrs[[1]], fill = rgb(1,.5,.1,.5)) +
-    geom_sf(data = barrs[[2]], fill = rgb(.1,.5,1,.5)) 
+    geom_sf(data = bnds[[1]], fill = rgb(1,.7,.5)) +
+    geom_sf(data = bnds[[2]], fill = rgb(.5,.7,1)) +
+    geom_sf(data = barrs[[1]], fill = rgb(1,.3,.1,.5)) +
+    geom_sf(data = barrs[[2]], fill = rgb(.1,.3,1,.5)) +
+    geom_sf(data = barrs[[3]], fill = rgb(0.5,1,0.5,.5)) 
 
 ## triangles in the barrier
 tri.ids <- barrier_mesh_centroids(mesh, barrs)
@@ -93,20 +94,44 @@ all.equal(sfem$c0@x,
           Reduce("+", bfem$C))
 
 ### define the cgeneric barrier model
-bmodel <- barrierModel.define(
+bmodel_c <- barrierModel.define(
     mesh = mesh,
     barrier.triangles = tri.ids,
     prior.range = c(s/5, 0.1),
     prior.sigma = c(1, 0.5),
-    range.fraction = c(1, 1)
+    range.fraction = rep(1, length(barrs)),
+    constr = TRUE ## one per domain
 )
+
+bmodel_c
+sapply(bfem$C, sum)
+rowSums(bmodel_c$f$extraconstr$A)
 
 ## model parameters
 range <- s
 sigma <- 2
 
 ## get the precision
-ifit <- inla(
+fit_c <- inla(
+    y ~ 0 + f(i, model = bmodel_c),
+    verbose = !TRUE,
+    data = data.frame(y = NA, i = 1:bmodel_c$f$n), 
+    control.mode = list(
+        theta = c(10, log(c(range, sigma))),
+        fixed = TRUE),
+    control.compute = list(config = TRUE)
+)
+
+## now without constraints, for comparison
+bmodel <- barrierModel.define(
+    mesh = mesh,
+    barrier.triangles = tri.ids,
+    prior.range = c(s/5, 0.1),
+    prior.sigma = c(1, 0.5),
+    range.fraction = rep(1, length(barrs))
+)
+
+fit <- inla(
     y ~ 0 + f(i, model = bmodel),
     verbose = !TRUE,
     data = data.frame(y = NA, i = 1:bmodel$f$n), 
@@ -116,11 +141,12 @@ ifit <- inla(
     control.compute = list(config = TRUE)
 )
 
-summary(ifit$summary.random$i$sd)
+summary(fit_c$summary.random$i$sd)
+summary(fit$summary.random$i$sd)
 
 ## the upper part of the prior
 Qub <- inla.as.sparse(
-    ifit$misc$configs$config[[1]]$Qprior
+    fit$misc$configs$config[[1]]$Qprior
 )
 
 ## the non-stationary precision matrix
@@ -141,7 +167,7 @@ sigma2 <- sigma^2
 k2 <- 8/(range2)
 t2 <- 1/(4*pi*k2*sigma2)
 Qs <- inla.as.sparse(
-    t2 * ((k2^2)*sfem$c1 + ## C1: closer comparison with Hakkon's choice
+    t2 * ((k2^2)*sfem$c1 + ## C1: closer comparison 
           2*k2*sfem$g1 + sfem$g2))
 Vs <- inla.qinv(Qs)
 

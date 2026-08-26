@@ -13,7 +13,7 @@
 #' for the triangles inside each barrier.
 #' If `mesh` is a list of domains, a [fmesher::fm_collect()] output,
 #' then it should be a list where each element `i` contains a length k
-#' list of index for the triangles in the i-th domain.
+#' list with a index vector for the triangles in the i-th domain.
 #' @return a list object containing the FE matrices.
 #' @export
 mesh2fem <- function(mesh, order = 2, barrier.triangles = NULL) {
@@ -61,13 +61,14 @@ mesh2fem <- function(mesh, order = 2, barrier.triangles = NULL) {
   }
   ijx <- which((ii > 0) | (jj > 0))
   res <- list(
-    c0 = Sparse(Matrix::sparseMatrix(i = 1:n, j = 1:n, x = c0, repr = "T")),
+    c0 = Matrix::sparseMatrix(
+      i = 1:n, j = 1:n, x = c0),
     c1 = Sparse(Matrix::sparseMatrix(
-      i = ii[ijx], j = jj[ijx], x = c1x[ijx], dims = c(n, n)
-    )),
+      i = ii[ijx], j = jj[ijx], x = c1x[ijx],
+      dims = c(n, n))),
     g1 = Sparse(Matrix::sparseMatrix(
-      i = ii[ijx], j = jj[ijx], x = g1x[ijx], dims = c(n, n)
-    ))
+      i = ii[ijx], j = jj[ijx], x = g1x[ijx],
+      dims = c(n, n)))
   )
   order <- floor(order)
   if (order > 1) {
@@ -177,13 +178,10 @@ mesh2fem.barrier <- function(mesh, barrier.triangles = NULL) {
     }
 
     ijx <- which((ii > 0) | (jj > 0))
-    res$I <- res$I +
-      Matrix::sparseMatrix(
-        i = ii[ijx], j = jj[ijx], x = c1x[ijx], dims = c(n, n)
-      )
+    res$I <- res$I + Matrix::sparseMatrix(
+      i = ii[ijx], j = jj[ijx], x = c1x[ijx],  dims = c(n, n))
     res$D[[o]] <- Sparse(Matrix::sparseMatrix(
-      i = ii[ijx], j = jj[ijx], x = g1x[ijx], dims = c(n, n)
-    ))
+      i = ii[ijx], j = jj[ijx], x = g1x[ijx], dims = c(n, n)))
     res$C[[o]] <- c0
     res$hdim <- res$hdim + 1L
   }
@@ -204,6 +202,7 @@ collect2fem.barrier <- function(collect, barrier.triangles = NULL) {
     out <- fmesher::fm_fem(collect, order = 2L)
   } else {
     nc <- length(collect[[1]])
+    stopifnot(nc == length(barrier.triangles))
     lfe <- vector("list", nc)
     for(k in 1:nc) {
       lfe[[k]] <- mesh2fem.barrier(collect[[1]][[k]], barrier.triangles[[k]])
