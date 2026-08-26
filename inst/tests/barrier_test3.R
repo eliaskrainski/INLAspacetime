@@ -5,7 +5,7 @@ library(sf)
 library(fmesher)
 library(INLA)
 library(INLAspacetime)
-stopifnot(packageVersion("INLAspacetime")>'0.1.14.902')
+stopifnot(packageVersion("INLAspacetime")>='0.1.14.904')
 
 ## Define two domains
 s <- 10

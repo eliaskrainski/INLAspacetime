@@ -5,8 +5,15 @@
 #' @param mesh a spatial mesh from [fmesher::fm_mesh_2d()],
 #' or collection from [fmesher::fm_collect()]
 #' @param order the desired order.
-#' @param barrier.triangles integer index to specify the
-#' triangles in the barrier domain
+#' @param barrier.triangles integer (or list of, or list of list of) indexes
+#' to specify the triangles in the barrier domain.
+#' For the only one domain (mesh) and only one barrier it may be vector
+#' or a length one list.
+#' For only one domain an k barriers, it should be a length k list of indexes
+#' for the triangles inside each barrier.
+#' If `mesh` is a list of domains, a [fmesher::fm_collect()] output,
+#' then it should be a list where each element `i` contains a length k
+#' list of index for the triangles in the i-th domain.
 #' @return a list object containing the FE matrices.
 #' @export
 mesh2fem <- function(mesh, order = 2, barrier.triangles = NULL) {

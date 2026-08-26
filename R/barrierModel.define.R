@@ -171,7 +171,8 @@ barrierModel.define <-
     )
     if (constr) {
       the_model$f$extraconstr <- list(
-        A = matrix(diag(CC), 1, n), e = 0.0
+        A = matrix(bfem$C[[1]], 1, n), ## within domain only
+        e = 0.0
       )
     }
     # Prepend specialised model class identifier, for bru_mapper use:
@@ -186,15 +187,10 @@ barrierModel.define <-
     if(requireNamespace("inlabru")) {
       if(!is.na(packageCheck(
         name = "inlabru",
-        minimum_version = "2.12.0.9021",
+        minimum_version = "2.13",
         quietly = TRUE
       ))) {
-        if(inherits(mesh, "fm_mesh_2d") | inherits(mesh, "inla.mesh")){
-          the_model$mapper <- inlabru::bru_mapper(mesh)
-        } else {
-          the_model$mapper <- list(mesh)
-          attr(the_model$mapper, "class") <- c("bm_fmesher", "bru_mapper")
-        }
+        the_model$mapper <- inlabru::bm_fmesher(mesh)
       }
     }
 
