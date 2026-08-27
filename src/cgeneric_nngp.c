@@ -71,6 +71,7 @@ double *inla_cgeneric_nngp(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgeneri
 	assert(!strcasecmp(data->doubles[2]->name, "nu"));
 	double nu = data->doubles[2]->doubles[0];
 
+	printf("n = %d, debug = %d, cfn = %d, M = %d\n", N, debug, cfn, M);
 
 	nth = 0;
 	if (iszero(prange->doubles[1])) {
@@ -151,14 +152,14 @@ double *inla_cgeneric_nngp(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgeneri
     int Mmax = data->ints[5]->ints[0];
     assert(!strcasecmp(data->ints[6]->name, "Mi"));
     inla_cgeneric_vec_tp *Mi = data->ints[6];
-    assert(!strcasecmp(data->ints[7]->name, "Aj"));
-    inla_cgeneric_vec_tp *Aj = data->ints[7];
-    assert(!strcasecmp(data->ints[8]->name, "nll"));
-    inla_cgeneric_vec_tp *nll = data->ints[8];
-    assert(!strcasecmp(data->ints[9]->name, "iL1"));
-    inla_cgeneric_vec_tp *iL1 = data->ints[9];
-    assert(!strcasecmp(data->ints[10]->name, "iL2"));
-    inla_cgeneric_vec_tp *iL2 = data->ints[10];
+//    assert(!strcasecmp(data->ints[7]->name, "Aj"));
+  //  inla_cgeneric_vec_tp *Aj = data->ints[7];
+    assert(!strcasecmp(data->ints[7]->name, "nll"));
+    inla_cgeneric_vec_tp *nll = data->ints[7];
+    assert(!strcasecmp(data->ints[8]->name, "iL1"));
+    inla_cgeneric_vec_tp *iL1 = data->ints[8];
+    assert(!strcasecmp(data->ints[9]->name, "iL2"));
+    inla_cgeneric_vec_tp *iL2 = data->ints[9];
 
     assert(!strcasecmp(data->doubles[3]->name, "cbdists"));
 //    double *cbd = &data->doubles[3]->doubles[0];
@@ -169,18 +170,19 @@ double *inla_cgeneric_nngp(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgeneri
     int ncc = data->doubles[4]->len;
     double d[N], cc[ncc];
     if(cfn==1) {
-      cWMatern(&ncb, &sigma2, &scale, &nu,
-               &data->doubles[3]->doubles[0], &cb[0]);
-      cWMatern(&ncc, &sigma2, &scale, &nu,
-               &data->doubles[4]->doubles[0], &cc[0]);
+      for(i=0; i<ncb; i++) {
+        cb[i] = sigma2 * exp(-data->doubles[3]->doubles[i]*scale);
+      }
+      for(i=0; i<ncc; i++) {
+        cc[i] = sigma2 * exp(-data->doubles[4]->doubles[i]*scale);
+      }
     } else {
-      if(nu==1) {
-        for(i=0; i<ncb; i++) {
-          cb[i] = sigma2 * exp(-data->doubles[3]->doubles[i]*scale);
-        }
-        for(i=0; i<ncc; i++) {
-          cc[i] = sigma2 * exp(-data->doubles[4]->doubles[i]*scale);
-        }
+      if(cfn==2) {
+        printf("test\n");
+        cWMatern(&ncb, &sigma2, &scale, &nu,
+                 &data->doubles[3]->doubles[0], &cb[0]);
+        cWMatern(&ncc, &sigma2, &scale, &nu,
+                 &data->doubles[4]->doubles[0], &cc[0]);
       } else {
         for(i=0; i<ncb; i++) {
           daux = pow(data->doubles[3]->doubles[i]*scale, nu);
@@ -192,6 +194,7 @@ double *inla_cgeneric_nngp(inla_cgeneric_cmd_tp cmd, double *theta, inla_cgeneri
         }
       }
     }
+
     for(i=0; i<ncb; i++) {
       aa[i] = cb[i];
     }
