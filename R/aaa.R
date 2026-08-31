@@ -1,6 +1,7 @@
 #' Internal to make NAMESPACE
 #' @noRd
 #' @importFrom methods as
+#' @importFrom utils str
 #' @importFrom stats dnorm pnorm complete.cases
 #' @importFrom fmesher fm_manifold fm_manifold_dim fm_fem
 #' @importFrom Matrix Diagonal sparseMatrix

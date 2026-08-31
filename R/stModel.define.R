@@ -94,7 +94,7 @@ stModel.define <-
       } else {
         libpath <- cgeneric_shlib_path(
           package = "INLAspacetime",
-          useINLAprecomp = dotArgs$useINLAprecomp
+          useINLAprecomp = useINLAprecomp
         )
       }
       if (useINLAprecomp)
