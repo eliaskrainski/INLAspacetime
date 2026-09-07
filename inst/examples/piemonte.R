@@ -5,6 +5,8 @@ setwd(here::here("inst/examples"))
 getwd()
 
 ### packages
+library(sf)
+library(fmesher)
 library(INLA)
 library(INLAspacetime)
 library(inlabru)

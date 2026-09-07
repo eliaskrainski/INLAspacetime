@@ -25,7 +25,7 @@ mesh2fem <- function(mesh, order = 2, barrier.triangles = NULL) {
   }
 
   if(inherits(mesh, "fm_collect"))
-    return(fmesher:::fm_fem(mesh))
+    return(fmesher::fm_fem(mesh))
 
   stopifnot(fm_manifold(mesh, c("S", "R")))
   Rmanifold <- fm_manifold(mesh, "R") + 0L

@@ -24,7 +24,6 @@ export(spde2precision)
 export(stModel.define)
 export(stModel.matrices)
 export(stModel.precision)
-export(stats.inla)
 export(stlines)
 export(stpoints)
 export(worldMap)
@@ -57,4 +56,5 @@ importFrom(stats,
   dnorm,
   pnorm
 )
+importFrom(utils,str)
 useDynLib(INLAspacetime, .registration = TRUE)

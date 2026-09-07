@@ -129,7 +129,7 @@ barrierModel.define <-
     }
     iC <- Diagonal(n, 1 / CC)
     if(dotArgs$debug) {
-      print(str(list(Imat = Imat, Dmat = Dmat, CC = CC, iC = iC)))
+      print(utils::str(list(Imat = Imat, Dmat = Dmat, CC = CC, iC = iC)))
     }
 
     lmats <- upperPadding(
@@ -144,7 +144,7 @@ barrierModel.define <-
     stopifnot(n == nrow(lmats$graph))
 
     if(dotArgs$debug) {
-      print(str(lmats))
+      print(utils::str(lmats))
     }
 
     args0 <- list(
